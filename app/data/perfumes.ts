@@ -4,7 +4,7 @@ export const perfumes = [
       name: "Amber Oud Gold",
       description: "Ámbar intenso con vainilla cremosa.",
       price: "$85.000",
-      image: "/perfumes/amber-oud.jpg",
+      image: "/perfumes/amber.jpg", 
       badge: "Más vendido"
     },
     {
@@ -12,8 +12,7 @@ export const perfumes = [
       name: "Honor & Glory",
       description: "Dulce, elegante y larga duración.",
       price: "$72.000",
-      image:
-        "https://images.unsplash.com/photo-1594035910387-fea47794261f?q=80&w=1200&auto=format&fit=crop",
+      image: "/perfumes/HonorAndGlory.jpg", 
       badge: "Nuevo"
     },
     {
@@ -21,8 +20,7 @@ export const perfumes = [
       name: "Atlas",
       description: "Amaderado premium con oud árabe.",
       price: "$90.000",
-      image:
-        "https://images.unsplash.com/photo-1523293182086-7651a899d37f?q=80&w=1200&auto=format&fit=crop",
+      image: "/perfumes/atlas.jpg",
       badge: "Top"
     }
   ];
