@@ -4,8 +4,7 @@ export const perfumes = [
       name: "Amber Oud Gold",
       description: "Ámbar intenso con vainilla cremosa.",
       price: "$85.000",
-      image:
-        "https://images.unsplash.com/photo-1541643600914-78b084683601?q=80&w=1200&auto=format&fit=crop",
+      image: "/perfumes/amber-oud.jpg",
       badge: "Más vendido"
     },
     {
