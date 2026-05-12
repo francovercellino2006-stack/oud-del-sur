@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Navbar from "../../components/Navbar";
 import CatalogGrid from "../../components/CatalogGrid";
 import Footer from "../../components/Footer";
@@ -25,7 +26,8 @@ export default async function CatalogPage({
           <div
             className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.07) 0%, transparent 70%)",
+              background:
+                "radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.07) 0%, transparent 70%)",
             }}
           />
           <div className="mx-auto max-w-7xl relative z-10">
@@ -59,16 +61,60 @@ export default async function CatalogPage({
           </div>
         </div>
 
-        {/* ✅ Todo desde params (el awaited) */}
-        <CatalogGrid
-          initialBrand={params.brand}
-          initialCategory={params.category}
-          initialFamily={params.family}
-        />
+        {/* Suspense requerido por useSearchParams() dentro de CatalogGrid */}
+        <Suspense fallback={<CatalogSkeleton />}>
+          <CatalogGrid
+            initialBrand={params.brand}
+            initialCategory={params.category}
+            initialFamily={params.family}
+          />
+        </Suspense>
       </main>
 
       <Footer />
       <FloatingWhatsApp />
     </>
+  );
+}
+
+// Loading skeleton mientras carga el grid
+function CatalogSkeleton() {
+  return (
+    <div className="px-6 py-16">
+      <div className="mx-auto max-w-7xl">
+        {/* Filter bar skeleton */}
+        <div className="mb-10 space-y-4">
+          <div className="h-3 w-16 rounded-sm animate-pulse" style={{ background: "rgba(212,175,55,0.15)" }} />
+          <div className="flex gap-2 flex-wrap">
+            {[...Array(6)].map((_, i) => (
+              <div key={i} className="h-8 w-24 animate-pulse" style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }} />
+            ))}
+          </div>
+        </div>
+
+        {/* Divider */}
+        <div className="mb-10 h-px" style={{ background: "rgba(212,175,55,0.1)" }} />
+
+        {/* Cards skeleton */}
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          {[...Array(6)].map((_, i) => (
+            <div
+              key={i}
+              className="overflow-hidden animate-pulse"
+              style={{ background: "#141414", border: "1px solid rgba(255,255,255,0.05)" }}
+            >
+              <div className="aspect-square" style={{ background: "rgba(255,255,255,0.03)" }} />
+              <div className="p-5 space-y-3">
+                <div className="h-2 w-16 rounded-sm" style={{ background: "rgba(212,175,55,0.15)" }} />
+                <div className="h-5 w-3/4 rounded-sm" style={{ background: "rgba(255,255,255,0.06)" }} />
+                <div className="h-3 w-full rounded-sm" style={{ background: "rgba(255,255,255,0.04)" }} />
+                <div className="h-3 w-2/3 rounded-sm" style={{ background: "rgba(255,255,255,0.04)" }} />
+                <div className="pt-2 h-10 rounded-sm" style={{ background: "rgba(212,175,55,0.08)" }} />
+              </div>
+            </div>
+          ))}
+        </div>
+      </div>
+    </div>
   );
 }
