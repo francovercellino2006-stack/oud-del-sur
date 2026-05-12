@@ -48,7 +48,7 @@ export const perfumes: Perfume[] = [
     name: "Noble Blush",
     brand: "Lattafa",
     description: "Floral elegante con rosas suaves, almizcle blanco y vainilla.",
-    price: "$0",
+    price: "$62.990",
     image: "/perfumes/nobleblush.jpg",
     badge: "Exclusivo",
     category: "mujer",
