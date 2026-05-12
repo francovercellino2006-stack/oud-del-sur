@@ -23,7 +23,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
   const waMessage = encodeURIComponent(
     `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${perfume.price}. ¿Tienen stock?`
   );
-  const waUrl = `https://wa.me/5491100000000?text=${waMessage}`;
+const waUrl = `https://wa.me/542920528440?text=${waMessage}`;
  
   return (
     <motion.div
