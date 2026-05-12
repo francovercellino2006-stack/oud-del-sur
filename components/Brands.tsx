@@ -18,7 +18,7 @@ const brands = [
     name: "Armaf",
     origin: "Emiratos Árabes",
     description: "Fragancias de alta gama con inspiración en los grandes clásicos europeos, a precios accesibles.",
-    specialty: "Frescos · Maderosos · Amaderados",
+    specialty: "Frescos · Maderosos · Amaderado",
     founded: "2012",
     accent: "#C0C0C0",
   },
