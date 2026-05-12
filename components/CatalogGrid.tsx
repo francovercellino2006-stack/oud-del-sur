@@ -1,29 +1,322 @@
+"use client";
+
+import { useState, useEffect, useMemo } from "react";
+import { useRouter, useSearchParams } from "next/navigation";
+import { motion, AnimatePresence } from "framer-motion";
+import { X, SlidersHorizontal } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { perfumes } from "../app/data/perfumes";
+import { perfumes, type Perfume } from "../app/data/perfumes";
 
-export default function CatalogGrid() {
+const BRANDS    = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi"];
+const CATS      = ["hombre", "mujer", "unisex"] as const;
+const FAMILIES  = ["dulces", "frescos", "orientales", "maderosos", "florales"] as const;
+
+interface CatalogGridProps {
+  initialBrand?:    string;
+  initialCategory?: string;
+  initialFamily?:   string;
+}
+
+export default function CatalogGrid({
+  initialBrand,
+  initialCategory,
+  initialFamily,
+}: CatalogGridProps) {
+  const router       = useRouter();
+  const searchParams = useSearchParams();
+
+  const [brand,    setBrand]    = useState(initialBrand    ?? "");
+  const [category, setCategory] = useState(initialCategory ?? "");
+  const [family,   setFamily]   = useState(initialFamily   ?? "");
+  const [showFilters, setShowFilters] = useState(false);
+
+  // Sync state → URL
+  useEffect(() => {
+    const params = new URLSearchParams();
+    if (brand)    params.set("brand",    brand);
+    if (category) params.set("category", category);
+    if (family)   params.set("family",   family);
+    router.replace(`/catalog?${params.toString()}`, { scroll: false });
+  }, [brand, category, family]);
+
+  // Sync URL → state (back/forward navigation)
+  useEffect(() => {
+    setBrand(searchParams.get("brand")    ?? "");
+    setCategory(searchParams.get("category") ?? "");
+    setFamily(searchParams.get("family")   ?? "");
+  }, [searchParams]);
+
+  const filtered = useMemo<Perfume[]>(() => {
+    return perfumes.filter((p) => {
+      if (brand    && p.brand    !== brand)    return false;
+      if (category && p.category !== category) return false;
+      if (family   && p.family   !== family)   return false;
+      return true;
+    });
+  }, [brand, category, family]);
+
+  const activeCount = [brand, category, family].filter(Boolean).length;
+
+  const clearAll = () => {
+    setBrand("");
+    setCategory("");
+    setFamily("");
+  };
+
+  const FilterBtn = ({
+    label,
+    active,
+    onClick,
+  }: {
+    label: string;
+    active: boolean;
+    onClick: () => void;
+  }) => (
+    <button
+      onClick={onClick}
+      className="px-4 py-2 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300 whitespace-nowrap"
+      style={{
+        background:   active ? "#D4AF37"                      : "transparent",
+        color:        active ? "#0B0B0B"                      : "rgba(255,255,255,0.5)",
+        border:       active ? "1px solid #D4AF37"            : "1px solid rgba(255,255,255,0.1)",
+        fontFamily:   "sans-serif",
+      }}
+      onMouseEnter={(e) => {
+        if (!active) {
+          e.currentTarget.style.borderColor = "rgba(212,175,55,0.4)";
+          e.currentTarget.style.color       = "#D4AF37";
+        }
+      }}
+      onMouseLeave={(e) => {
+        if (!active) {
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.1)";
+          e.currentTarget.style.color       = "rgba(255,255,255,0.5)";
+        }
+      }}
+    >
+      {label}
+    </button>
+  );
+
   return (
-    <section className="bg-[#0B0B0B] px-6 py-24">
+    <section className="px-6 py-16" style={{ background: "#0B0B0B" }}>
       <div className="mx-auto max-w-7xl">
-        <div className="mb-14 text-center">
-          <h2 className="text-5xl font-bold text-white">
-            Catálogo Premium
-          </h2>
 
-          <p className="mt-4 text-gray-400">
-            Descubrí perfumes árabes exclusivos
-          </p>
+        {/* ── Filter bar ── */}
+        <div className="mb-10">
+
+          {/* Mobile toggle */}
+          <div className="flex items-center justify-between mb-5 md:hidden">
+            <button
+              onClick={() => setShowFilters(!showFilters)}
+              className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-light transition-colors duration-300"
+              style={{ color: showFilters ? "#D4AF37" : "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
+            >
+              <SlidersHorizontal size={14} />
+              Filtros {activeCount > 0 && `(${activeCount})`}
+            </button>
+            {activeCount > 0 && (
+              <button
+                onClick={clearAll}
+                className="flex items-center gap-1 text-xs font-light"
+                style={{ color: "rgba(212,175,55,0.7)", fontFamily: "sans-serif" }}
+              >
+                <X size={12} /> Limpiar
+              </button>
+            )}
+          </div>
+
+          {/* Desktop filters always visible, mobile collapsible */}
+          <AnimatePresence>
+            {(showFilters || true) && (
+              <motion.div
+                initial={false}
+                className="space-y-5"
+              >
+                {/* Row 1: Brands */}
+                <div>
+                  <p
+                    className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
+                    style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                  >
+                    Marca
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <FilterBtn
+                      label="Todas"
+                      active={brand === ""}
+                      onClick={() => setBrand("")}
+                    />
+                    {BRANDS.map((b) => (
+                      <FilterBtn
+                        key={b}
+                        label={b}
+                        active={brand === b}
+                        onClick={() => setBrand(brand === b ? "" : b)}
+                      />
+                    ))}
+                  </div>
+                </div>
+
+                {/* Row 2: Category + Family */}
+                <div className="flex flex-wrap gap-x-10 gap-y-5">
+                  <div>
+                    <p
+                      className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
+                      style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                    >
+                      Categoría
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {CATS.map((c) => (
+                        <FilterBtn
+                          key={c}
+                          label={c}
+                          active={category === c}
+                          onClick={() => setCategory(category === c ? "" : c)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+
+                  <div>
+                    <p
+                      className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
+                      style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                    >
+                      Familia
+                    </p>
+                    <div className="flex flex-wrap gap-2">
+                      {FAMILIES.map((f) => (
+                        <FilterBtn
+                          key={f}
+                          label={f}
+                          active={family === f}
+                          onClick={() => setFamily(family === f ? "" : f)}
+                        />
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </motion.div>
+            )}
+          </AnimatePresence>
+
+          {/* Active filters summary + clear */}
+          {activeCount > 0 && (
+            <div className="flex items-center gap-3 mt-5 pt-5"
+              style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
+              <span className="text-xs font-light" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}>
+                Filtros activos:
+              </span>
+              {brand    && <Chip label={brand}    onRemove={() => setBrand("")} />}
+              {category && <Chip label={category} onRemove={() => setCategory("")} />}
+              {family   && <Chip label={family}   onRemove={() => setFamily("")} />}
+              <button
+                onClick={clearAll}
+                className="ml-auto text-xs font-light flex items-center gap-1 transition-colors duration-200"
+                style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}
+                onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
+                onMouseLeave={e => e.currentTarget.style.color = "rgba(212,175,55,0.6)"}
+              >
+                <X size={12} /> Limpiar todo
+              </button>
+            </div>
+          )}
         </div>
 
-        <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
-          {perfumes.map((perfume) => (
-            <ProductCard
-              key={perfume.name}
-              perfume={perfume}
-            />
-          ))}
-        </div>
+        {/* Divider */}
+        <div
+          className="mb-10 h-px"
+          style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent)" }}
+        />
+
+        {/* Results count */}
+        <p
+          className="text-xs tracking-[0.25em] uppercase mb-8 font-light"
+          style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}
+        >
+          {filtered.length} {filtered.length === 1 ? "perfume" : "perfumes"} encontrados
+        </p>
+
+        {/* Grid */}
+        {filtered.length > 0 ? (
+          <motion.div
+            layout
+            className="grid gap-6 md:grid-cols-2 lg:grid-cols-3"
+          >
+            <AnimatePresence mode="popLayout">
+              {filtered.map((perfume, i) => (
+                <motion.div
+                  key={perfume.slug}
+                  layout
+                  initial={{ opacity: 0, scale: 0.96 }}
+                  animate={{ opacity: 1, scale: 1 }}
+                  exit={{ opacity: 0, scale: 0.96 }}
+                  transition={{ duration: 0.35, delay: i * 0.05 }}
+                >
+                  <ProductCard perfume={perfume} index={i} />
+                </motion.div>
+              ))}
+            </AnimatePresence>
+          </motion.div>
+        ) : (
+          // Empty state
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            className="flex flex-col items-center justify-center py-32 text-center"
+          >
+            <div
+              className="w-16 h-16 flex items-center justify-center mb-6"
+              style={{ border: "1px solid rgba(212,175,55,0.2)" }}
+            >
+              <span style={{ color: "rgba(212,175,55,0.4)", fontSize: "24px" }}>✦</span>
+            </div>
+            <p
+              className="text-lg font-light mb-2"
+              style={{ fontFamily: "'Cormorant Garamond', serif", color: "rgba(255,255,255,0.6)" }}
+            >
+              No hay perfumes con esos filtros
+            </p>
+            <p
+              className="text-xs font-light mb-8"
+              style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}
+            >
+              Probá con otra combinación o limpiá los filtros
+            </p>
+            <button
+              onClick={clearAll}
+              className="px-6 py-3 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300"
+              style={{ border: "1px solid rgba(212,175,55,0.3)", color: "#D4AF37", fontFamily: "sans-serif" }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#D4AF37"; e.currentTarget.style.color = "#0B0B0B"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#D4AF37"; }}
+            >
+              Ver todos los perfumes
+            </button>
+          </motion.div>
+        )}
       </div>
     </section>
+  );
+}
+
+// Small removable chip
+function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
+  return (
+    <span
+      className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-light capitalize"
+      style={{
+        background: "rgba(212,175,55,0.1)",
+        border: "1px solid rgba(212,175,55,0.25)",
+        color: "#D4AF37",
+        fontFamily: "sans-serif",
+      }}
+    >
+      {label}
+      <button onClick={onRemove} className="opacity-60 hover:opacity-100 transition-opacity">
+        <X size={10} />
+      </button>
+    </span>
   );
 }

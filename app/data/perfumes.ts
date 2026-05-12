@@ -171,7 +171,7 @@ export const perfumes: Perfume[] = [
     description: "Cítrico dulce y moderno con mandarina vibrante y vainilla suave.",
     price: "$84.000",
     image: "/perfumes/mandarynsky.jpg",
-    badge: "Nuevo",
+    badge: "Más vendido",
     category: "unisex",
     family: "frescos",
     duration: "8-10 hs",

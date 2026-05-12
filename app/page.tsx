@@ -4,6 +4,7 @@ import ProductGrid from "../components/ProductGrid";
 import FloatingWhatsApp from "../components/FloatingWhatsApp";
 import Footer from "../components/Footer";
 import Benefits from "../components/Benefits";
+import Brands from "../components/Brands";
 
 export default function Home() {
   return (
@@ -11,7 +12,8 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Benefits />
-      <ProductGrid />
+      <Brands />
+     {/* <ProductGrid /> */}
       <Footer />
       <FloatingWhatsApp />
     </>

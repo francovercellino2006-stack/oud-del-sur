@@ -2,6 +2,9 @@ import ProductCard from "./ProductCard";
 import { perfumes } from "../app/data/perfumes";
  
 export default function ProductGrid() {
+  const featuredPerfumes = perfumes.filter(
+    (perfume) => perfume.badge === "Más vendido"
+  );
   return (
     <section id="destacados" className="relative py-28 px-6" style={{ background: "#0B0B0B" }}>
       {/* Top border accent */}
@@ -59,7 +62,7 @@ export default function ProductGrid() {
  
         {/* Grid */}
         <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-          {perfumes.map((perfume, i) => (
+        {featuredPerfumes.map((perfume, i) => (
             <ProductCard key={perfume.slug} perfume={perfume} index={i} />
           ))}
         </div>
