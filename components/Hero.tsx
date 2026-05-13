@@ -162,7 +162,7 @@ export default function Hero() {
             className="flex items-center gap-8 mt-16"
           >
             {[
-              { value: "+100", label: "Clientes" },
+              { value: "+50", label: "Clientes" },
               { value: "100%", label: "Originales" },
               { value: "48hs", label: "Envío" },
             ].map((stat, i) => (
