@@ -10,17 +10,17 @@ const testimonials = [
   },
   {
     handle: "@tthiagogarcia__",
-    quote: "Gracias por confiar. Thiago sabe cositas.",
+    quote: null,
     perfume: "Eternal Touch · Maison Alhambra",
   },
   {
     handle: "@euge.diiazz",
-    quote: "Seguimos con la entrega de perfumes. Y vos, ¿qué esperás?",
+    quote: null,
     perfume: "Yara · Lattafa",
   },
   {
     handle: "@tomii.vegaa_",
-    quote: "Gracias por confiar. Seguimos entregando calidad.",
+    quote: null,
     perfume: "Club de Nuit · Armaf",
   },
 ];
@@ -111,15 +111,30 @@ export default function Testimonials() {
               </div>
 
               {/* Quote */}
-              <blockquote
-                className="flex-1 text-xl font-light leading-snug mb-7 italic"
-                style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  color: "rgba(255,255,255,0.75)",
-                }}
-              >
-                "{t.quote}"
-              </blockquote>
+              {t.quote ? (
+                <blockquote
+                  className="flex-1 text-xl font-light leading-snug mb-7 italic"
+                  style={{
+                    fontFamily: "'Cormorant Garamond', serif",
+                    color: "rgba(255,255,255,0.75)",
+                  }}
+                >
+                  "{t.quote}"
+                </blockquote>
+              ) : (
+                <div className="flex-1 flex items-center mb-7">
+                  <span
+                    className="text-xs tracking-[0.25em] uppercase font-light px-3 py-1.5"
+                    style={{
+                      border: "1px solid rgba(212,175,55,0.2)",
+                      color: "rgba(212,175,55,0.5)",
+                      fontFamily: "sans-serif",
+                    }}
+                  >
+                    Compra verificada
+                  </span>
+                </div>
+              )}
 
               {/* Divider */}
               <div
