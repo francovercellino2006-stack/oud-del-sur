@@ -17,7 +17,7 @@ export interface Perfume {
   offer?: { discount: number; endsAt: string };
 }
 
-const HOT_SALE = { discount: 20, endsAt: "2026-05-20T23:59:00" };
+const HOT_SALE = { discount: 15, endsAt: "2026-05-20T23:59:00" };
 
 export const perfumes: Perfume[] = [
   {

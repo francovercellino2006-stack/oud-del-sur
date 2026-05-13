@@ -1,5 +1,5 @@
 export default function HotSaleBanner() {
-  const text = "🔥 HOT SALE — 20% OFF EN TODA LA TIENDA · HASTA EL 20 DE MAYO · ";
+  const text = "🔥 HOT SALE — 15% OFF EN TODA LA TIENDA · HASTA EL 20 DE MAYO · ";
   const items = Array(8).fill(text);
 
   return (
