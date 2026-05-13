@@ -141,17 +141,6 @@ export default function Hero() {
               />
             </a>
 
-            <a
-              href="#destacados"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 text-sm tracking-[0.2em] uppercase font-light transition-all duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
-              style={{
-                border: "1px solid rgba(255,255,255,0.15)",
-                color: "rgba(255,255,255,0.7)",
-                fontFamily: "sans-serif",
-              }}
-            >
-              Más Vendidos
-            </a>
           </motion.div>
 
           {/* Stats */}
