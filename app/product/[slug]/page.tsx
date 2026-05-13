@@ -143,24 +143,28 @@ export default function ProductPage({
                   </div>
                 )}
 
-                <button
-                  onClick={() => setActiveImage((prev) => (prev - 1 + images.length) % images.length)}
-                  className="absolute left-3 top-1/2 -translate-y-1/2 p-2 transition-all duration-300"
-                  style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.4)"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
-                >
-                  <ChevronLeft size={18} style={{ color: "rgba(255,255,255,0.6)" }} />
-                </button>
-                <button
-                  onClick={() => setActiveImage((prev) => (prev + 1) % images.length)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 p-2 transition-all duration-300"
-                  style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
-                  onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.4)"}
-                  onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
-                >
-                  <ChevronRight size={18} style={{ color: "rgba(255,255,255,0.6)" }} />
-                </button>
+                {images.length > 1 && (
+                  <>
+                    <button
+                      onClick={() => setActiveImage((prev) => (prev - 1 + images.length) % images.length)}
+                      className="absolute left-3 top-1/2 -translate-y-1/2 p-2 transition-all duration-300"
+                      style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.4)"}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
+                    >
+                      <ChevronLeft size={18} style={{ color: "rgba(255,255,255,0.6)" }} />
+                    </button>
+                    <button
+                      onClick={() => setActiveImage((prev) => (prev + 1) % images.length)}
+                      className="absolute right-3 top-1/2 -translate-y-1/2 p-2 transition-all duration-300"
+                      style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.08)" }}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.4)"}
+                      onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
+                    >
+                      <ChevronRight size={18} style={{ color: "rgba(255,255,255,0.6)" }} />
+                    </button>
+                  </>
+                )}
               </div>
 
               {images.length > 1 && <div className="grid grid-cols-4 gap-2">

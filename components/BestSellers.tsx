@@ -4,6 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import { perfumes } from "../app/data/perfumes";
+import { applyDiscount } from "../utils/price";
 
 const bestsellers = perfumes.filter((p) => p.badge === "Más vendido").slice(0, 4);
 
@@ -109,28 +110,30 @@ export default function BestSellers() {
                 >
                   {perfume.name}
                 </h3>
-                <p
-                  className="text-[11px] leading-relaxed font-light mb-4 flex-1"
-                  style={{ color: "rgba(255,255,255,0.35)", fontFamily: "sans-serif" }}
-                >
-                  {perfume.description}
-                </p>
+                <div className="flex-1" />
 
                 <div
                   className="flex items-center justify-between pt-4"
                   style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}
                 >
-                  <span
-                    className="text-base font-light"
-                    style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 100%)",
-                      WebkitBackgroundClip: "text",
-                      WebkitTextFillColor: "transparent",
-                    }}
-                  >
-                    {perfume.price}
-                  </span>
+                  <div className="flex items-baseline gap-2">
+                    <span
+                      className="text-base font-light"
+                      style={{
+                        fontFamily: "'Cormorant Garamond', serif",
+                        background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 100%)",
+                        WebkitBackgroundClip: "text",
+                        WebkitTextFillColor: "transparent",
+                      }}
+                    >
+                      {perfume.offer ? applyDiscount(perfume.price, perfume.offer.discount) : perfume.price}
+                    </span>
+                    {perfume.offer && (
+                      <span className="text-xs line-through font-light" style={{ color: "rgba(255,255,255,0.22)", fontFamily: "sans-serif" }}>
+                        {perfume.price}
+                      </span>
+                    )}
+                  </div>
                   <div
                     className="flex items-center justify-center w-7 h-7 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
                     style={{ border: "1px solid rgba(212,175,55,0.3)" }}

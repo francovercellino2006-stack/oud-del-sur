@@ -37,13 +37,11 @@ export default function Hero() {
         }}
       />
 
-      {/* Pattern */}
+      {/* Right vignette */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-1/2 z-0 opacity-10"
+        className="absolute right-0 top-0 bottom-0 w-1/2 z-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "radial-gradient(rgba(212,175,55,0.6) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
+          background: "linear-gradient(270deg, rgba(212,175,55,0.03) 0%, transparent 60%)",
         }}
       />
 
@@ -151,7 +149,7 @@ export default function Hero() {
             className="flex items-center gap-8 mt-16"
           >
             {[
-              { value: "+50", label: "Clientes" },
+              { value: "5", label: "Casas Árabes" },
               { value: "100%", label: "Originales" },
               { value: "48hs", label: "Envío" },
             ].map((stat, i) => (

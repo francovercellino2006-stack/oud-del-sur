@@ -47,6 +47,7 @@ export default function Footer() {
               {[
                 { label: "Inicio", href: "/" },
                 { label: "Catálogo", href: "/catalog" },
+                { label: "Quiz de Fragancias", href: "/quiz" },
               ].map((link) => (
                 <Link
                   key={link.href}
@@ -79,7 +80,7 @@ export default function Footer() {
                 Instagram
               </a>
               <a
-                href="https://wa.me/5491100000000"
+                href="https://wa.me/5492920528440"
                 target="_blank"
                 rel="noopener noreferrer"
                 className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#D4AF37]"

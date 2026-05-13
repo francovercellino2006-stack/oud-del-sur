@@ -137,6 +137,7 @@ export default function Navbar() {
               {[
                 { label: "Inicio", href: "/" },
                 { label: "Catálogo", href: "/catalog" },
+                { label: "Quiz", href: "/quiz" },
               ].map((link, i) => (
                 <motion.div
                   key={link.href}
