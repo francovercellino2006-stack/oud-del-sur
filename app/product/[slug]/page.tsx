@@ -58,7 +58,9 @@ export default function ProductPage({
     `Fragancia ${perfume.category} · ${perfume.ml}ml`,
   ];
 
-  const relatedPerfumes = perfumes.filter((p) => p.slug !== perfume.slug).slice(0, 3);
+  const sameBrand = perfumes.filter((p) => p.slug !== perfume.slug && p.brand === perfume.brand);
+  const sameFamily = perfumes.filter((p) => p.slug !== perfume.slug && p.brand !== perfume.brand && p.family === perfume.family);
+  const relatedPerfumes = [...sameBrand, ...sameFamily].slice(0, 3);
 
   return (
     <>
