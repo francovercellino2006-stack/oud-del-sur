@@ -4,11 +4,13 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart } from "lucide-react";
+import { useFavorites } from "../hooks/useFavorites";
  
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const { favorites } = useFavorites();
  
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -72,6 +74,20 @@ export default function Navbar() {
  
           {/* CTA button desktop + mobile hamburger */}
           <div className="flex items-center gap-4">
+            <Link href="/favorites" className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
+              style={{ color: "rgba(255,255,255,0.45)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+              aria-label="Favoritos">
+              <Heart size={16} />
+              {favorites.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
+                  style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                  {favorites.length}
+                </span>
+              )}
+            </Link>
+
             <Link
               href="/catalog"
             className="hidden md:inline-flex items-center px-5 py-2 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"

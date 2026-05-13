@@ -2,8 +2,9 @@
  
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowRight, MessageCircle, Sparkles, Heart } from "lucide-react";
 import type { Perfume } from "../app/data/perfumes";
+import { useFavorites } from "../hooks/useFavorites";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   "Más vendido": { bg: "#D4AF37",              color: "#0B0B0B", border: "transparent" },
@@ -19,6 +20,8 @@ interface ProductCardProps {
  
 export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
   const badgeStyle = perfume.badge ? BADGE_STYLES[perfume.badge] : null;
+  const { toggle, isFav } = useFavorites();
+  const fav = isFav(perfume.slug);
  
   const waMessage = encodeURIComponent(
     `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${perfume.price}. ¿Tienen stock?`
@@ -42,6 +45,26 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.12)",
       }}
     >
+      {/* Favorite button */}
+      <button
+        onClick={() => toggle(perfume.slug)}
+        className="absolute top-3 right-3 z-20 flex items-center justify-center w-8 h-8 transition-all duration-300"
+        style={{
+          background: fav ? "rgba(212,175,55,0.15)" : "rgba(0,0,0,0.4)",
+          border: `1px solid ${fav ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.1)"}`,
+          backdropFilter: "blur(8px)",
+        }}
+        aria-label={fav ? "Quitar de favoritos" : "Agregar a favoritos"}
+      >
+        <Heart
+          size={13}
+          style={{
+            color: fav ? "#D4AF37" : "rgba(255,255,255,0.4)",
+            fill: fav ? "#D4AF37" : "none",
+          }}
+        />
+      </button>
+
       {/* Badge */}
       {perfume.badge && badgeStyle && (
         <div className="absolute top-3 left-3 z-20">
