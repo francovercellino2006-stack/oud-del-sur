@@ -2,7 +2,7 @@
  
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Sparkles, Heart, ShoppingBag } from "lucide-react";
+import { ArrowRight, Sparkles, Heart, ShoppingBag } from "lucide-react";
 import type { Perfume } from "../app/data/perfumes";
 import { useFavorites } from "../hooks/useFavorites";
 import { useCart } from "../hooks/useCart";
@@ -213,30 +213,25 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
           <ShoppingBag size={13} />
         </button>
 
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-1 items-center justify-center gap-2 py-3 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"
+        <Link
+          href={`/product/${perfume.slug}`}
+          className="flex flex-1 items-center justify-center gap-2 py-3 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300"
           style={{
             border: "1px solid rgba(212,175,55,0.4)",
             color: "#D4AF37",
             fontFamily: "sans-serif",
           }}
-        >
-          <MessageCircle size={13} />
-          Comprar
-        </a>
-
-        <Link
-          href={`/product/${perfume.slug}`}
-          className="flex items-center justify-center px-4 py-3 transition-all duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
-          style={{
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "rgba(255,255,255,0.4)",
+          onMouseEnter={e => {
+            e.currentTarget.style.background = "#D4AF37";
+            e.currentTarget.style.color = "#0B0B0B";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#D4AF37";
           }}
         >
-          <ArrowRight size={15} />
+          Ver perfume
+          <ArrowRight size={13} />
         </Link>
       </div>
 
