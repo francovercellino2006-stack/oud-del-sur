@@ -14,6 +14,7 @@ export interface Perfume {
   duration: string;
   ml: number;
   inspiredBy?: string;
+  offer?: { discount: number; endsAt: string };
 }
  
 export const perfumes: Perfume[] = [
@@ -30,6 +31,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "10-12 hs",
     ml: 100,
+    offer: { discount: 15, endsAt: "2026-05-20T23:59:00" },
   },
   {
     slug: "khamrah",
@@ -165,6 +167,7 @@ export const perfumes: Perfume[] = [
     duration: "12-14 hs",
     ml: 100,
     inspiredBy: "Creed Aventus · Creed",
+    offer: { discount: 10, endsAt: "2026-05-20T23:59:00" },
   },
 
   {

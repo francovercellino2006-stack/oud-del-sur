@@ -48,6 +48,14 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.12)",
       }}
     >
+      {/* Offer badge */}
+      {perfume.offer && (
+        <div className="absolute top-3 left-3 z-20 px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
+          style={{ background: "rgba(220,50,50,0.9)", color: "white", fontFamily: "sans-serif" }}>
+          −{perfume.offer.discount}%
+        </div>
+      )}
+
       {/* Favorite button */}
       <button
         onClick={() => toggle(perfume.slug)}

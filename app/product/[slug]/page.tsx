@@ -8,6 +8,7 @@ import { perfumes } from "../../../app/data/perfumes";
 import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Clock, Droplets, Tag, Star } from "lucide-react";
 import Link from "next/link";
+import OfferCountdown from "../../../components/OfferCountdown";
 
 export default function ProductPage({
   params,
@@ -228,6 +229,10 @@ export default function ProductPage({
                   {perfume.ml}ml
                 </span>
               </div>
+
+              {perfume.offer && (
+                <OfferCountdown discount={perfume.offer.discount} endsAt={perfume.offer.endsAt} />
+              )}
 
               {perfume.inspiredBy && (
                 <div className="flex items-center gap-3 mb-8 px-4 py-3"
