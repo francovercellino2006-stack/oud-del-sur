@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles, Heart, ShoppingBag } from "lucide-react";
 import type { Perfume } from "../app/data/perfumes";
 import { useFavorites } from "../hooks/useFavorites";
 import { useCart } from "../hooks/useCart";
-import { applyDiscount } from "../utils/price";
+import { applyDiscount, getActivePrice } from "../utils/price";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   "Más vendido": { bg: "#D4AF37",              color: "#0B0B0B", border: "transparent" },
@@ -27,8 +27,9 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
   const { add, remove, inCart } = useCart();
   const cart = inCart(perfume.slug);
  
+  const activePrice = getActivePrice(perfume.price, perfume.offer);
   const waMessage = encodeURIComponent(
-    `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${perfume.price}. ¿Tienen stock?`
+    `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${activePrice}. ¿Tienen stock?`
   );
   const waUrl = `https://wa.me/542920528440?text=${waMessage}`;
  

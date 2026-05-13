@@ -9,7 +9,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Clock, Droplets, Tag, Star } from "lucide-react";
 import Link from "next/link";
 import OfferCountdown from "../../../components/OfferCountdown";
-import { applyDiscount } from "../../../utils/price";
+import { applyDiscount, getActivePrice } from "../../../utils/price";
 
 export default function ProductPage({
   params,
@@ -41,8 +41,9 @@ export default function ProductPage({
 
   const images = [perfume.image];
 
+  const activePrice = getActivePrice(perfume.price, perfume.offer);
   const waMessage = encodeURIComponent(
-    `Hola! Quiero comprar *${perfume.name}* (${perfume.brand}) - ${perfume.price}. ¿Tienen stock disponible?`
+    `Hola! Quiero comprar *${perfume.name}* (${perfume.brand}) - ${activePrice}. ¿Tienen stock disponible?`
   );
   const waUrl = `https://wa.me/5492920528440?text=${waMessage}`;
 
