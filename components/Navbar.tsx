@@ -109,19 +109,6 @@ export default function Navbar() {
               )}
             </Link>
 
-            <Link
-              href="/catalog"
-            className="hidden md:inline-flex items-center px-5 py-2 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"
-              style={{
-                border: "1px solid rgba(212,175,55,0.4)",
-                color: "#D4AF37",
-                fontFamily: "sans-serif",
-              }}
-             
-            >
-              Ver Catálogo
-            </Link>
- 
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="md:hidden transition-colors duration-200"
