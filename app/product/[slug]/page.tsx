@@ -58,6 +58,15 @@ export default function ProductPage({
     `Fragancia ${perfume.category} · ${perfume.ml}ml`,
   ];
 
+  const intensityMap: Record<string, { dulzor: number; proyeccion: number; duracion: number }> = {
+    dulces:     { dulzor: 9, proyeccion: 7, duracion: 7 },
+    orientales: { dulzor: 6, proyeccion: 9, duracion: 9 },
+    maderosos:  { dulzor: 3, proyeccion: 8, duracion: 9 },
+    frescos:    { dulzor: 2, proyeccion: 6, duracion: 6 },
+    florales:   { dulzor: 5, proyeccion: 5, duracion: 6 },
+  };
+  const intensity = intensityMap[perfume.family] ?? { dulzor: 5, proyeccion: 5, duracion: 5 };
+
   const sameBrand = perfumes.filter((p) => p.slug !== perfume.slug && p.brand === perfume.brand);
   const sameFamily = perfumes.filter((p) => p.slug !== perfume.slug && p.brand !== perfume.brand && p.family === perfume.family);
   const relatedPerfumes = [...sameBrand, ...sameFamily].slice(0, 3);
@@ -227,6 +236,37 @@ export default function ProductPage({
                     <p className="text-sm font-light" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
                       {item}
                     </p>
+                  </div>
+                ))}
+              </div>
+
+              <div className="h-px mb-8" style={{ background: "rgba(255,255,255,0.06)" }} />
+
+              {/* Intensity bars */}
+              <div className="space-y-4 mb-8">
+                {[
+                  { label: "Dulzor",      value: intensity.dulzor },
+                  { label: "Proyección",  value: intensity.proyeccion },
+                  { label: "Duración",    value: intensity.duracion },
+                ].map(({ label, value }) => (
+                  <div key={label} className="flex items-center gap-4">
+                    <span className="text-[10px] tracking-[0.25em] uppercase font-light w-20 shrink-0"
+                      style={{ color: "rgba(255,255,255,0.35)", fontFamily: "sans-serif" }}>
+                      {label}
+                    </span>
+                    <div className="flex-1 h-px relative" style={{ background: "rgba(255,255,255,0.06)" }}>
+                      <div
+                        className="absolute top-1/2 -translate-y-1/2 h-[3px] rounded-full"
+                        style={{
+                          width: `${value * 10}%`,
+                          background: "linear-gradient(90deg, #B8941F, #D4AF37, #F0D875)",
+                        }}
+                      />
+                    </div>
+                    <span className="text-[10px] font-light w-6 text-right shrink-0"
+                      style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                      {value}/10
+                    </span>
                   </div>
                 ))}
               </div>
