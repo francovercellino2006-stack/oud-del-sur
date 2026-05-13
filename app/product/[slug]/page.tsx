@@ -363,12 +363,22 @@ export default function ProductPage({
                 href={waConsultUrl}
                 target="_blank"
                 rel="noopener noreferrer"
-                className="flex items-center justify-center gap-2 mt-4 transition-all duration-300 group"
-                style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}
-                onMouseEnter={e => e.currentTarget.style.color = "rgba(212,175,55,0.7)"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.3)"}
+                className="flex items-center justify-center gap-2 mt-3 py-3 transition-all duration-300 group"
+                style={{
+                  border: "1px solid rgba(255,255,255,0.08)",
+                  color: "rgba(255,255,255,0.45)",
+                  fontFamily: "sans-serif",
+                }}
+                onMouseEnter={e => {
+                  e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)";
+                  e.currentTarget.style.color = "#D4AF37";
+                }}
+                onMouseLeave={e => {
+                  e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
+                  e.currentTarget.style.color = "rgba(255,255,255,0.45)";
+                }}
               >
-                <span className="text-xs font-light tracking-[0.15em]">¿Tenés dudas? Consultanos</span>
+                <span className="text-xs font-light tracking-[0.2em] uppercase">¿Tenés dudas? Consultanos</span>
                 <span className="text-xs transition-transform duration-300 group-hover:translate-x-0.5">→</span>
               </a>
 
