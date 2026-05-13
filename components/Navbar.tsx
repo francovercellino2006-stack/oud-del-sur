@@ -56,6 +56,7 @@ export default function Navbar() {
             {[
               { label: "Inicio", href: "/" },
               { label: "Catálogo", href: "/catalog" },
+              { label: "Quiz", href: "/quiz" },
             ].map((link) => (
               <Link
                 key={link.href}
