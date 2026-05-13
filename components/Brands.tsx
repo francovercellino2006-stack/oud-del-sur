@@ -239,8 +239,8 @@ return (
             className="h-px mb-8"
             style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.06), transparent)" }}
           />
-          <div className="flex items-center gap-10 opacity-20">
-            {[...brands, ...brands].map((brand, i) => (
+          <div className="flex items-center gap-10 opacity-20 animate-ticker" style={{ width: "max-content" }}>
+            {[...brands, ...brands, ...brands, ...brands].map((brand, i) => (
               <span
                 key={i}
                 className="shrink-0 text-2xl font-light tracking-widest text-white whitespace-nowrap"

@@ -1,10 +1,10 @@
 import Navbar from "../components/Navbar";
 import Hero from "../components/Hero";
-import ProductGrid from "../components/ProductGrid";
-import FloatingWhatsApp from "../components/FloatingWhatsApp";
-import Footer from "../components/Footer";
 import Benefits from "../components/Benefits";
+import BestSellers from "../components/BestSellers";
 import Brands from "../components/Brands";
+import Footer from "../components/Footer";
+import FloatingWhatsApp from "../components/FloatingWhatsApp";
 
 export default function Home() {
   return (
@@ -12,8 +12,8 @@ export default function Home() {
       <Navbar />
       <Hero />
       <Benefits />
+      <BestSellers />
       <Brands />
-     {/* <ProductGrid /> */}
       <Footer />
       <FloatingWhatsApp />
     </>
