@@ -13,6 +13,7 @@ export interface Perfume {
   family: "dulces" | "frescos" | "orientales" | "maderosos" | "florales";
   duration: string;
   ml: number;
+  inspiredBy?: string;
 }
  
 export const perfumes: Perfume[] = [
@@ -42,6 +43,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "10-14 hs",
     ml: 100,
+    inspiredBy: "Baccarat Rouge 540 · Maison Francis Kurkdjian",
   },
   {
     slug: "qhawah",
@@ -148,6 +150,7 @@ export const perfumes: Perfume[] = [
     family: "frescos",
     duration: "8-12 hs",
     ml: 100,
+    inspiredBy: "Bleu de Chanel · Chanel",
   },
   {
     slug: "club-de-nuit-intense",
@@ -161,6 +164,7 @@ export const perfumes: Perfume[] = [
     family: "maderosos",
     duration: "12-14 hs",
     ml: 100,
+    inspiredBy: "Creed Aventus · Creed",
   },
 
   {
@@ -215,6 +219,7 @@ export const perfumes: Perfume[] = [
     family: "frescos",
     duration: "8-10 hs",
     ml: 100,
+    inspiredBy: "Acqua di Gio · Giorgio Armani",
   },
   {
     slug: "mandaryn-sky",

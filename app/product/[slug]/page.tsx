@@ -229,6 +229,21 @@ export default function ProductPage({
                 </span>
               </div>
 
+              {perfume.inspiredBy && (
+                <div className="flex items-center gap-3 mb-8 px-4 py-3"
+                  style={{ background: "rgba(212,175,55,0.05)", border: "1px solid rgba(212,175,55,0.15)" }}>
+                  <span className="text-[10px] tracking-[0.3em] uppercase font-light shrink-0"
+                    style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
+                    Inspirado en
+                  </span>
+                  <div className="w-px h-3 shrink-0" style={{ background: "rgba(212,175,55,0.25)" }} />
+                  <span className="text-xs font-light"
+                    style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
+                    {perfume.inspiredBy}
+                  </span>
+                </div>
+              )}
+
               <div className="space-y-3 mb-8">
                 {highlights.map((item) => (
                   <div key={item} className="flex items-center gap-3">
