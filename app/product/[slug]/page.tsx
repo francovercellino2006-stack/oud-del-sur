@@ -330,6 +330,24 @@ export default function ProductPage({
               </div>
 
               {/* CTA buttons */}
+              {perfume.outOfStock ? (
+                <div className="flex flex-col items-center gap-3 py-5"
+                  style={{ border: "1px solid rgba(255,255,255,0.08)" }}>
+                  <span className="text-sm tracking-[0.3em] uppercase font-light"
+                    style={{ color: "rgba(255,255,255,0.35)", fontFamily: "sans-serif" }}>
+                    Agotado
+                  </span>
+                  <a href={`https://wa.me/5492920528440?text=${encodeURIComponent(`Hola! Me interesa *${perfume.name}* (${perfume.brand}). ¿Cuándo tienen stock disponible?`)}`}
+                    target="_blank" rel="noopener noreferrer"
+                    className="text-xs tracking-[0.2em] font-light transition-colors duration-300"
+                    style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                    onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
+                    onMouseLeave={e => e.currentTarget.style.color = "rgba(212,175,55,0.5)"}
+                  >
+                    Avisame cuando haya stock →
+                  </a>
+                </div>
+              ) : (
               <div className="flex flex-col gap-3">
                 <a
                   href={waUrl}
@@ -358,6 +376,8 @@ export default function ProductPage({
                 </a>
 
               </div>
+
+              )}
 
               <a
                 href={waConsultUrl}

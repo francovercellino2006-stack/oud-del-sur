@@ -49,9 +49,20 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.12)",
       }}
     >
+      {/* Overlay agotado */}
+      {perfume.outOfStock && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none"
+          style={{ background: "rgba(11,11,11,0.6)", backdropFilter: "blur(2px)" }}>
+          <span className="px-4 py-2 text-xs tracking-[0.3em] uppercase font-light"
+            style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
+            Agotado
+          </span>
+        </div>
+      )}
+
       {/* Badges column — top left */}
       <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
-        {perfume.offer && (
+        {!perfume.outOfStock && perfume.offer && (
           <span className="px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
             style={{ background: "rgba(200,40,40,0.92)", color: "white", fontFamily: "sans-serif" }}>
             −{perfume.offer.discount}%

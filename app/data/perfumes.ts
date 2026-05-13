@@ -15,6 +15,7 @@ export interface Perfume {
   ml: number;
   inspiredBy?: string;
   offer?: { discount: number; endsAt: string };
+  outOfStock?: boolean;
 }
 
 const HOT_SALE = { discount: 15, endsAt: "2026-05-20T23:59:00" };
@@ -219,6 +220,7 @@ export const perfumes: Perfume[] = [
     duration: "10-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    outOfStock: true,
   },
   {
     slug: "9am",
