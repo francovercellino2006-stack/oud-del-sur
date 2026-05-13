@@ -3,7 +3,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, SlidersHorizontal } from "lucide-react";
+import { X, SlidersHorizontal, Search } from "lucide-react";
 import ProductCard from "./ProductCard";
 import { perfumes, type Perfume } from "../app/data/perfumes";
 
@@ -28,6 +28,7 @@ export default function CatalogGrid({
   const [brand,    setBrand]    = useState(initialBrand    ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
   const [family,   setFamily]   = useState(initialFamily   ?? "");
+  const [search,   setSearch]   = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
   // Sync state → URL
@@ -47,13 +48,15 @@ export default function CatalogGrid({
   }, [searchParams]);
 
   const filtered = useMemo<Perfume[]>(() => {
+    const q = search.toLowerCase().trim();
     return perfumes.filter((p) => {
       if (brand    && p.brand    !== brand)    return false;
       if (category && p.category !== category) return false;
       if (family   && p.family   !== family)   return false;
+      if (q && ![p.name, p.brand, p.description, p.family].some((s) => s.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [brand, category, family]);
+  }, [brand, category, family, search]);
 
   const activeCount = [brand, category, family].filter(Boolean).length;
 
@@ -101,6 +104,38 @@ export default function CatalogGrid({
   return (
     <section className="px-6 py-16" style={{ background: "#0B0B0B" }}>
       <div className="mx-auto max-w-7xl">
+
+        {/* ── Search bar ── */}
+        <div className="mb-8 relative">
+          <Search
+            size={15}
+            className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
+            style={{ color: "rgba(212,175,55,0.5)" }}
+          />
+          <input
+            type="text"
+            value={search}
+            onChange={(e) => setSearch(e.target.value)}
+            placeholder="Buscar por nombre, marca o notas..."
+            className="w-full py-3 pl-11 pr-10 text-sm font-light bg-transparent outline-none transition-all duration-300"
+            style={{
+              border: "1px solid rgba(255,255,255,0.08)",
+              color: "rgba(255,255,255,0.7)",
+              fontFamily: "sans-serif",
+              caretColor: "#D4AF37",
+            }}
+            onFocus={(e) => e.currentTarget.style.borderColor = "rgba(212,175,55,0.35)"}
+            onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
+          />
+          {search && (
+            <button
+              onClick={() => setSearch("")}
+              className="absolute right-4 top-1/2 -translate-y-1/2 transition-opacity duration-200 opacity-50 hover:opacity-100"
+            >
+              <X size={13} style={{ color: "rgba(255,255,255,0.6)" }} />
+            </button>
+          )}
+        </div>
 
         {/* ── Filter bar ── */}
         <div className="mb-10">
