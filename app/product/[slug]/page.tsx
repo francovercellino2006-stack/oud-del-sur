@@ -6,7 +6,7 @@ import Footer from "../../../components/Footer";
 import FloatingWhatsApp from "../../../components/FloatingWhatsApp";
 import { perfumes } from "../../../app/data/perfumes";
 import { motion } from "framer-motion";
-import { ChevronLeft, ChevronRight, Clock, Droplets, Tag } from "lucide-react";
+import { ChevronLeft, ChevronRight, Clock, Droplets, Tag, Star } from "lucide-react";
 import Link from "next/link";
 
 export default function ProductPage({
