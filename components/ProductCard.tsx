@@ -6,6 +6,7 @@ import { ArrowRight, MessageCircle, Sparkles, Heart, ShoppingBag } from "lucide-
 import type { Perfume } from "../app/data/perfumes";
 import { useFavorites } from "../hooks/useFavorites";
 import { useCart } from "../hooks/useCart";
+import { applyDiscount } from "../utils/price";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   "Más vendido": { bg: "#D4AF37",              color: "#0B0B0B", border: "transparent" },
@@ -170,9 +171,17 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
               className="text-2xl font-light"
               style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}
             >
-              {perfume.price}
+              {perfume.offer ? applyDiscount(perfume.price, perfume.offer.discount) : perfume.price}
             </span>
-            {perfume.priceOriginal && (
+            {perfume.offer && (
+              <span
+                className="text-sm line-through font-light"
+                style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
+              >
+                {perfume.price}
+              </span>
+            )}
+            {!perfume.offer && perfume.priceOriginal && (
               <span
                 className="text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}

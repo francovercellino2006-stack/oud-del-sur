@@ -9,6 +9,7 @@ import { motion } from "framer-motion";
 import { ChevronLeft, ChevronRight, Clock, Droplets, Tag, Star } from "lucide-react";
 import Link from "next/link";
 import OfferCountdown from "../../../components/OfferCountdown";
+import { applyDiscount } from "../../../utils/price";
 
 export default function ProductPage({
   params,
@@ -215,9 +216,14 @@ export default function ProductPage({
                   className="text-4xl font-light"
                   style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}
                 >
-                  {perfume.price}
+                  {perfume.offer ? applyDiscount(perfume.price, perfume.offer.discount) : perfume.price}
                 </span>
-                {perfume.priceOriginal && (
+                {perfume.offer && (
+                  <span className="text-lg line-through font-light" style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}>
+                    {perfume.price}
+                  </span>
+                )}
+                {!perfume.offer && perfume.priceOriginal && (
                   <span className="text-lg line-through font-light" style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}>
                     {perfume.priceOriginal}
                   </span>
