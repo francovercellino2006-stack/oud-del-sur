@@ -14,30 +14,7 @@ const brands = [
     founded: "2007",
     accent: "#D4AF37",
   },
-  {
-    name: "Khamrah",
-    origin: "Emiratos Árabes",
-    description: "Oud dulce y avainillado con especias cálidas. Una de las fragancias más adictivas y vendidas de Lattafa.",
-    specialty: "Dulces · Gourmand · Orientales",
-    founded: "2021",
-    accent: "#D4AF37",
-  },
-  {
-    name: "Qhawah",
-    origin: "Emiratos Árabes",
-    description: "Inspirado en el café árabe tradicional. Cálido, especiado y maderoso con notas de cardamomo y oud.",
-    specialty: "Especiados · Maderosos · Café",
-    founded: "2019",
-    accent: "#C0C0C0",
-  },
-  {
-    name: "Dukhan",
-    origin: "Emiratos Árabes",
-    description: "El perfume del humo árabe. Oud ahumado intenso con resinas y especias del desierto.",
-    specialty: "Ahumados · Oud · Orientales",
-    founded: "2020",
-    accent: "#D4AF37",
-  },
+
   {
     name: "Armaf",
     origin: "Emiratos Árabes",
