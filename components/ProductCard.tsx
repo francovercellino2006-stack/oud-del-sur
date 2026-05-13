@@ -2,9 +2,10 @@
  
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Sparkles, Heart } from "lucide-react";
+import { ArrowRight, MessageCircle, Sparkles, Heart, ShoppingBag } from "lucide-react";
 import type { Perfume } from "../app/data/perfumes";
 import { useFavorites } from "../hooks/useFavorites";
+import { useCart } from "../hooks/useCart";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   "Más vendido": { bg: "#D4AF37",              color: "#0B0B0B", border: "transparent" },
@@ -22,6 +23,8 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
   const badgeStyle = perfume.badge ? BADGE_STYLES[perfume.badge] : null;
   const { toggle, isFav } = useFavorites();
   const fav = isFav(perfume.slug);
+  const { add, remove, inCart } = useCart();
+  const cart = inCart(perfume.slug);
  
   const waMessage = encodeURIComponent(
     `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${perfume.price}. ¿Tienen stock?`
@@ -178,6 +181,23 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
 
       {/* Botones — fuera del Link para que no naveguen */}
       <div className="flex gap-2 px-5 pb-5">
+        <button
+          onClick={() => cart
+            ? remove(perfume.slug)
+            : add({ slug: perfume.slug, name: perfume.name, brand: perfume.brand, price: perfume.price, image: perfume.image })
+          }
+          className="flex items-center justify-center gap-2 py-3 px-4 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300"
+          style={{
+            border: `1px solid ${cart ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.08)"}`,
+            color: cart ? "#D4AF37" : "rgba(255,255,255,0.4)",
+            background: cart ? "rgba(212,175,55,0.08)" : "transparent",
+            fontFamily: "sans-serif",
+          }}
+          aria-label={cart ? "Quitar de lista" : "Agregar a lista"}
+        >
+          <ShoppingBag size={13} />
+        </button>
+
         <a
           href={waUrl}
           target="_blank"

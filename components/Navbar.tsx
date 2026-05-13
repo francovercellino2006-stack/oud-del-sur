@@ -4,13 +4,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X, Heart } from "lucide-react";
+import { Menu, X, Heart, ShoppingBag } from "lucide-react";
 import { useFavorites } from "../hooks/useFavorites";
+import { useCart } from "../hooks/useCart";
+import CartDrawer from "./CartDrawer";
  
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
   const { favorites } = useFavorites();
+  const { items } = useCart();
  
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -20,6 +24,7 @@ export default function Navbar() {
  
   return (
     <>
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <motion.header
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
@@ -74,6 +79,22 @@ export default function Navbar() {
  
           {/* CTA button desktop + mobile hamburger */}
           <div className="flex items-center gap-4">
+            {/* Cart button */}
+            <button onClick={() => setCartOpen(true)}
+              className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
+              style={{ color: "rgba(255,255,255,0.45)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+              aria-label="Carrito">
+              <ShoppingBag size={16} />
+              {items.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
+                  style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                  {items.length}
+                </span>
+              )}
+            </button>
+
             <Link href="/favorites" className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
               style={{ color: "rgba(255,255,255,0.45)" }}
               onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
