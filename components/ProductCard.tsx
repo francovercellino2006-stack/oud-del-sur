@@ -48,13 +48,29 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.12)",
       }}
     >
-      {/* Offer badge */}
-      {perfume.offer && (
-        <div className="absolute top-3 left-3 z-20 px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
-          style={{ background: "rgba(220,50,50,0.9)", color: "white", fontFamily: "sans-serif" }}>
-          −{perfume.offer.discount}%
-        </div>
-      )}
+      {/* Badges column — top left */}
+      <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
+        {perfume.offer && (
+          <span className="px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
+            style={{ background: "rgba(200,40,40,0.92)", color: "white", fontFamily: "sans-serif" }}>
+            −{perfume.offer.discount}%
+          </span>
+        )}
+        {perfume.badge && badgeStyle && (
+          <span
+            className="flex items-center gap-1 px-3 py-1 text-[10px] tracking-[0.2em] uppercase font-medium"
+            style={{
+              background: badgeStyle.bg,
+              color: badgeStyle.color,
+              border: `1px solid ${badgeStyle.border}`,
+              fontFamily: "sans-serif",
+            }}
+          >
+            {perfume.badge === "Más vendido" && <Sparkles size={9} />}
+            {perfume.badge}
+          </span>
+        )}
+      </div>
 
       {/* Favorite button */}
       <button
@@ -75,24 +91,6 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
           }}
         />
       </button>
-
-      {/* Badge */}
-      {perfume.badge && badgeStyle && (
-        <div className="absolute top-3 left-3 z-20">
-          <span
-            className="flex items-center gap-1 px-3 py-1 text-[10px] tracking-[0.2em] uppercase font-medium"
-            style={{
-              background: badgeStyle.bg,
-              color: badgeStyle.color,
-              border: `1px solid ${badgeStyle.border}`,
-              fontFamily: "sans-serif",
-            }}
-          >
-            {perfume.badge === "Más vendido" && <Sparkles size={9} />}
-            {perfume.badge}
-          </span>
-        </div>
-      )}
 
       {/* Clickeable: imagen + info */}
       <Link href={`/product/${perfume.slug}`} className="flex flex-col flex-1 cursor-pointer">
