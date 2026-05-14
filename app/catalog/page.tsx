@@ -4,6 +4,7 @@ import Navbar from "../../components/Navbar";
 import CatalogGrid from "../../components/CatalogGrid";
 import Footer from "../../components/Footer";
 import FloatingWhatsApp from "../../components/FloatingWhatsApp";
+import { getPerfumes } from "../../lib/queries";
 
 // Fuerza renderizado dinámico — necesario por useSearchParams y searchParams
 export const dynamic = "force-dynamic";
@@ -23,6 +24,7 @@ export default async function CatalogPage({
   }>;
 }) {
   const params = await searchParams;
+  const perfumes = await getPerfumes();
 
   return (
     <>
@@ -72,6 +74,7 @@ export default async function CatalogPage({
 
         <Suspense fallback={<CatalogSkeleton />}>
           <CatalogGrid
+            perfumes={perfumes}
             initialBrand={params.brand}
             initialCategory={params.category}
             initialFamily={params.family}

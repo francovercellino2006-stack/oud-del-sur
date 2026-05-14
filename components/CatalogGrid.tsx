@@ -5,19 +5,21 @@ import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal, Search } from "lucide-react";
 import ProductCard from "./ProductCard";
-import { perfumes, type Perfume } from "../app/data/perfumes";
+import type { Perfume } from "../app/data/perfumes";
 
 const BRANDS    = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi"];
 const CATS      = ["hombre", "mujer", "unisex"] as const;
 const FAMILIES  = ["dulces", "frescos", "orientales", "maderosos", "florales"] as const;
 
 interface CatalogGridProps {
+  perfumes:         Perfume[];
   initialBrand?:    string;
   initialCategory?: string;
   initialFamily?:   string;
 }
 
 export default function CatalogGrid({
+  perfumes,
   initialBrand,
   initialCategory,
   initialFamily,

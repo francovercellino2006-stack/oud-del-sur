@@ -4,15 +4,20 @@ import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import FloatingWhatsApp from "../../../components/FloatingWhatsApp";
 import ProductDetail from "../../../components/ProductDetail";
-import { perfumes } from "../../../app/data/perfumes";
+import { getPerfume, getPerfumes } from "../../../lib/queries";
 
 type Props = {
   params: Promise<{ slug: string }>;
 };
 
+export async function generateStaticParams() {
+  const perfumes = await getPerfumes();
+  return perfumes.map((p) => ({ slug: p.slug }));
+}
+
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
   const { slug } = await params;
-  const perfume = perfumes.find((p) => p.slug === slug);
+  const perfume = await getPerfume(slug);
 
   if (!perfume) {
     return { title: "Perfume no encontrado | Oud Del Sur" };
@@ -38,7 +43,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export default async function ProductPage({ params }: Props) {
   const { slug } = await params;
-  const perfume = perfumes.find((p) => p.slug === slug);
+  const perfume = await getPerfume(slug);
 
   if (!perfume) {
     notFound();

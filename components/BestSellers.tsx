@@ -3,12 +3,11 @@
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
-import { perfumes } from "../app/data/perfumes";
+import type { Perfume } from "../app/data/perfumes";
 import { applyDiscount } from "../utils/price";
 
-const bestsellers = perfumes.filter((p) => p.badge === "Más vendido").slice(0, 4);
-
-export default function BestSellers() {
+export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
+  const bestsellers = perfumes.filter((p) => p.badge === "Más vendido").slice(0, 4);
   return (
     <section id="destacados" className="relative px-6 py-28" style={{ background: "#0B0B0B" }}>
       <div

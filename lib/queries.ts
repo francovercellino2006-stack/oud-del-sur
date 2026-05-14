@@ -1,21 +1,35 @@
 import { client } from './sanity'
+import type { Perfume } from '../app/data/perfumes'
 
-export async function getPerfumes() {
-  return client.fetch(`*[_type == "perfume"] | order(order asc) {
-    "slug": slug.current,
-    name, brand, description, price, priceOriginal,
-    "image": coalesce(imageUrl, image.asset->url),
-    badge, category, family, duration, ml,
-    inspiredBy, outOfStock, offerDiscount, offerEndsAt
-  }`)
+const PERFUME_FIELDS = `
+  "slug": slug.current,
+  name, brand, description, price, priceOriginal,
+  "image": coalesce(imageUrl, image.asset->url),
+  badge, category, family, duration, ml,
+  inspiredBy, outOfStock, offerDiscount, offerEndsAt
+`
+
+function mapPerfume(raw: any): Perfume {
+  const p = { ...raw }
+  if (p.offerDiscount && p.offerEndsAt) {
+    p.offer = { discount: p.offerDiscount, endsAt: p.offerEndsAt }
+  }
+  delete p.offerDiscount
+  delete p.offerEndsAt
+  return p as Perfume
 }
 
-export async function getPerfume(slug: string) {
-  return client.fetch(`*[_type == "perfume" && slug.current == $slug][0] {
-    "slug": slug.current,
-    name, brand, description, price, priceOriginal,
-    "image": coalesce(imageUrl, image.asset->url),
-    badge, category, family, duration, ml,
-    inspiredBy, outOfStock, offerDiscount, offerEndsAt
-  }`, { slug })
+export async function getPerfumes(): Promise<Perfume[]> {
+  const raw = await client.fetch(
+    `*[_type == "perfume"] | order(order asc) { ${PERFUME_FIELDS} }`
+  )
+  return raw.map(mapPerfume)
+}
+
+export async function getPerfume(slug: string): Promise<Perfume | null> {
+  const raw = await client.fetch(
+    `*[_type == "perfume" && slug.current == $slug][0] { ${PERFUME_FIELDS} }`,
+    { slug }
+  )
+  return raw ? mapPerfume(raw) : null
 }
