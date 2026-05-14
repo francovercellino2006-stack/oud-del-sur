@@ -6,6 +6,7 @@ import { schemaTypes } from './sanity/schema'
 export default defineConfig({
   name: 'oud-del-sur',
   title: 'Oud Del Sur',
+  basePath: '/studio',
   projectId: 'mbd1smgb',
   dataset: 'production',
   plugins: [structureTool(), visionTool()],
