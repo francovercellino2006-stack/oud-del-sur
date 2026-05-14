@@ -1,11 +1,31 @@
 "use client";
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { motion } from "framer-motion";
 import { MessageCircle, Clock, Droplets, Tag } from "lucide-react";
 import Link from "next/link";
 import type { Perfume } from "../app/data/perfumes";
 import { getActivePrice } from "../utils/price";
+
+function useCountdown(endsAt: string) {
+  const [timeLeft, setTimeLeft] = useState("");
+
+  useEffect(() => {
+    function calc() {
+      const diff = new Date(endsAt).getTime() - Date.now();
+      if (diff <= 0) { setTimeLeft(""); return; }
+      const h = Math.floor(diff / 3600000);
+      const m = Math.floor((diff % 3600000) / 60000);
+      const s = Math.floor((diff % 60000) / 1000);
+      setTimeLeft(`${h}h ${String(m).padStart(2,"0")}m ${String(s).padStart(2,"0")}s`);
+    }
+    calc();
+    const id = setInterval(calc, 1000);
+    return () => clearInterval(id);
+  }, [endsAt]);
+
+  return timeLeft;
+}
 
 const SENSORY: Record<string, { dulzor: number; intensidad: number; frescura: number; maderas: number }> = {
   orientales: { dulzor: 75, intensidad: 90, frescura: 20, maderas: 65 },
@@ -25,6 +45,7 @@ export default function ProductDetail({
   const [activeImage] = useState(0);
 
   const activePrice = getActivePrice(perfume.price, perfume.offer);
+  const countdown = useCountdown(perfume.offer?.endsAt ?? "");
 
   const waMessage = encodeURIComponent(
     `Hola! Quiero comprar *${perfume.name}* (${perfume.brand}) - ${activePrice}. ¿Tienen stock disponible?`
@@ -220,6 +241,17 @@ export default function ProductDetail({
                 {perfume.ml}ml
               </span>
             </div>
+
+            {perfume.offer && countdown && (
+              <div
+                className="flex items-center gap-3 px-4 py-3 mb-6 text-xs tracking-[0.2em] uppercase font-light"
+                style={{ background: "rgba(212,175,55,0.07)", border: "1px solid rgba(212,175,55,0.2)", fontFamily: "sans-serif" }}
+              >
+                <Clock size={13} style={{ color: "#D4AF37" }} />
+                <span style={{ color: "rgba(255,255,255,0.5)" }}>Hot Sale termina en</span>
+                <span style={{ color: "#D4AF37" }}>{countdown}</span>
+              </div>
+            )}
 
             <div className="space-y-3 mb-8">
               {highlights.map((item) => (
