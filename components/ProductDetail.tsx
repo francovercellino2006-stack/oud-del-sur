@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, Clock, Droplets, Tag, Star } from "lucide-react";
+import { MessageCircle, Clock, Droplets, Tag } from "lucide-react";
 import Link from "next/link";
 import type { Perfume } from "../app/data/perfumes";
 import { getActivePrice } from "../utils/price";
@@ -39,7 +39,7 @@ export default function ProductDetail({
     { icon: Droplets, label: "Concentración", value: "Eau de Parfum" },
     { icon: Tag,      label: "Familia",        value: perfume.family.charAt(0).toUpperCase() + perfume.family.slice(1) },
     { icon: Clock,    label: "Duración",       value: perfume.duration },
-    { icon: Star,     label: "Categoría",      value: perfume.category.charAt(0).toUpperCase() + perfume.category.slice(1) },
+    { icon: Tag,      label: "Categoría",      value: perfume.category.charAt(0).toUpperCase() + perfume.category.slice(1) },
   ];
 
   const highlights = [
@@ -191,15 +191,6 @@ export default function ProductDetail({
             >
               {perfume.name}
             </h1>
-
-            <div className="flex items-center gap-2 mb-6">
-              {[...Array(5)].map((_, i) => (
-                <Star key={i} size={13} style={{ fill: "#D4AF37", color: "#D4AF37" }} />
-              ))}
-              <span className="text-[11px] font-light ml-1" style={{ color: "rgba(255,255,255,0.35)", fontFamily: "sans-serif" }}>
-                (47 reseñas)
-              </span>
-            </div>
 
             <p
               className="text-sm leading-relaxed mb-8 max-w-md font-light"
