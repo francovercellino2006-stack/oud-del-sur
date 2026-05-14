@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import type { Metadata } from "next";
 import Navbar from "../../components/Navbar";
 import CatalogGrid from "../../components/CatalogGrid";
 import Footer from "../../components/Footer";
@@ -6,6 +7,11 @@ import FloatingWhatsApp from "../../components/FloatingWhatsApp";
 
 // Fuerza renderizado dinámico — necesario por useSearchParams y searchParams
 export const dynamic = "force-dynamic";
+
+export const metadata: Metadata = {
+  title: "Catálogo de Perfumes Árabes | Oud Del Sur",
+  description: "Explorá nuestra colección completa de perfumes árabes originales. Lattafa, Armaf, Afnan, Maison Alhambra y Rasasi. Envíos a todo el país desde Viedma, Río Negro.",
+};
 
 export default async function CatalogPage({
   searchParams,

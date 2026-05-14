@@ -21,6 +21,14 @@ export const metadata: Metadata = {
     "amber oud",
     "perfumes originales",
     "fragancias arabes",
+    "Viedma",
+    "Río Negro",
+    "Patagonia",
+    "perfumes arabes Viedma",
+    "perfumes arabes Rio Negro",
+    "perfumes arabes Patagonia",
+    "perfumes Viedma",
+    "comprar perfumes arabes",
   ],
   authors: [{ name: "Oud Del Sur" }],
   creator: "Oud Del Sur",
@@ -77,6 +85,32 @@ export default function RootLayout({
         <link
           href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,500;0,600;1,300;1,400&family=Jost:wght@200;300;400;500&display=swap"
           rel="stylesheet"
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{
+            __html: JSON.stringify({
+              "@context": "https://schema.org",
+              "@type": "OnlineStore",
+              "name": "Oud Del Sur",
+              "description": "Perfumería árabe premium. Fragancias originales importadas de Emiratos Árabes y Arabia Saudita.",
+              "url": "https://ouddelsurperfumes.com",
+              "telephone": "+5492920528440",
+              "address": {
+                "@type": "PostalAddress",
+                "addressLocality": "Viedma",
+                "addressRegion": "Río Negro",
+                "addressCountry": "AR",
+              },
+              "areaServed": {
+                "@type": "Country",
+                "name": "Argentina",
+              },
+              "priceRange": "$$",
+              "image": "https://ouddelsurperfumes.com/og-image.jpg",
+              "sameAs": ["https://instagram.com/oudelsurperfumes"],
+            }),
+          }}
         />
       </head>
       <body>{children}</body>

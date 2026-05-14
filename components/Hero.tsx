@@ -70,7 +70,7 @@ export default function Hero() {
                 fontFamily: "sans-serif",
               }}
             >
-              Perfumería Árabe Premium
+              Perfumería Árabe · Viedma, Argentina
             </span>
           </motion.div>
 
@@ -112,8 +112,8 @@ export default function Hero() {
               fontFamily: "sans-serif",
             }}
           >
-            Fragancias exclusivas con proyección y duración extrema.
-            Oud, almizcle y especias del Medio Oriente, directo a tu puerta.
+            Fragancias árabes originales con proyección y duración extrema.
+            Importadas directamente, con envíos a todo el país.
           </motion.p>
 
           {/* Buttons */}
