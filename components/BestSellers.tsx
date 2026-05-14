@@ -4,7 +4,7 @@ import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
 import Image from "next/image";
 import type { Perfume } from "../app/data/perfumes";
-import { applyDiscount } from "../utils/price";
+import { getActivePrice, isOfferActive } from "../utils/price";
 
 export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
   const bestsellers = perfumes.filter((p) => p.badge === "Más vendido").slice(0, 4);
@@ -125,9 +125,9 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                         WebkitTextFillColor: "transparent",
                       }}
                     >
-                      {perfume.offer ? applyDiscount(perfume.price, perfume.offer.discount) : perfume.price}
+                      {getActivePrice(perfume.price, perfume.offer)}
                     </span>
-                    {perfume.offer && (
+                    {isOfferActive(perfume.offer) && (
                       <span className="text-xs line-through font-light" style={{ color: "rgba(255,255,255,0.22)", fontFamily: "sans-serif" }}>
                         {perfume.price}
                       </span>

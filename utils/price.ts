@@ -5,9 +5,13 @@ export function applyDiscount(price: string, discount: number): string {
   return "$" + discounted.toLocaleString("es-AR");
 }
 
+export function isOfferActive(offer?: { discount: number; endsAt: string }): boolean {
+  return !!offer && new Date(offer.endsAt) > new Date();
+}
+
 export function getActivePrice(price: string, offer?: { discount: number; endsAt: string }): string {
-  if (offer && new Date(offer.endsAt) > new Date()) {
-    return applyDiscount(price, offer.discount);
+  if (isOfferActive(offer)) {
+    return applyDiscount(price, offer!.discount);
   }
   return price;
 }

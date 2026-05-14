@@ -1,4 +1,10 @@
+import { isOfferActive } from "../utils/price";
+
+const OFFER = { discount: 15, endsAt: "2026-05-20T23:59:00" };
+
 export default function HotSaleBanner() {
+  if (!isOfferActive(OFFER)) return null;
+
   const text = "🔥 HOT SALE — 15% OFF EN TODA LA TIENDA · HASTA EL 20 DE MAYO · ";
   const items = Array(8).fill(text);
 

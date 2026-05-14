@@ -6,7 +6,7 @@ import { ArrowRight, Sparkles, Heart, ShoppingBag } from "lucide-react";
 import type { Perfume } from "../app/data/perfumes";
 import { useFavorites } from "../hooks/useFavorites";
 import { useCart } from "../hooks/useCart";
-import { applyDiscount, getActivePrice } from "../utils/price";
+import { applyDiscount, getActivePrice, isOfferActive } from "../utils/price";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   "Más vendido": { bg: "#D4AF37",              color: "#0B0B0B", border: "transparent" },
@@ -63,10 +63,10 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
 
       {/* Badges column — top left */}
       <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
-        {!perfume.outOfStock && perfume.offer && (
+        {!perfume.outOfStock && isOfferActive(perfume.offer) && (
           <span className="px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
             style={{ background: "rgba(200,40,40,0.92)", color: "white", fontFamily: "sans-serif" }}>
-            −{perfume.offer.discount}%
+            −{perfume.offer!.discount}%
           </span>
         )}
         {perfume.badge && badgeStyle && (
@@ -183,9 +183,9 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
               className="text-2xl font-light"
               style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}
             >
-              {perfume.offer ? applyDiscount(perfume.price, perfume.offer.discount) : perfume.price}
+              {getActivePrice(perfume.price, perfume.offer)}
             </span>
-            {perfume.offer && (
+            {isOfferActive(perfume.offer) && (
               <span
                 className="text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
@@ -193,7 +193,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
                 {perfume.price}
               </span>
             )}
-            {!perfume.offer && perfume.priceOriginal && (
+            {!isOfferActive(perfume.offer) && perfume.priceOriginal && (
               <span
                 className="text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
