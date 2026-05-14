@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import "./globals.css";
+import Loader from "../components/Loader";
+import HotSaleBanner from "../components/HotSaleBanner";
 
 export const metadata: Metadata = {
   title: {
@@ -113,7 +115,13 @@ export default function RootLayout({
           }}
         />
       </head>
-      <body>{children}</body>
+      <body>
+        <HotSaleBanner />
+        <div style={{ paddingTop: "32px" }}>
+          <Loader />
+          {children}
+        </div>
+      </body>
     </html>
   );
 }

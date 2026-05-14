@@ -2,8 +2,11 @@
  
 import { motion } from "framer-motion";
 import Link from "next/link";
-import { ArrowRight, MessageCircle, Sparkles } from "lucide-react";
+import { ArrowRight, Sparkles, Heart, ShoppingBag } from "lucide-react";
 import type { Perfume } from "../app/data/perfumes";
+import { useFavorites } from "../hooks/useFavorites";
+import { useCart } from "../hooks/useCart";
+import { applyDiscount, getActivePrice } from "../utils/price";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
   "Más vendido": { bg: "#D4AF37",              color: "#0B0B0B", border: "transparent" },
@@ -19,9 +22,14 @@ interface ProductCardProps {
  
 export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
   const badgeStyle = perfume.badge ? BADGE_STYLES[perfume.badge] : null;
+  const { toggle, isFav } = useFavorites();
+  const fav = isFav(perfume.slug);
+  const { add, remove, inCart } = useCart();
+  const cart = inCart(perfume.slug);
  
+  const activePrice = getActivePrice(perfume.price, perfume.offer);
   const waMessage = encodeURIComponent(
-    `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${perfume.price}. ¿Tienen stock?`
+    `Hola! Me interesa el perfume *${perfume.name}* (${perfume.brand}) - ${activePrice}. ¿Tienen stock?`
   );
   const waUrl = `https://wa.me/542920528440?text=${waMessage}`;
  
@@ -42,9 +50,26 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         boxShadow: "0 20px 60px rgba(0,0,0,0.8), 0 0 0 1px rgba(212,175,55,0.12)",
       }}
     >
-      {/* Badge */}
-      {perfume.badge && badgeStyle && (
-        <div className="absolute top-3 left-3 z-20">
+      {/* Overlay agotado */}
+      {perfume.outOfStock && (
+        <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none"
+          style={{ background: "rgba(11,11,11,0.6)", backdropFilter: "blur(2px)" }}>
+          <span className="px-4 py-2 text-xs tracking-[0.3em] uppercase font-light"
+            style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
+            Agotado
+          </span>
+        </div>
+      )}
+
+      {/* Badges column — top left */}
+      <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
+        {!perfume.outOfStock && perfume.offer && (
+          <span className="px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
+            style={{ background: "rgba(200,40,40,0.92)", color: "white", fontFamily: "sans-serif" }}>
+            −{perfume.offer.discount}%
+          </span>
+        )}
+        {perfume.badge && badgeStyle && (
           <span
             className="flex items-center gap-1 px-3 py-1 text-[10px] tracking-[0.2em] uppercase font-medium"
             style={{
@@ -57,8 +82,28 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
             {perfume.badge === "Más vendido" && <Sparkles size={9} />}
             {perfume.badge}
           </span>
-        </div>
-      )}
+        )}
+      </div>
+
+      {/* Favorite button */}
+      <button
+        onClick={() => toggle(perfume.slug)}
+        className="absolute top-3 right-3 z-20 flex items-center justify-center w-8 h-8 transition-all duration-300"
+        style={{
+          background: fav ? "rgba(212,175,55,0.15)" : "rgba(0,0,0,0.4)",
+          border: `1px solid ${fav ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.1)"}`,
+          backdropFilter: "blur(8px)",
+        }}
+        aria-label={fav ? "Quitar de favoritos" : "Agregar a favoritos"}
+      >
+        <Heart
+          size={13}
+          style={{
+            color: fav ? "#D4AF37" : "rgba(255,255,255,0.4)",
+            fill: fav ? "#D4AF37" : "none",
+          }}
+        />
+      </button>
 
       {/* Clickeable: imagen + info */}
       <Link href={`/product/${perfume.slug}`} className="flex flex-col flex-1 cursor-pointer">
@@ -138,9 +183,17 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
               className="text-2xl font-light"
               style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}
             >
-              {perfume.price}
+              {perfume.offer ? applyDiscount(perfume.price, perfume.offer.discount) : perfume.price}
             </span>
-            {perfume.priceOriginal && (
+            {perfume.offer && (
+              <span
+                className="text-sm line-through font-light"
+                style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
+              >
+                {perfume.price}
+              </span>
+            )}
+            {!perfume.offer && perfume.priceOriginal && (
               <span
                 className="text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
@@ -155,30 +208,42 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
 
       {/* Botones — fuera del Link para que no naveguen */}
       <div className="flex gap-2 px-5 pb-5">
-        <a
-          href={waUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="flex flex-1 items-center justify-center gap-2 py-3 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"
+        <button
+          onClick={() => cart
+            ? remove(perfume.slug)
+            : add({ slug: perfume.slug, name: perfume.name, brand: perfume.brand, price: perfume.price, image: perfume.image })
+          }
+          className="flex items-center justify-center gap-2 py-3 px-4 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300"
+          style={{
+            border: `1px solid ${cart ? "rgba(212,175,55,0.5)" : "rgba(255,255,255,0.08)"}`,
+            color: cart ? "#D4AF37" : "rgba(255,255,255,0.4)",
+            background: cart ? "rgba(212,175,55,0.08)" : "transparent",
+            fontFamily: "sans-serif",
+          }}
+          aria-label={cart ? "Quitar de lista" : "Agregar a lista"}
+        >
+          <ShoppingBag size={13} />
+        </button>
+
+        <Link
+          href={`/product/${perfume.slug}`}
+          className="flex flex-1 items-center justify-center gap-2 py-3 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300"
           style={{
             border: "1px solid rgba(212,175,55,0.4)",
             color: "#D4AF37",
             fontFamily: "sans-serif",
           }}
-        >
-          <MessageCircle size={13} />
-          Comprar
-        </a>
-
-        <Link
-          href={`/product/${perfume.slug}`}
-          className="flex items-center justify-center px-4 py-3 transition-all duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
-          style={{
-            border: "1px solid rgba(255,255,255,0.08)",
-            color: "rgba(255,255,255,0.4)",
+          onMouseEnter={e => {
+            e.currentTarget.style.background = "#D4AF37";
+            e.currentTarget.style.color = "#0B0B0B";
+          }}
+          onMouseLeave={e => {
+            e.currentTarget.style.background = "transparent";
+            e.currentTarget.style.color = "#D4AF37";
           }}
         >
-          <ArrowRight size={15} />
+          Ver perfume
+          <ArrowRight size={13} />
         </Link>
       </div>
 

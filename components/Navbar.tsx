@@ -4,11 +4,17 @@
 import { useState, useEffect } from "react";
 import Link from "next/link";
 import { motion, AnimatePresence } from "framer-motion";
-import { Menu, X } from "lucide-react";
+import { Menu, X, Heart, ShoppingBag } from "lucide-react";
+import { useFavorites } from "../hooks/useFavorites";
+import { useCart } from "../hooks/useCart";
+import CartDrawer from "./CartDrawer";
  
 export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [cartOpen, setCartOpen] = useState(false);
+  const { favorites } = useFavorites();
+  const { items } = useCart();
  
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 40);
@@ -18,11 +24,13 @@ export default function Navbar() {
  
   return (
     <>
+      <CartDrawer open={cartOpen} onClose={() => setCartOpen(false)} />
       <motion.header
         initial={{ y: -80, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
+        style={{ top: "32px" }}
         transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-        className={`fixed top-0 left-0 right-0 z-50 transition-all duration-500 ${
+        className={`fixed left-0 right-0 z-50 transition-all duration-500 ${
           scrolled
             ? "border-b border-white/5 py-3 backdrop-blur-xl bg-black/60"
             : "py-5 bg-transparent"
@@ -56,6 +64,7 @@ export default function Navbar() {
             {[
               { label: "Inicio", href: "/" },
               { label: "Catálogo", href: "/catalog" },
+              { label: "Quiz", href: "/quiz" },
             ].map((link) => (
               <Link
                 key={link.href}
@@ -71,19 +80,36 @@ export default function Navbar() {
  
           {/* CTA button desktop + mobile hamburger */}
           <div className="flex items-center gap-4">
-            <Link
-              href="/catalog"
-            className="hidden md:inline-flex items-center px-5 py-2 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"
-              style={{
-                border: "1px solid rgba(212,175,55,0.4)",
-                color: "#D4AF37",
-                fontFamily: "sans-serif",
-              }}
-             
-            >
-              Ver Catálogo
+            {/* Cart button */}
+            <button onClick={() => setCartOpen(true)}
+              className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
+              style={{ color: "rgba(255,255,255,0.45)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+              aria-label="Carrito">
+              <ShoppingBag size={16} />
+              {items.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
+                  style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                  {items.length}
+                </span>
+              )}
+            </button>
+
+            <Link href="/favorites" className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
+              style={{ color: "rgba(255,255,255,0.45)" }}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+              onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
+              aria-label="Favoritos">
+              <Heart size={16} />
+              {favorites.length > 0 && (
+                <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
+                  style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                  {favorites.length}
+                </span>
+              )}
             </Link>
- 
+
             <button
               onClick={() => setMenuOpen(!menuOpen)}
               className="md:hidden transition-colors duration-200"
@@ -111,6 +137,7 @@ export default function Navbar() {
               {[
                 { label: "Inicio", href: "/" },
                 { label: "Catálogo", href: "/catalog" },
+                { label: "Quiz", href: "/quiz" },
               ].map((link, i) => (
                 <motion.div
                   key={link.href}

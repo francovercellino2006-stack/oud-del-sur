@@ -37,13 +37,11 @@ export default function Hero() {
         }}
       />
 
-      {/* Pattern */}
+      {/* Right vignette */}
       <div
-        className="absolute right-0 top-0 bottom-0 w-1/2 z-0 opacity-10"
+        className="absolute right-0 top-0 bottom-0 w-1/2 z-0 pointer-events-none"
         style={{
-          backgroundImage:
-            "radial-gradient(rgba(212,175,55,0.6) 1px, transparent 1px)",
-          backgroundSize: "28px 28px",
+          background: "linear-gradient(270deg, rgba(212,175,55,0.03) 0%, transparent 60%)",
         }}
       />
 
@@ -141,17 +139,6 @@ export default function Hero() {
               />
             </a>
 
-            <a
-              href="#destacados"
-              className="inline-flex items-center justify-center gap-3 px-8 py-4 text-sm tracking-[0.2em] uppercase font-light transition-all duration-300 hover:border-[#D4AF37] hover:text-[#D4AF37]"
-              style={{
-                border: "1px solid rgba(255,255,255,0.15)",
-                color: "rgba(255,255,255,0.7)",
-                fontFamily: "sans-serif",
-              }}
-            >
-              Más Vendidos
-            </a>
           </motion.div>
 
           {/* Stats */}
@@ -162,7 +149,7 @@ export default function Hero() {
             className="flex items-center gap-8 mt-16"
           >
             {[
-              { value: "+50", label: "Clientes" },
+              { value: "5", label: "Casas Árabes" },
               { value: "100%", label: "Originales" },
               { value: "48hs", label: "Envío" },
             ].map((stat, i) => (

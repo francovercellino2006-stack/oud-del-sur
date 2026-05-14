@@ -1,5 +1,5 @@
 export type PerfumeBadge = "Más vendido" | "Nuevo" | "Top" | "Exclusivo" | null;
- 
+
 export interface Perfume {
   slug: string;
   name: string;
@@ -13,8 +13,13 @@ export interface Perfume {
   family: "dulces" | "frescos" | "orientales" | "maderosos" | "florales";
   duration: string;
   ml: number;
+  inspiredBy?: string;
+  offer?: { discount: number; endsAt: string };
+  outOfStock?: boolean;
 }
- 
+
+const HOT_SALE = { discount: 15, endsAt: "2026-05-20T23:59:00" };
+
 export const perfumes: Perfume[] = [
   {
     slug: "amber-oud-gold",
@@ -29,6 +34,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "10-12 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "khamrah",
@@ -42,6 +48,8 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "10-14 hs",
     ml: 100,
+    inspiredBy: "Baccarat Rouge 540 · Maison Francis Kurkdjian",
+    offer: HOT_SALE,
   },
   {
     slug: "qhawah",
@@ -55,6 +63,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "8-12 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "dukhan",
@@ -68,6 +77,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "10-14 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "honor-and-glory",
@@ -81,6 +91,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "8-12 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "oud-for-glory",
@@ -94,6 +105,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "10-14 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "noble-blush",
@@ -107,6 +119,7 @@ export const perfumes: Perfume[] = [
     family: "florales",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "sublime",
@@ -120,6 +133,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "atlas",
@@ -133,9 +147,8 @@ export const perfumes: Perfume[] = [
     family: "maderosos",
     duration: "12-14 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
-
-
   {
     slug: "club-de-nuit-iconic",
     name: "Club de Nuit Iconic",
@@ -148,6 +161,8 @@ export const perfumes: Perfume[] = [
     family: "frescos",
     duration: "8-12 hs",
     ml: 100,
+    inspiredBy: "Bleu de Chanel · Chanel",
+    offer: HOT_SALE,
   },
   {
     slug: "club-de-nuit-intense",
@@ -161,12 +176,13 @@ export const perfumes: Perfume[] = [
     family: "maderosos",
     duration: "12-14 hs",
     ml: 100,
+    inspiredBy: "Creed Aventus · Creed",
+    offer: HOT_SALE,
   },
-
   {
     slug: "club-de-nuit-urban-man",
-    name: "club de Nuit Urban Man",
-    brand: " Armaf",
+    name: "Club de Nuit Urban Man",
+    brand: "Armaf",
     description: "Masculino y moderno con notas frescas, ambaradas y amaderadas.",
     price: "$94.000",
     image: "/perfumes/urbanman.jpg",
@@ -175,8 +191,8 @@ export const perfumes: Perfume[] = [
     family: "maderosos",
     duration: "8-12 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
-
   {
     slug: "9pm-night-out",
     name: "9PM Night Out",
@@ -189,6 +205,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "10-12 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "9pm-elixir",
@@ -202,6 +219,8 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "10-12 hs",
     ml: 100,
+    offer: HOT_SALE,
+    outOfStock: true,
   },
   {
     slug: "9am",
@@ -215,6 +234,8 @@ export const perfumes: Perfume[] = [
     family: "frescos",
     duration: "8-10 hs",
     ml: 100,
+    inspiredBy: "Acqua di Gio · Giorgio Armani",
+    offer: HOT_SALE,
   },
   {
     slug: "mandaryn-sky",
@@ -228,6 +249,7 @@ export const perfumes: Perfume[] = [
     family: "frescos",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "hawas-for-her",
@@ -241,6 +263,7 @@ export const perfumes: Perfume[] = [
     family: "frescos",
     duration: "8-12 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "mayar",
@@ -254,6 +277,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "yara-candy",
@@ -267,6 +291,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "yara-pink",
@@ -280,6 +305,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "yara-touse",
@@ -293,6 +319,7 @@ export const perfumes: Perfume[] = [
     family: "dulces",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "asad",
@@ -306,6 +333,7 @@ export const perfumes: Perfume[] = [
     family: "orientales",
     duration: "10-14 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
   {
     slug: "eternal-touch",
@@ -319,5 +347,6 @@ export const perfumes: Perfume[] = [
     family: "florales",
     duration: "8-10 hs",
     ml: 100,
+    offer: HOT_SALE,
   },
 ];
