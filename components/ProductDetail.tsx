@@ -6,6 +6,39 @@ import Link from "next/link";
 import type { Perfume } from "../app/data/perfumes";
 import { getActivePrice, isOfferActive } from "../utils/price";
 
+const SENSORY: Record<string, { label: string; value: number }[]> = {
+  orientales: [
+    { label: "Dulzor",     value: 75 },
+    { label: "Intensidad", value: 90 },
+    { label: "Frescura",   value: 20 },
+    { label: "Maderas",    value: 65 },
+  ],
+  dulces: [
+    { label: "Dulzor",     value: 90 },
+    { label: "Intensidad", value: 60 },
+    { label: "Frescura",   value: 15 },
+    { label: "Maderas",    value: 35 },
+  ],
+  maderosos: [
+    { label: "Dulzor",     value: 30 },
+    { label: "Intensidad", value: 70 },
+    { label: "Frescura",   value: 40 },
+    { label: "Maderas",    value: 90 },
+  ],
+  florales: [
+    { label: "Dulzor",     value: 55 },
+    { label: "Intensidad", value: 50 },
+    { label: "Frescura",   value: 70 },
+    { label: "Maderas",    value: 25 },
+  ],
+  frescos: [
+    { label: "Dulzor",     value: 20 },
+    { label: "Intensidad", value: 45 },
+    { label: "Frescura",   value: 90 },
+    { label: "Maderas",    value: 30 },
+  ],
+};
+
 export default function ProductDetail({
   perfume,
   allPerfumes = [],
@@ -13,16 +46,13 @@ export default function ProductDetail({
   perfume: Perfume;
   allPerfumes?: Perfume[];
 }) {
-  const activePrice = getActivePrice(perfume.price, perfume.offer);
-  const offerActive = isOfferActive(perfume.offer);
+  const activePrice  = getActivePrice(perfume.price, perfume.offer);
+  const offerActive  = isOfferActive(perfume.offer);
+  const sensory      = SENSORY[perfume.family] ?? SENSORY.orientales;
 
-  const waMessage = encodeURIComponent(
-    `Hola! Quiero comprar *${perfume.name}* (${perfume.brand}) - ${activePrice}. ¿Tienen stock disponible?`
-  );
-  const waConsult = encodeURIComponent(
-    `Hola! Quería consultar sobre *${perfume.name}* (${perfume.brand}) antes de comprarlo. ¿Me podés dar más info?`
-  );
-  const waUrl       = `https://wa.me/5492920528440?text=${waMessage}`;
+  const waMessage    = encodeURIComponent(`Hola! Quiero comprar *${perfume.name}* (${perfume.brand}) - ${activePrice}. ¿Tienen stock disponible?`);
+  const waConsult    = encodeURIComponent(`Hola! Quería consultar sobre *${perfume.name}* (${perfume.brand}) antes de comprarlo. ¿Me podés dar más info?`);
+  const waUrl        = `https://wa.me/5492920528440?text=${waMessage}`;
   const waConsultUrl = `https://wa.me/5492920528440?text=${waConsult}`;
 
   const highlights = [
@@ -51,15 +81,13 @@ export default function ProductDetail({
       <div className="pt-28 pb-4 px-6 border-b border-white/5">
         <div className="mx-auto max-w-7xl flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase font-light"
           style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}>
-          <Link href="/"
-            style={{ color: "rgba(255,255,255,0.3)" }}
+          <Link href="/" style={{ color: "rgba(255,255,255,0.3)" }}
             onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
             onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.3)"}>
             Inicio
           </Link>
           <span>/</span>
-          <Link href="/catalog"
-            style={{ color: "rgba(255,255,255,0.3)" }}
+          <Link href="/catalog" style={{ color: "rgba(255,255,255,0.3)" }}
             onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
             onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.3)"}>
             Catálogo
@@ -73,13 +101,13 @@ export default function ProductDetail({
       <div className="mx-auto max-w-7xl px-6 py-20">
         <div className="grid items-start gap-16 lg:grid-cols-[1fr_1fr]">
 
-          {/* Image */}
+          {/* LEFT — Image + Inspirado en */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="relative"
           >
+            {/* Image */}
             <div
               className="relative overflow-hidden"
               style={{
@@ -88,7 +116,6 @@ export default function ProductDetail({
                 aspectRatio: "1/1",
               }}
             >
-              {/* Gold glow */}
               <div className="absolute inset-0 pointer-events-none" style={{
                 background: "radial-gradient(ellipse at 50% 20%, rgba(212,175,55,0.05) 0%, transparent 65%)"
               }} />
@@ -101,15 +128,13 @@ export default function ProductDetail({
 
               {perfume.badge && (
                 <div className="absolute top-5 left-5">
-                  <span
-                    className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
+                  <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
                     style={{
                       background: perfume.badge === "Más vendido" ? "#D4AF37" : "transparent",
                       color: perfume.badge === "Más vendido" ? "#0B0B0B" : "#D4AF37",
                       border: perfume.badge === "Más vendido" ? "none" : "1px solid rgba(212,175,55,0.4)",
                       fontFamily: "sans-serif",
-                    }}
-                  >
+                    }}>
                     {perfume.badge}
                   </span>
                 </div>
@@ -117,10 +142,8 @@ export default function ProductDetail({
 
               {offerActive && (
                 <div className="absolute top-5 right-5">
-                  <span
-                    className="px-3 py-1 text-[9px] tracking-[0.2em] uppercase font-medium"
-                    style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}
-                  >
+                  <span className="px-3 py-1 text-[9px] tracking-[0.2em] uppercase font-medium"
+                    style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}>
                     −{perfume.offer!.discount}%
                   </span>
                 </div>
@@ -137,20 +160,40 @@ export default function ProductDetail({
               )}
             </div>
 
-            {/* Divider line decoration */}
-            <div className="mt-8 flex items-center gap-4">
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
-              <div className="w-1 h-1 rounded-full" style={{ background: "rgba(212,175,55,0.3)" }} />
-              <div className="flex-1 h-px" style={{ background: "rgba(255,255,255,0.04)" }} />
-            </div>
+            {/* Inspirado en / nota inferior */}
+            {perfume.inspiredBy ? (
+              <div className="mt-5 px-6 py-5"
+                style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.03)" }}>
+                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-2"
+                  style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                  Inspirado en
+                </p>
+                <p className="text-sm font-light"
+                  style={{ color: "rgba(255,255,255,0.55)", fontFamily: "sans-serif" }}>
+                  {perfume.inspiredBy}
+                </p>
+              </div>
+            ) : (
+              <div className="mt-5 px-6 py-5"
+                style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.02)" }}>
+                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-2"
+                  style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                  Importado directamente
+                </p>
+                <p className="text-sm font-light"
+                  style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}>
+                  Perfume 100% original. Garantizamos autenticidad en cada frasco.
+                </p>
+              </div>
+            )}
           </motion.div>
 
-          {/* Info */}
+          {/* RIGHT — Info */}
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
             transition={{ duration: 0.9, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
-            className="flex flex-col justify-center"
+            className="flex flex-col"
           >
             {/* Brand */}
             <p className="text-[10px] tracking-[0.55em] uppercase font-light mb-4"
@@ -159,33 +202,29 @@ export default function ProductDetail({
             </p>
 
             {/* Name */}
-            <h1
-              className="text-5xl md:text-6xl font-light leading-[1.05] mb-6"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
-            >
+            <h1 className="text-5xl md:text-6xl font-light leading-[1.05] mb-6"
+              style={{ fontFamily: "'Cormorant Garamond', serif" }}>
               {perfume.name}
             </h1>
 
             {/* Description */}
-            <p className="text-sm leading-loose mb-10 font-light"
+            <p className="text-sm leading-loose mb-8 font-light"
               style={{ color: "rgba(255,255,255,0.45)", fontFamily: "sans-serif", maxWidth: "38ch" }}>
               {perfume.description}
             </p>
 
-            {/* Divider */}
-            <div className="h-px mb-10" style={{ background: "linear-gradient(90deg, rgba(212,175,55,0.2), transparent)" }} />
+            <div className="h-px mb-8"
+              style={{ background: "linear-gradient(90deg, rgba(212,175,55,0.2), transparent)" }} />
 
             {/* Price */}
-            <div className="flex items-baseline gap-4 mb-10">
-              <span
-                className="text-5xl font-light"
+            <div className="flex items-baseline gap-4 mb-8">
+              <span className="text-5xl font-light"
                 style={{
                   fontFamily: "'Cormorant Garamond', serif",
                   background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 50%, #B8941F 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
-                }}
-              >
+                }}>
                 {activePrice}
               </span>
               {offerActive && (
@@ -194,16 +233,14 @@ export default function ProductDetail({
                   {perfume.price}
                 </span>
               )}
-              <span
-                className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5"
-                style={{ border: "1px solid rgba(212,175,55,0.2)", color: "rgba(212,175,55,0.7)", fontFamily: "sans-serif" }}
-              >
+              <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5"
+                style={{ border: "1px solid rgba(212,175,55,0.2)", color: "rgba(212,175,55,0.7)", fontFamily: "sans-serif" }}>
                 {perfume.ml}ml
               </span>
             </div>
 
             {/* Highlights */}
-            <div className="space-y-3 mb-10">
+            <div className="space-y-3 mb-8">
               {highlights.map((item) => (
                 <div key={item} className="flex items-center gap-3">
                   <span style={{ color: "rgba(212,175,55,0.5)", fontSize: "10px" }}>✦</span>
@@ -216,11 +253,10 @@ export default function ProductDetail({
             </div>
 
             {/* Specs */}
-            <div className="grid grid-cols-2 gap-px mb-10"
+            <div className="grid grid-cols-2 gap-px mb-8"
               style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
               {specs.map(({ label, value }) => (
-                <div key={label} className="px-5 py-4"
-                  style={{ background: "#0B0B0B" }}>
+                <div key={label} className="px-5 py-4" style={{ background: "#0B0B0B" }}>
                   <p className="text-[9px] tracking-[0.3em] uppercase font-light mb-1"
                     style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
                     {label}
@@ -232,20 +268,43 @@ export default function ProductDetail({
               ))}
             </div>
 
+            {/* Sensory bars */}
+            <div className="mb-8 px-5 py-5"
+              style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
+              <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-5"
+                style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                Perfil sensorial
+              </p>
+              <div className="space-y-4">
+                {sensory.map(({ label, value }, i) => (
+                  <div key={label} className="flex items-center gap-4">
+                    <span className="text-[10px] tracking-[0.15em] uppercase font-light w-20 shrink-0"
+                      style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}>
+                      {label}
+                    </span>
+                    <div className="flex-1 h-px relative" style={{ background: "rgba(255,255,255,0.05)" }}>
+                      <motion.div
+                        initial={{ width: 0 }}
+                        animate={{ width: `${value}%` }}
+                        transition={{ duration: 1.2, delay: 0.3 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        className="absolute top-1/2 -translate-y-1/2 h-[1.5px]"
+                        style={{ background: "linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.3))" }}
+                      />
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
             {/* CTAs */}
             {perfume.outOfStock ? (
-              <div
-                className="flex items-center justify-center w-full py-5 text-sm tracking-[0.3em] uppercase font-light"
-                style={{ background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.25)", border: "1px solid rgba(255,255,255,0.06)", fontFamily: "sans-serif" }}
-              >
+              <div className="flex items-center justify-center w-full py-5 text-sm tracking-[0.3em] uppercase font-light"
+                style={{ background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.25)", border: "1px solid rgba(255,255,255,0.06)", fontFamily: "sans-serif" }}>
                 Sin stock disponible
               </div>
             ) : (
               <div className="flex flex-col gap-3">
-                <a
-                  href={waUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href={waUrl} target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 w-full py-5 text-sm tracking-[0.3em] uppercase font-medium transition-all duration-300"
                   style={{
                     background: "linear-gradient(90deg, #D4AF37 0%, #C9A227 100%)",
@@ -260,16 +319,12 @@ export default function ProductDetail({
                   onMouseLeave={e => {
                     e.currentTarget.style.boxShadow = "0 4px 40px rgba(212,175,55,0.2)";
                     e.currentTarget.style.transform = "translateY(0)";
-                  }}
-                >
+                  }}>
                   <MessageCircle size={16} />
                   Comprar por WhatsApp
                 </a>
 
-                <a
-                  href={waConsultUrl}
-                  target="_blank"
-                  rel="noopener noreferrer"
+                <a href={waConsultUrl} target="_blank" rel="noopener noreferrer"
                   className="flex items-center justify-center gap-3 w-full py-4 text-xs tracking-[0.3em] uppercase font-light transition-all duration-300"
                   style={{
                     color: "rgba(255,255,255,0.35)",
@@ -283,8 +338,7 @@ export default function ProductDetail({
                   onMouseLeave={e => {
                     e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)";
                     e.currentTarget.style.color = "rgba(255,255,255,0.35)";
-                  }}
-                >
+                  }}>
                   Consultar antes de comprar
                 </a>
               </div>
@@ -318,26 +372,19 @@ export default function ProductDetail({
 
             <div className="grid gap-5 md:grid-cols-3">
               {relatedPerfumes.map((rel, i) => (
-                <motion.div
-                  key={rel.slug}
+                <motion.div key={rel.slug}
                   initial={{ opacity: 0, y: 20 }}
                   whileInView={{ opacity: 1, y: 0 }}
                   viewport={{ once: true }}
-                  transition={{ duration: 0.5, delay: i * 0.1 }}
-                >
+                  transition={{ duration: 0.5, delay: i * 0.1 }}>
                   <Link href={`/product/${rel.slug}`}>
-                    <div
-                      className="group overflow-hidden transition-all duration-500"
+                    <div className="group overflow-hidden transition-all duration-500"
                       style={{ background: "#111", border: "1px solid rgba(255,255,255,0.05)" }}
                       onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.2)"}
-                      onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"}
-                    >
+                      onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"}>
                       <div className="relative overflow-hidden" style={{ aspectRatio: "4/3", background: "#0d0d0d" }}>
-                        <img
-                          src={rel.image}
-                          alt={rel.name}
-                          className="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-105"
-                        />
+                        <img src={rel.image} alt={rel.name}
+                          className="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-105" />
                         <div className="absolute inset-0"
                           style={{ background: "linear-gradient(180deg, transparent 40%, rgba(11,11,11,0.95) 100%)" }} />
                       </div>
