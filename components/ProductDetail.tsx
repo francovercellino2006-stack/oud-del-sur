@@ -55,13 +55,6 @@ export default function ProductDetail({
   const waUrl        = `https://wa.me/5492920528440?text=${waMessage}`;
   const waConsultUrl = `https://wa.me/5492920528440?text=${waConsult}`;
 
-  const highlights = [
-    "Eau de Parfum 100% original importado",
-    `Duración aproximada: ${perfume.duration}`,
-    "Proyección intensa y elegante",
-    `Fragancia ${perfume.category} · ${perfume.ml}ml`,
-  ];
-
   const specs = [
     { label: "Concentración", value: "Eau de Parfum" },
     { label: "Familia",       value: perfume.family.charAt(0).toUpperCase() + perfume.family.slice(1) },
@@ -239,19 +232,6 @@ export default function ProductDetail({
               </span>
             </div>
 
-            {/* Highlights */}
-            <div className="space-y-3 mb-8">
-              {highlights.map((item) => (
-                <div key={item} className="flex items-center gap-3">
-                  <span style={{ color: "rgba(212,175,55,0.5)", fontSize: "10px" }}>✦</span>
-                  <p className="text-sm font-light"
-                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
-                    {item}
-                  </p>
-                </div>
-              ))}
-            </div>
-
             {/* Specs */}
             <div className="grid grid-cols-2 gap-px mb-8"
               style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
@@ -285,8 +265,9 @@ export default function ProductDetail({
                     <div className="flex-1 h-px relative" style={{ background: "rgba(255,255,255,0.05)" }}>
                       <motion.div
                         initial={{ width: 0 }}
-                        animate={{ width: `${value}%` }}
-                        transition={{ duration: 1.2, delay: 0.3 + i * 0.08, ease: [0.25, 0.46, 0.45, 0.94] }}
+                        whileInView={{ width: `${value}%` }}
+                        viewport={{ once: true, margin: "-40px" }}
+                        transition={{ duration: 1.2, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                         className="absolute top-1/2 -translate-y-1/2 h-[1.5px]"
                         style={{ background: "linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.3))" }}
                       />
