@@ -74,7 +74,7 @@ export default function ProductDetail({
       <div className="lg:hidden">
 
         {/* Hero image — full width */}
-        <div className="relative w-full" style={{ aspectRatio: "1/1", background: "#111" }}>
+        <div className="relative w-full" style={{ aspectRatio: "1/1", background: "#111", marginTop: "88px" }}>
           <div className="absolute inset-0 pointer-events-none z-10"
             style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(212,175,55,0.04) 0%, transparent 70%)" }} />
 
@@ -86,14 +86,14 @@ export default function ProductDetail({
 
           {/* Back button */}
           <Link href="/catalog"
-            className="absolute top-16 left-4 z-20 flex items-center justify-center w-8 h-8 transition-all duration-200"
+            className="absolute top-4 left-4 z-20 flex items-center justify-center w-8 h-8 transition-all duration-200"
             style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(8px)" }}>
             <ArrowLeft size={14} style={{ color: "rgba(255,255,255,0.6)" }} />
           </Link>
 
           {/* Badge único — solo si hay oferta */}
           {offerActive && (
-            <div className="absolute top-16 right-4 z-20">
+            <div className="absolute top-4 right-4 z-20">
               <span className="px-2 py-1 text-[9px] tracking-[0.15em] uppercase font-medium"
                 style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}>
                 −{perfume.offer!.discount}%
