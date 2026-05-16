@@ -3,6 +3,7 @@
 :root {
   --background: #0B0B0B;
   --foreground: #ffffff;
+  --font-perfume: 'Playfair Display', serif;
 }
 
 @theme inline {

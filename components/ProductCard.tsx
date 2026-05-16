@@ -165,8 +165,8 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
           </span>
 
           <h3
-            className="text-xl font-light text-white mb-2 leading-snug"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            className="text-xl font-normal text-white mb-2 leading-snug"
+            style={{ fontFamily: "var(--font-perfume)" }}
           >
             {perfume.name}
           </h3>

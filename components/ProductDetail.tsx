@@ -195,8 +195,8 @@ export default function ProductDetail({
             </p>
 
             {/* Name */}
-            <h1 className="text-5xl md:text-6xl font-light leading-[1.05] mb-6"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+            <h1 className="text-5xl md:text-6xl font-normal leading-[1.05] mb-6"
+              style={{ fontFamily: "var(--font-perfume)" }}>
               {perfume.name}
             </h1>
 
@@ -374,8 +374,8 @@ export default function ProductDetail({
                           style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
                           {rel.brand}
                         </p>
-                        <h3 className="text-xl font-light mb-3"
-                          style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                        <h3 className="text-xl font-normal mb-3"
+                          style={{ fontFamily: "var(--font-perfume)" }}>
                           {rel.name}
                         </h3>
                         <span className="text-lg font-light"

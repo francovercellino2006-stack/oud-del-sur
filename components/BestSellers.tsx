@@ -104,8 +104,8 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                   {perfume.brand}
                 </p>
                 <h3
-                  className="text-lg font-light text-white mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 leading-tight"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                  className="text-lg font-normal text-white mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 leading-tight"
+                  style={{ fontFamily: "var(--font-perfume)" }}
                 >
                   {perfume.name}
                 </h3>
