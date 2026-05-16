@@ -133,7 +133,7 @@ export default function Navbar() {
             className="fixed inset-0 z-40 flex flex-col px-6 pt-24 pb-10"
             style={{ background: "rgba(11,11,11,0.97)", backdropFilter: "blur(16px)" }}
           >
-            <nav className="flex flex-col gap-7">
+            <nav className="flex flex-col">
               {[
                 { label: "Inicio", href: "/" },
                 { label: "Catálogo", href: "/catalog" },
@@ -144,17 +144,22 @@ export default function Navbar() {
                   initial={{ opacity: 0, x: -16 }}
                   animate={{ opacity: 1, x: 0 }}
                   transition={{ delay: i * 0.08 }}
+                  style={{ borderBottom: "1px solid rgba(255,255,255,0.05)" }}
                 >
                   <Link
                     href={link.href}
                     onClick={() => setMenuOpen(false)}
-                    className="text-3xl font-light tracking-widest block transition-colors duration-300"
+                    className="flex items-center gap-4 py-5 text-sm tracking-[0.35em] uppercase font-light block transition-colors duration-300 group"
                     style={{
-                      fontFamily: "'Cormorant Garamond', serif",
-                      color: "rgba(255,255,255,0.75)",
+                      fontFamily: "'Jost', sans-serif",
+                      color: "rgba(255,255,255,0.55)",
                     }}
                   >
-                    {link.label}
+                    <span className="w-5 h-px flex-shrink-0 transition-all duration-300 group-hover:w-8"
+                      style={{ background: "#D4AF37", opacity: 0.6 }} />
+                    <span className="group-hover:text-[#D4AF37] transition-colors duration-300">
+                      {link.label}
+                    </span>
                   </Link>
                 </motion.div>
               ))}
