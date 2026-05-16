@@ -14,7 +14,7 @@ export default async function Home() {
   return (
     <>
       <Navbar />
-      <Hero perfumes={perfumes} />
+      <Hero />
       <Benefits />
       <BestSellers perfumes={perfumes} />
       <Testimonials />

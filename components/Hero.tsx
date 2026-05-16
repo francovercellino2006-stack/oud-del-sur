@@ -2,18 +2,7 @@
 
 import { motion } from "framer-motion";
 import { ArrowRight } from "lucide-react";
-import type { Perfume } from "../app/data/perfumes";
-import { getActivePrice, isOfferActive } from "../utils/price";
-
-export default function Hero({ perfumes = [] }: { perfumes?: Perfume[] }) {
-  // Tomamos hasta 3 perfumes con oferta activa, si no hay suficientes completamos con bestsellers
-  const offerPerfumes = perfumes
-    .filter((p) => !p.outOfStock && isOfferActive(p.offer))
-    .slice(0, 3);
-
-  const featured = offerPerfumes.length >= 2
-    ? offerPerfumes
-    : perfumes.filter((p) => !p.outOfStock && p.badge === "Más vendido").slice(0, 3);
+export default function Hero() {
 
   return (
     <section className="relative flex min-h-screen items-center overflow-hidden">
@@ -152,111 +141,90 @@ export default function Hero({ perfumes = [] }: { perfumes?: Perfume[] }) {
             </motion.div>
           </div>
 
-          {/* RIGHT — Ofertas */}
-          {featured.length > 0 && (
-            <motion.div
-              initial={{ opacity: 0, x: 40 }}
-              animate={{ opacity: 1, x: 0 }}
-              transition={{ duration: 0.9, delay: 0.5 }}
-              className="hidden lg:block"
+          {/* RIGHT — Quiz */}
+          <motion.div
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            transition={{ duration: 1, delay: 0.55 }}
+            className="hidden lg:flex items-center justify-center"
+          >
+            <motion.a
+              href="/quiz"
+              className="group relative flex flex-col items-center justify-center text-center p-14 w-full transition-all duration-500"
+              style={{
+                border: "1px solid rgba(212,175,55,0.15)",
+                background: "rgba(212,175,55,0.03)",
+                backdropFilter: "blur(8px)",
+                minHeight: "380px",
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.borderColor = "rgba(212,175,55,0.35)";
+                e.currentTarget.style.background = "rgba(212,175,55,0.06)";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.borderColor = "rgba(212,175,55,0.15)";
+                e.currentTarget.style.background = "rgba(212,175,55,0.03)";
+              }}
             >
-              {/* Label */}
+              {/* Corner accents */}
+              <span className="absolute top-0 left-0 w-6 h-6 border-t border-l" style={{ borderColor: "#D4AF37" }} />
+              <span className="absolute top-0 right-0 w-6 h-6 border-t border-r" style={{ borderColor: "#D4AF37" }} />
+              <span className="absolute bottom-0 left-0 w-6 h-6 border-b border-l" style={{ borderColor: "#D4AF37" }} />
+              <span className="absolute bottom-0 right-0 w-6 h-6 border-b border-r" style={{ borderColor: "#D4AF37" }} />
+
+              {/* Eyebrow */}
+              <motion.p
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.8 }}
+                className="text-[9px] tracking-[0.55em] uppercase font-light mb-8"
+                style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}
+              >
+                Descubrí tu fragancia
+              </motion.p>
+
+              {/* Title */}
+              <motion.h2
+                initial={{ opacity: 0, y: 10 }}
+                animate={{ opacity: 1, y: 0 }}
+                transition={{ delay: 0.9 }}
+                className="text-4xl font-light leading-snug mb-6"
+                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              >
+                ¿Cuál es tu<br />
+                <span style={{
+                  background: "linear-gradient(90deg, #D4AF37, #F0D875, #B8941F)",
+                  WebkitBackgroundClip: "text",
+                  WebkitTextFillColor: "transparent",
+                }}>
+                  perfume ideal?
+                </span>
+              </motion.h2>
+
+              {/* Description */}
               <motion.p
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
-                transition={{ delay: 0.7 }}
-                className="text-[9px] tracking-[0.5em] uppercase font-light mb-5 text-center"
-                style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                transition={{ delay: 1 }}
+                className="text-sm font-light leading-relaxed mb-10 max-w-xs"
+                style={{ color: "rgba(255,255,255,0.35)", fontFamily: "sans-serif" }}
               >
-                {isOfferActive(featured[0]?.offer) ? "Ofertas del día" : "Destacados"}
+                Respondé 5 preguntas y te recomendamos la fragancia perfecta para vos.
               </motion.p>
 
-              {/* Cards grid */}
-              <div className="grid grid-cols-3 gap-3">
-                {featured.map((p, i) => {
-                  const active = isOfferActive(p.offer);
-                  const price  = getActivePrice(p.price, p.offer);
-                  return (
-                    <motion.a
-                      key={p.slug}
-                      href={`/product/${p.slug}`}
-                      initial={{ opacity: 0, y: 24 }}
-                      animate={{ opacity: 1, y: 0 }}
-                      transition={{ duration: 0.7, delay: 0.65 + i * 0.15 }}
-                      className="group flex flex-col overflow-hidden transition-all duration-400"
-                      style={{
-                        background: "rgba(255,255,255,0.03)",
-                        border: "1px solid rgba(255,255,255,0.07)",
-                        backdropFilter: "blur(10px)",
-                      }}
-                      onMouseEnter={e => {
-                        e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)";
-                        e.currentTarget.style.background = "rgba(212,175,55,0.05)";
-                      }}
-                      onMouseLeave={e => {
-                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-                        e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-                      }}
-                    >
-                      {/* Image */}
-                      <div className="relative overflow-hidden" style={{ aspectRatio: "1/1" }}>
-                        {active && (
-                          <div className="absolute top-2 right-2 z-10">
-                            <span className="px-2 py-0.5 text-[8px] tracking-[0.15em] uppercase font-medium"
-                              style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}>
-                              −{p.offer!.discount}%
-                            </span>
-                          </div>
-                        )}
-                        <img
-                          src={p.image}
-                          alt={p.name}
-                          className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
-                        />
-                      </div>
-
-                      {/* Info */}
-                      <div className="px-3 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
-                        <p className="text-[8px] tracking-[0.3em] uppercase font-light mb-1"
-                          style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
-                          {p.brand}
-                        </p>
-                        <p className="text-sm font-normal leading-tight mb-2 group-hover:text-[#D4AF37] transition-colors duration-300"
-                          style={{ fontFamily: "var(--font-perfume)" }}>
-                          {p.name}
-                        </p>
-                        <div className="flex items-baseline gap-2">
-                          <span className="text-sm font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>
-                            {price}
-                          </span>
-                          {active && (
-                            <span className="text-[10px] line-through font-light" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}>
-                              {p.price}
-                            </span>
-                          )}
-                        </div>
-                      </div>
-                    </motion.a>
-                  );
-                })}
-              </div>
-
-              {/* Footer */}
-              <motion.a
-                href="/catalog"
-                initial={{ opacity: 0 }}
-                animate={{ opacity: 1 }}
+              {/* CTA */}
+              <motion.div
+                initial={{ opacity: 0, y: 8 }}
+                animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.1 }}
-                className="flex items-center justify-center gap-2 mt-4 text-[9px] tracking-[0.4em] uppercase font-light transition-colors duration-300"
-                style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}
-                onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.2)"}
+                className="flex items-center gap-3 text-sm tracking-[0.25em] uppercase font-medium transition-all duration-300"
+                style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
               >
-                Ver catálogo completo
-                <ArrowRight size={11} />
-              </motion.a>
-            </motion.div>
-          )}
+                Comenzar quiz
+                <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-300" />
+              </motion.div>
+            </motion.a>
+          </motion.div>
         </div>
       </div>
 
