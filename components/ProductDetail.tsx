@@ -426,14 +426,35 @@ export default function ProductDetail({
 
       {/* Related */}
       {relatedPerfumes.length > 0 && (
-        <section className="pb-24 lg:pb-24 pb-36 px-5 lg:px-6">
+        <section className="pb-36 lg:pb-24 pt-4">
           <div className="mx-auto max-w-7xl">
-            <div className="h-px mb-16" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }} />
-            <div className="mb-10 text-center">
-              <p className="text-[10px] tracking-[0.5em] uppercase mb-3 font-light" style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>También te puede interesar</p>
-              <h2 className="text-3xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Otras Fragancias</h2>
+            <div className="h-px mb-12 mx-5 lg:mx-6" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }} />
+            <div className="mb-8 px-5 lg:px-6">
+              <p className="text-[10px] tracking-[0.5em] uppercase mb-2 font-light" style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>También te puede interesar</p>
+              <h2 className="text-2xl lg:text-3xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Otras Fragancias</h2>
             </div>
-            <div className="grid grid-cols-3 gap-3 lg:gap-5">
+
+            {/* Mobile: horizontal scroll */}
+            <div className="lg:hidden flex gap-3 overflow-x-auto px-5 pb-2 snap-x snap-mandatory" style={{ scrollbarWidth: "none" }}>
+              {relatedPerfumes.map((rel, i) => (
+                <Link key={rel.slug} href={`/product/${rel.slug}`}
+                  className="flex-shrink-0 snap-start overflow-hidden"
+                  style={{ width: "62vw", background: "#111", border: "1px solid rgba(255,255,255,0.06)" }}>
+                  <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "linear-gradient(145deg, #181818, #111)" }}>
+                    <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-6" style={{ mixBlendMode: "luminosity", opacity: 0.9 }} />
+                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(11,11,11,0.7) 0%, transparent 50%)" }} />
+                  </div>
+                  <div className="px-4 py-3">
+                    <p className="text-[8px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
+                    <h3 className="text-base font-normal mb-1 leading-snug" style={{ fontFamily: "var(--font-perfume)", color: "rgba(255,255,255,0.9)" }}>{rel.name}</h3>
+                    <span className="text-sm font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
+                  </div>
+                </Link>
+              ))}
+            </div>
+
+            {/* Desktop: grid */}
+            <div className="hidden lg:grid grid-cols-3 gap-5 px-6">
               {relatedPerfumes.map((rel, i) => (
                 <motion.div key={rel.slug}
                   initial={{ opacity: 0, y: 20 }}
@@ -445,13 +466,14 @@ export default function ProductDetail({
                       style={{ background: "#111", border: "1px solid rgba(255,255,255,0.05)" }}
                       onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.2)"}
                       onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"}>
-                      <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "#0d0d0d" }}>
-                        <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-4 lg:p-8 transition-transform duration-700 group-hover:scale-105" />
+                      <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "linear-gradient(145deg, #181818, #111)" }}>
+                        <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-105" />
+                        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(11,11,11,0.5) 0%, transparent 50%)" }} />
                       </div>
-                      <div className="px-3 lg:px-6 py-3 lg:py-5">
-                        <p className="text-[8px] lg:text-[9px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
-                        <h3 className="text-sm lg:text-xl font-normal mb-2" style={{ fontFamily: "var(--font-perfume)" }}>{rel.name}</h3>
-                        <span className="text-sm lg:text-lg font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
+                      <div className="px-6 py-5">
+                        <p className="text-[9px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
+                        <h3 className="text-xl font-normal mb-2" style={{ fontFamily: "var(--font-perfume)" }}>{rel.name}</h3>
+                        <span className="text-lg font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
                       </div>
                     </div>
                   </Link>
