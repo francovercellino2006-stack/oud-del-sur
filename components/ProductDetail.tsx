@@ -86,31 +86,20 @@ export default function ProductDetail({
 
           {/* Back button */}
           <Link href="/catalog"
-            className="absolute top-14 left-4 z-20 flex items-center justify-center w-9 h-9 transition-all duration-200"
-            style={{ background: "rgba(0,0,0,0.5)", border: "1px solid rgba(255,255,255,0.1)", backdropFilter: "blur(8px)" }}>
-            <ArrowLeft size={16} style={{ color: "rgba(255,255,255,0.7)" }} />
+            className="absolute top-16 left-4 z-20 flex items-center justify-center w-8 h-8 transition-all duration-200"
+            style={{ background: "rgba(0,0,0,0.45)", backdropFilter: "blur(8px)" }}>
+            <ArrowLeft size={14} style={{ color: "rgba(255,255,255,0.6)" }} />
           </Link>
 
-          {/* Badges */}
-          <div className="absolute top-14 right-4 z-20 flex flex-col gap-1 items-end">
-            {perfume.badge && (
-              <span className="px-2 py-1 text-[8px] tracking-[0.2em] uppercase font-medium"
-                style={{
-                  background: perfume.badge === "Más vendido" ? "#D4AF37" : "transparent",
-                  color: perfume.badge === "Más vendido" ? "#0B0B0B" : "#D4AF37",
-                  border: perfume.badge === "Más vendido" ? "none" : "1px solid rgba(212,175,55,0.4)",
-                  fontFamily: "sans-serif",
-                }}>
-                {perfume.badge}
-              </span>
-            )}
-            {offerActive && (
-              <span className="px-2 py-1 text-[8px] tracking-[0.15em] uppercase font-medium"
+          {/* Badge único — solo si hay oferta */}
+          {offerActive && (
+            <div className="absolute top-16 right-4 z-20">
+              <span className="px-2 py-1 text-[9px] tracking-[0.15em] uppercase font-medium"
                 style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}>
                 −{perfume.offer!.discount}%
               </span>
-            )}
-          </div>
+            </div>
+          )}
 
           {/* Out of stock overlay */}
           {perfume.outOfStock && (

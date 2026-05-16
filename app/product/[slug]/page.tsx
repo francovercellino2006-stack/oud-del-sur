@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { notFound } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
-import FloatingWhatsApp from "../../../components/FloatingWhatsApp";
 import ProductDetail from "../../../components/ProductDetail";
 import { getPerfume, getPerfumes } from "../../../lib/queries";
 
@@ -76,7 +75,6 @@ export default async function ProductPage({ params }: Props) {
       <Navbar />
       <ProductDetail perfume={perfume} allPerfumes={allPerfumes} />
       <Footer />
-      <FloatingWhatsApp />
     </>
   );
 }
