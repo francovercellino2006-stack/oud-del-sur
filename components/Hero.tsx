@@ -158,113 +158,102 @@ export default function Hero({ perfumes = [] }: { perfumes?: Perfume[] }) {
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               transition={{ duration: 0.9, delay: 0.5 }}
-              className="hidden lg:flex flex-col gap-3"
+              className="hidden lg:block"
             >
-              {/* Header */}
-              <div className="flex items-center gap-3 mb-1">
-                <div className="h-px flex-1" style={{ background: "rgba(212,175,55,0.2)" }} />
-                <span
-                  className="text-[10px] tracking-[0.45em] uppercase font-light"
-                  style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
-                >
-                  {isOfferActive(featured[0]?.offer) ? "Ofertas del día" : "Destacados"}
-                </span>
-                <div className="h-px flex-1" style={{ background: "rgba(212,175,55,0.2)" }} />
+              {/* Label */}
+              <motion.p
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1 }}
+                transition={{ delay: 0.7 }}
+                className="text-[9px] tracking-[0.5em] uppercase font-light mb-5 text-center"
+                style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+              >
+                {isOfferActive(featured[0]?.offer) ? "Ofertas del día" : "Destacados"}
+              </motion.p>
+
+              {/* Cards grid */}
+              <div className="grid grid-cols-3 gap-3">
+                {featured.map((p, i) => {
+                  const active = isOfferActive(p.offer);
+                  const price  = getActivePrice(p.price, p.offer);
+                  return (
+                    <motion.a
+                      key={p.slug}
+                      href={`/product/${p.slug}`}
+                      initial={{ opacity: 0, y: 24 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.7, delay: 0.65 + i * 0.15 }}
+                      className="group flex flex-col overflow-hidden transition-all duration-400"
+                      style={{
+                        background: "rgba(255,255,255,0.03)",
+                        border: "1px solid rgba(255,255,255,0.07)",
+                        backdropFilter: "blur(10px)",
+                      }}
+                      onMouseEnter={e => {
+                        e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)";
+                        e.currentTarget.style.background = "rgba(212,175,55,0.05)";
+                      }}
+                      onMouseLeave={e => {
+                        e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
+                        e.currentTarget.style.background = "rgba(255,255,255,0.03)";
+                      }}
+                    >
+                      {/* Image */}
+                      <div className="relative overflow-hidden" style={{ aspectRatio: "1/1" }}>
+                        {active && (
+                          <div className="absolute top-2 right-2 z-10">
+                            <span className="px-2 py-0.5 text-[8px] tracking-[0.15em] uppercase font-medium"
+                              style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}>
+                              −{p.offer!.discount}%
+                            </span>
+                          </div>
+                        )}
+                        <img
+                          src={p.image}
+                          alt={p.name}
+                          className="w-full h-full object-contain p-4 transition-transform duration-700 group-hover:scale-105"
+                        />
+                      </div>
+
+                      {/* Info */}
+                      <div className="px-3 py-3 border-t" style={{ borderColor: "rgba(255,255,255,0.05)" }}>
+                        <p className="text-[8px] tracking-[0.3em] uppercase font-light mb-1"
+                          style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                          {p.brand}
+                        </p>
+                        <p className="text-sm font-normal leading-tight mb-2 group-hover:text-[#D4AF37] transition-colors duration-300"
+                          style={{ fontFamily: "var(--font-perfume)" }}>
+                          {p.name}
+                        </p>
+                        <div className="flex items-baseline gap-2">
+                          <span className="text-sm font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>
+                            {price}
+                          </span>
+                          {active && (
+                            <span className="text-[10px] line-through font-light" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}>
+                              {p.price}
+                            </span>
+                          )}
+                        </div>
+                      </div>
+                    </motion.a>
+                  );
+                })}
               </div>
 
-              {/* Cards */}
-              {featured.map((p, i) => {
-                const active = isOfferActive(p.offer);
-                const price  = getActivePrice(p.price, p.offer);
-                return (
-                  <motion.a
-                    key={p.slug}
-                    href={`/product/${p.slug}`}
-                    initial={{ opacity: 0, y: 20 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ duration: 0.6, delay: 0.65 + i * 0.12 }}
-                    className="flex items-center gap-4 p-4 transition-all duration-300 group"
-                    style={{
-                      background: "rgba(255,255,255,0.03)",
-                      border: "1px solid rgba(255,255,255,0.07)",
-                      backdropFilter: "blur(12px)",
-                    }}
-                    onMouseEnter={e => {
-                      e.currentTarget.style.background = "rgba(212,175,55,0.06)";
-                      e.currentTarget.style.borderColor = "rgba(212,175,55,0.25)";
-                    }}
-                    onMouseLeave={e => {
-                      e.currentTarget.style.background = "rgba(255,255,255,0.03)";
-                      e.currentTarget.style.borderColor = "rgba(255,255,255,0.07)";
-                    }}
-                  >
-                    {/* Image */}
-                    <div
-                      className="shrink-0 w-16 h-16 overflow-hidden"
-                      style={{ background: "rgba(255,255,255,0.04)", border: "1px solid rgba(255,255,255,0.06)" }}
-                    >
-                      <img
-                        src={p.image}
-                        alt={p.name}
-                        className="w-full h-full object-contain p-2"
-                      />
-                    </div>
-
-                    {/* Info */}
-                    <div className="flex-1 min-w-0">
-                      <p
-                        className="text-[9px] tracking-[0.3em] uppercase font-light mb-0.5"
-                        style={{ color: "rgba(212,175,55,0.55)", fontFamily: "sans-serif" }}
-                      >
-                        {p.brand}
-                      </p>
-                      <p
-                        className="text-base font-light truncate group-hover:text-[#D4AF37] transition-colors duration-300"
-                        style={{ fontFamily: "'Cormorant Garamond', serif" }}
-                      >
-                        {p.name}
-                      </p>
-                    </div>
-
-                    {/* Price */}
-                    <div className="shrink-0 text-right">
-                      <p
-                        className="text-base font-light"
-                        style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}
-                      >
-                        {price}
-                      </p>
-                      {active && (
-                        <p
-                          className="text-[10px] line-through font-light"
-                          style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
-                        >
-                          {p.price}
-                        </p>
-                      )}
-                    </div>
-
-                    <ArrowRight
-                      size={13}
-                      className="shrink-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300"
-                      style={{ color: "#D4AF37" }}
-                    />
-                  </motion.a>
-                );
-              })}
-
-              {/* Footer link */}
+              {/* Footer */}
               <motion.a
                 href="/catalog"
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 transition={{ delay: 1.1 }}
-                className="text-center text-[10px] tracking-[0.35em] uppercase font-light pt-2 transition-colors duration-300"
-                style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
+                className="flex items-center justify-center gap-2 mt-4 text-[9px] tracking-[0.4em] uppercase font-light transition-colors duration-300"
+                style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}
                 onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.25)"}
+                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.2)"}
               >
-                Ver todos los perfumes →
+                Ver catálogo completo
+                <ArrowRight size={11} />
               </motion.a>
             </motion.div>
           )}
