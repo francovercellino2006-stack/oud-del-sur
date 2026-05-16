@@ -91,8 +91,26 @@ export default function ProductDetail({
       </div>
 
       {/* Product */}
-      <div className="mx-auto max-w-7xl px-6 py-20">
-        <div className="grid items-start gap-16 lg:grid-cols-[1fr_1fr]">
+      <div className="mx-auto max-w-7xl px-4 md:px-6 py-10 md:py-20">
+
+        {/* Mobile: nombre arriba */}
+        <motion.div
+          className="lg:hidden mb-6"
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.7 }}
+        >
+          <p className="text-[10px] tracking-[0.5em] uppercase font-light mb-2"
+            style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
+            {perfume.brand}
+          </p>
+          <h1 className="text-3xl font-normal leading-tight"
+            style={{ fontFamily: "var(--font-perfume)" }}>
+            {perfume.name}
+          </h1>
+        </motion.div>
+
+        <div className="grid items-start gap-10 lg:gap-16 lg:grid-cols-[1fr_1fr]">
 
           {/* LEFT — Image + Inspirado en */}
           <motion.div
@@ -102,11 +120,12 @@ export default function ProductDetail({
           >
             {/* Image */}
             <div
-              className="relative overflow-hidden"
+              className="relative overflow-hidden mx-auto"
               style={{
                 background: "linear-gradient(145deg, #141414 0%, #0d0d0d 100%)",
                 border: "1px solid rgba(255,255,255,0.05)",
                 aspectRatio: "1/1",
+                maxWidth: "420px",
               }}
             >
               <div className="absolute inset-0 pointer-events-none" style={{
@@ -116,11 +135,11 @@ export default function ProductDetail({
               <img
                 src={perfume.image}
                 alt={perfume.name}
-                className="w-full h-full object-contain p-12"
+                className="w-full h-full object-contain p-8 md:p-12"
               />
 
               {perfume.badge && (
-                <div className="absolute top-5 left-5">
+                <div className="absolute top-4 left-4">
                   <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
                     style={{
                       background: perfume.badge === "Más vendido" ? "#D4AF37" : "transparent",
@@ -134,7 +153,7 @@ export default function ProductDetail({
               )}
 
               {offerActive && (
-                <div className="absolute top-5 right-5">
+                <div className="absolute top-4 right-4">
                   <span className="px-3 py-1 text-[9px] tracking-[0.2em] uppercase font-medium"
                     style={{ background: "rgba(200,40,40,0.9)", color: "white", fontFamily: "sans-serif" }}>
                     −{perfume.offer!.discount}%
@@ -153,11 +172,10 @@ export default function ProductDetail({
               )}
             </div>
 
-            {/* Inspirado en / nota inferior */}
+            {/* Inspirado en */}
             {perfume.inspiredBy ? (
-              <div className="mt-5 px-6 py-5"
-                style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.03)" }}>
-                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-2"
+              <div className="mt-4 px-5 py-4 mx-auto" style={{ maxWidth: "420px", border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.03)" }}>
+                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-1"
                   style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
                   Inspirado en
                 </p>
@@ -167,9 +185,8 @@ export default function ProductDetail({
                 </p>
               </div>
             ) : (
-              <div className="mt-5 px-6 py-5"
-                style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.02)" }}>
-                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-2"
+              <div className="mt-4 px-5 py-4 mx-auto" style={{ maxWidth: "420px", border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.02)" }}>
+                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-1"
                   style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
                   Importado directamente
                 </p>
@@ -188,14 +205,13 @@ export default function ProductDetail({
             transition={{ duration: 0.9, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
             className="flex flex-col"
           >
-            {/* Brand */}
-            <p className="text-[10px] tracking-[0.55em] uppercase font-light mb-4"
+            {/* Brand + Name — solo desktop */}
+            <p className="hidden lg:block text-[10px] tracking-[0.55em] uppercase font-light mb-4"
               style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
               {perfume.brand}
             </p>
 
-            {/* Name */}
-            <h1 className="text-5xl md:text-6xl font-normal leading-[1.05] mb-6"
+            <h1 className="hidden lg:block text-5xl md:text-6xl font-normal leading-[1.05] mb-6"
               style={{ fontFamily: "var(--font-perfume)" }}>
               {perfume.name}
             </h1>
