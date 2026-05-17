@@ -23,7 +23,7 @@ export async function getPerfumes(): Promise<Perfume[]> {
   const raw = await client.fetch(
     `*[_type == "perfume"] | order(order asc) { ${PERFUME_FIELDS} }`,
     {},
-    { next: { revalidate: 60, tags: ['perfumes'] } }
+    { next: { revalidate: 30 } }
   )
   return raw.map(mapPerfume)
 }
@@ -32,7 +32,7 @@ export async function getPerfume(slug: string): Promise<Perfume | null> {
   const raw = await client.fetch(
     `*[_type == "perfume" && slug.current == $slug][0] { ${PERFUME_FIELDS} }`,
     { slug },
-    { next: { revalidate: 60, tags: ['perfumes', `perfume-${slug}`] } }
+    { next: { revalidate: 30 } }
   )
   return raw ? mapPerfume(raw) : null
 }
