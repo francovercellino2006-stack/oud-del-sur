@@ -10,7 +10,7 @@ export const perfumeSchema = {
     { name: 'price', type: 'string', title: 'Precio (ej: $74.000)' },
     { name: 'priceOriginal', type: 'string', title: 'Precio original (opcional)' },
     { name: 'image', type: 'image', title: 'Imagen', options: { hotspot: true } },
-    { name: 'imageUrl', type: 'url', title: 'URL de imagen (alternativa)' },
+    { name: 'imageUrl', type: 'string', title: 'URL de imagen (alternativa)' },
     { name: 'badge', type: 'string', title: 'Badge', options: { list: [{ title: 'Ninguno', value: '' }, 'Más vendido', 'Nuevo', 'Top', 'Exclusivo'] } },
     { name: 'category', type: 'string', title: 'Categoría', options: { list: ['hombre', 'mujer', 'unisex'] } },
     { name: 'family', type: 'string', title: 'Familia', options: { list: ['dulces', 'frescos', 'orientales', 'maderosos', 'florales'] } },
