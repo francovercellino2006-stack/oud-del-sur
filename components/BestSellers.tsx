@@ -7,7 +7,7 @@ import type { Perfume } from "../app/data/perfumes";
 import { getActivePrice, isOfferActive } from "../utils/price";
 
 export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
-  const bestsellers = perfumes.filter((p) => p.badge === "Más vendido").slice(0, 4);
+  const bestsellers = perfumes.filter((p) => p.badge === "Más vendido" && !p.outOfStock).slice(0, 4);
   return (
     <section id="destacados" className="relative px-6 py-28" style={{ background: "#0B0B0B" }}>
       <div
