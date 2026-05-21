@@ -62,7 +62,6 @@ export default function Navbar() {
           {/* Desktop nav */}
           <nav className="hidden md:flex items-center gap-10">
             {[
-              { label: "Inicio", href: "/" },
               { label: "Catálogo", href: "/catalog" },
               { label: "Quiz", href: "/quiz" },
             ].map((link) => (
