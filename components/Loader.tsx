@@ -20,7 +20,7 @@ export default function Loader() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-          style={{ background: "#000000" }}
+          style={{ background: "#111111" }}
         >
           {/* Gold glow */}
           <div

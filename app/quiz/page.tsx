@@ -107,7 +107,7 @@ export default function QuizPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#000000] flex flex-col">
+      <main className="min-h-screen bg-[#111111] flex flex-col">
 
         {/* Gold glow top */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
@@ -246,7 +246,7 @@ export default function QuizPage() {
                         }}
                         onMouseEnter={(e) => {
                           (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.25)";
-                          (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 50px rgba(0,0,0,0.7)";
+                          (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 50px rgba(17,17,17,0.7)";
                         }}
                         onMouseLeave={(e) => {
                           (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.06)";
@@ -299,7 +299,7 @@ export default function QuizPage() {
                   </button>
                   <Link href="/catalog"
                     className="flex items-center gap-2 px-6 py-3 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300"
-                    style={{ background: "#FFFFFF", color: "#000000", fontFamily: "sans-serif" }}>
+                    style={{ background: "#FFFFFF", color: "#111111", fontFamily: "sans-serif" }}>
                     Ver catálogo completo <ArrowRight size={13} />
                   </Link>
                 </div>

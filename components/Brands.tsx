@@ -52,7 +52,7 @@ const brands = [
 export default function Brands() {
     
   return (
-    <section id="marcas" className="relative py-28 px-6" style={{ background: "#000000" }}>
+    <section id="marcas" className="relative py-28 px-6" style={{ background: "#111111" }}>
       {/* Top accent */}
       <div
         className="absolute top-0 inset-x-0 h-px"
@@ -128,7 +128,7 @@ return (
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
-                e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
+                e.currentTarget.style.boxShadow = "0 16px 50px rgba(17,17,17,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";

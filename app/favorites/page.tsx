@@ -16,7 +16,7 @@ export default function FavoritesPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#000000]">
+      <main className="min-h-screen bg-[#111111]">
 
         {/* Header */}
         <div className="relative pt-36 pb-16 px-6 border-b border-white/5">
@@ -78,7 +78,7 @@ export default function FavoritesPage() {
               <Link href="/catalog"
                 className="flex items-center gap-2 px-6 py-3 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300"
                 style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#FFFFFF", fontFamily: "sans-serif" }}
-                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; (e.currentTarget as HTMLElement).style.color = "#000000"; }}
+                onMouseEnter={(e) => { (e.currentTarget as HTMLElement).style.background = "#FFFFFF"; (e.currentTarget as HTMLElement).style.color = "#111111"; }}
                 onMouseLeave={(e) => { (e.currentTarget as HTMLElement).style.background = "transparent"; (e.currentTarget as HTMLElement).style.color = "#FFFFFF"; }}>
                 Ver catálogo <ArrowRight size={13} />
               </Link>

@@ -8,7 +8,7 @@ import { getActivePrice, isOfferActive } from "../utils/price";
 export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
   const bestsellers = perfumes.filter((p) => p.badge === "Más vendido" && !p.outOfStock).slice(0, 4);
   return (
-    <section id="destacados" className="relative px-6 py-28" style={{ background: "#000000" }}>
+    <section id="destacados" className="relative px-6 py-28" style={{ background: "#111111" }}>
       <div
         className="absolute top-0 inset-x-0 h-px"
         style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }}
@@ -67,7 +67,7 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
-                e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
+                e.currentTarget.style.boxShadow = "0 16px 50px rgba(17,17,17,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
@@ -86,7 +86,7 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                 {/* Badge */}
                 <div
                   className="absolute top-3 left-3 px-2 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
-                  style={{ background: "#FFFFFF", color: "#000000" }}
+                  style={{ background: "#FFFFFF", color: "#111111" }}
                 >
                   Más vendido
                 </div>

@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t px-6 py-16" style={{ background: "#000000", borderColor: "rgba(255,255,255,0.07)" }}>
+    <footer className="relative border-t px-6 py-16" style={{ background: "#111111", borderColor: "rgba(255,255,255,0.07)" }}>
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col items-start justify-between gap-12 md:flex-row md:items-center">
           {/* Brand */}
