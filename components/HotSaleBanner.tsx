@@ -14,7 +14,7 @@ export default function HotSaleBanner() {
       <div className="flex items-center whitespace-nowrap animate-ticker" style={{ width: "max-content" }}>
         {items.map((t, i) => (
           <span key={i} className="text-[11px] font-medium tracking-[0.18em] mx-2"
-            style={{ color: "#111111", fontFamily: "sans-serif" }}>
+            style={{ color: "#1C1C1E", fontFamily: "sans-serif" }}>
             {t}
           </span>
         ))}

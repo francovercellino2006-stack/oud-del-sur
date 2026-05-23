@@ -107,7 +107,7 @@ export default function QuizPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#111111] flex flex-col">
+      <main className="min-h-screen bg-[#1C1C1E] flex flex-col">
 
         {/* Gold glow top */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
@@ -299,7 +299,7 @@ export default function QuizPage() {
                   </button>
                   <Link href="/catalog"
                     className="flex items-center gap-2 px-6 py-3 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300"
-                    style={{ background: "#FFFFFF", color: "#111111", fontFamily: "sans-serif" }}>
+                    style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}>
                     Ver catálogo completo <ArrowRight size={13} />
                   </Link>
                 </div>

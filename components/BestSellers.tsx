@@ -8,7 +8,7 @@ import { getActivePrice, isOfferActive } from "../utils/price";
 export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
   const bestsellers = perfumes.filter((p) => p.badge === "Más vendido" && !p.outOfStock).slice(0, 4);
   return (
-    <section id="destacados" className="relative px-6 py-28" style={{ background: "#111111" }}>
+    <section id="destacados" className="relative px-6 py-28" style={{ background: "#1C1C1E" }}>
       <div
         className="absolute top-0 inset-x-0 h-px"
         style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }}
@@ -86,7 +86,7 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                 {/* Badge */}
                 <div
                   className="absolute top-3 left-3 px-2 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
-                  style={{ background: "#FFFFFF", color: "#111111" }}
+                  style={{ background: "#FFFFFF", color: "#1C1C1E" }}
                 >
                   Más vendido
                 </div>

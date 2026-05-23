@@ -68,7 +68,7 @@ export default function ProductDetail({
   ].slice(0, 3);
 
   return (
-    <main className="bg-[#111111] text-white">
+    <main className="bg-[#1C1C1E] text-white">
 
       {/* ─── MOBILE LAYOUT ─── */}
       <div className="lg:hidden">
@@ -114,7 +114,7 @@ export default function ProductDetail({
 
           {/* Bottom gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-16 z-10"
-            style={{ background: "linear-gradient(to top, #111111, transparent)" }} />
+            style={{ background: "linear-gradient(to top, #1C1C1E, transparent)" }} />
         </div>
 
         {/* Mobile info */}
@@ -178,7 +178,7 @@ export default function ProductDetail({
           <div className="grid grid-cols-2 gap-px mb-6"
             style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
             {specs.map(({ label, value }) => (
-              <div key={label} className="px-4 py-3" style={{ background: "#111111" }}>
+              <div key={label} className="px-4 py-3" style={{ background: "#1C1C1E" }}>
                 <p className="text-[8px] tracking-[0.3em] uppercase font-light mb-1"
                   style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
                   {label}
@@ -236,7 +236,7 @@ export default function ProductDetail({
                 className="flex-1 flex items-center justify-center gap-2 py-4 text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300"
                 style={{
                   background: "linear-gradient(90deg, #FFFFFF, #E0E0E0)",
-                  color: "#111111",
+                  color: "#1C1C1E",
                   fontFamily: "sans-serif",
                   boxShadow: "0 0 30px rgba(255,255,255,0.2)",
                 }}>
@@ -298,7 +298,7 @@ export default function ProductDetail({
                     <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
                       style={{
                         background: perfume.badge === "Más vendido" ? "#FFFFFF" : "transparent",
-                        color: perfume.badge === "Más vendido" ? "#111111" : "#FFFFFF",
+                        color: perfume.badge === "Más vendido" ? "#1C1C1E" : "#FFFFFF",
                         border: perfume.badge === "Más vendido" ? "none" : "1px solid rgba(255,255,255,0.4)",
                         fontFamily: "sans-serif",
                       }}>
@@ -358,7 +358,7 @@ export default function ProductDetail({
 
               <div className="grid grid-cols-2 gap-px mb-8" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
                 {specs.map(({ label, value }) => (
-                  <div key={label} className="px-5 py-4" style={{ background: "#111111" }}>
+                  <div key={label} className="px-5 py-4" style={{ background: "#1C1C1E" }}>
                     <p className="text-[9px] tracking-[0.3em] uppercase font-light mb-1" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{label}</p>
                     <p className="text-sm font-light text-white" style={{ fontFamily: "sans-serif" }}>{value}</p>
                   </div>
@@ -392,7 +392,7 @@ export default function ProductDetail({
                 <div className="flex flex-col gap-3">
                   <a href={waUrl} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 w-full py-5 text-sm tracking-[0.3em] uppercase font-medium transition-all duration-300"
-                    style={{ background: "linear-gradient(90deg, #FFFFFF 0%, #E0E0E0 100%)", color: "#111111", boxShadow: "0 4px 40px rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}
+                    style={{ background: "linear-gradient(90deg, #FFFFFF 0%, #E0E0E0 100%)", color: "#1C1C1E", boxShadow: "0 4px 40px rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}
                     onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 6px 50px rgba(255,255,255,0.4)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
                     onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 4px 40px rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateY(0)"; }}>
                     <MessageCircle size={16} />

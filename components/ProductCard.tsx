@@ -9,7 +9,7 @@ import { useCart } from "../hooks/useCart";
 import { applyDiscount, getActivePrice, isOfferActive } from "../utils/price";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
-  "Más vendido": { bg: "#FFFFFF",              color: "#111111", border: "transparent" },
+  "Más vendido": { bg: "#FFFFFF",              color: "#1C1C1E", border: "transparent" },
   "Nuevo":       { bg: "transparent",          color: "#ffffff", border: "rgba(255,255,255,0.25)" },
   "Top":         { bg: "transparent",          color: "#FFFFFF", border: "rgba(255,255,255,0.5)" },
   "Exclusivo":   { bg: "rgba(255,255,255,0.1)", color: "#FFFFFF", border: "rgba(255,255,255,0.4)" },
@@ -156,38 +156,38 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         </div>
 
         {/* Info */}
-        <div className="flex flex-col p-5 pb-3">
+        <div className="flex flex-col p-2 lg:p-5 pb-2 lg:pb-3">
           <span
-            className="text-[10px] tracking-[0.35em] uppercase font-light mb-1"
+            className="hidden lg:block text-[10px] tracking-[0.35em] uppercase font-light mb-1"
             style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
           >
             {perfume.brand}
           </span>
 
           <h3
-            className="text-xl font-normal text-white mb-2 leading-snug"
+            className="text-[11px] lg:text-xl font-normal text-white mb-1 lg:mb-2 leading-snug"
             style={{ fontFamily: "var(--font-perfume)" }}
           >
             {perfume.name}
           </h3>
 
           <p
-            className="text-xs leading-relaxed mb-5 font-light"
+            className="hidden lg:block text-xs leading-relaxed mb-5 font-light"
             style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}
           >
             {perfume.description}
           </p>
 
-          <div className="flex items-baseline gap-3 mb-5">
+          <div className="flex items-baseline gap-1 lg:gap-3 mb-2 lg:mb-5">
             <span
-              className="text-2xl font-light"
+              className="text-xs lg:text-2xl font-light"
               style={{ color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}
             >
               {getActivePrice(perfume.price, perfume.offer)}
             </span>
             {isOfferActive(perfume.offer) && (
               <span
-                className="text-sm line-through font-light"
+                className="text-[10px] lg:text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
               >
                 {perfume.price}
@@ -195,7 +195,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
             )}
             {!isOfferActive(perfume.offer) && perfume.priceOriginal && (
               <span
-                className="text-sm line-through font-light"
+                className="hidden lg:inline text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
               >
                 {perfume.priceOriginal}
@@ -206,8 +206,8 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
 
       </Link>
 
-      {/* Botones — fuera del Link para que no naveguen */}
-      <div className="flex gap-2 px-5 pb-5">
+      {/* Botones — solo en desktop */}
+      <div className="hidden lg:flex gap-2 px-5 pb-5">
         <button
           onClick={() => cart
             ? remove(perfume.slug)
@@ -235,7 +235,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = "#FFFFFF";
-            e.currentTarget.style.color = "#111111";
+            e.currentTarget.style.color = "#1C1C1E";
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = "transparent";

@@ -28,7 +28,7 @@ const benefits = [
 
 export default function Benefits() {
   return (
-    <section className="relative px-6 py-24" style={{ background: "#111111" }}>
+    <section className="relative px-6 py-24" style={{ background: "#1C1C1E" }}>
       <div
         className="absolute top-0 inset-x-0 h-px"
         style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}

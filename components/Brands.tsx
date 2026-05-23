@@ -52,7 +52,7 @@ const brands = [
 export default function Brands() {
     
   return (
-    <section id="marcas" className="relative py-28 px-6" style={{ background: "#111111" }}>
+    <section id="marcas" className="relative py-28 px-6" style={{ background: "#1C1C1E" }}>
       {/* Top accent */}
       <div
         className="absolute top-0 inset-x-0 h-px"

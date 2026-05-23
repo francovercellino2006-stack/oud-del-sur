@@ -89,7 +89,7 @@ export default function Navbar() {
               <ShoppingBag size={16} />
               {items.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
-                  style={{ background: "#FFFFFF", color: "#111111", fontFamily: "sans-serif" }}>
+                  style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}>
                   {items.length}
                 </span>
               )}
@@ -103,7 +103,7 @@ export default function Navbar() {
               <Heart size={16} />
               {favorites.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
-                  style={{ background: "#FFFFFF", color: "#111111", fontFamily: "sans-serif" }}>
+                  style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}>
                   {favorites.length}
                 </span>
               )}
@@ -176,7 +176,7 @@ export default function Navbar() {
                 href="/catalog"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center w-full py-4 text-sm tracking-[0.25em] uppercase font-medium transition-all duration-300"
-                style={{ background: "#FFFFFF", color: "#111111" }}
+                style={{ background: "#FFFFFF", color: "#1C1C1E" }}
               >
                 Ver Catálogo Completo
               </Link>

@@ -101,7 +101,7 @@ export default function Hero() {
                 className="group inline-flex items-center justify-center gap-3 px-8 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:scale-105"
                 style={{
                   background: "#FFFFFF",
-                  color: "#111111",
+                  color: "#1C1C1E",
                   boxShadow: "0 4px 30px rgba(255,255,255,0.3)",
                   fontFamily: "sans-serif",
                 }}
