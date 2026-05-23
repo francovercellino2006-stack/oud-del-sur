@@ -81,15 +81,15 @@ export default function CatalogGrid({
       onClick={onClick}
       className="px-4 py-2 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300 whitespace-nowrap"
       style={{
-        background:   active ? "#D4AF37"                      : "transparent",
-        color:        active ? "#0B0B0B"                      : "rgba(255,255,255,0.5)",
-        border:       active ? "1px solid #D4AF37"            : "1px solid rgba(255,255,255,0.1)",
+        background:   active ? "#FFFFFF"                      : "transparent",
+        color:        active ? "#000000"                      : "rgba(255,255,255,0.5)",
+        border:       active ? "1px solid #FFFFFF"            : "1px solid rgba(255,255,255,0.1)",
         fontFamily:   "sans-serif",
       }}
       onMouseEnter={(e) => {
         if (!active) {
-          e.currentTarget.style.borderColor = "rgba(212,175,55,0.4)";
-          e.currentTarget.style.color       = "#D4AF37";
+          e.currentTarget.style.borderColor = "rgba(255,255,255,0.4)";
+          e.currentTarget.style.color       = "#FFFFFF";
         }
       }}
       onMouseLeave={(e) => {
@@ -104,7 +104,7 @@ export default function CatalogGrid({
   );
 
   return (
-    <section className="px-6 py-16" style={{ background: "#0B0B0B" }}>
+    <section className="px-6 py-16" style={{ background: "#000000" }}>
       <div className="mx-auto max-w-7xl">
 
         {/* ── Search bar ── */}
@@ -112,7 +112,7 @@ export default function CatalogGrid({
           <Search
             size={15}
             className="absolute left-4 top-1/2 -translate-y-1/2 pointer-events-none"
-            style={{ color: "rgba(212,175,55,0.5)" }}
+            style={{ color: "rgba(255,255,255,0.5)" }}
           />
           <input
             type="text"
@@ -124,9 +124,9 @@ export default function CatalogGrid({
               border: "1px solid rgba(255,255,255,0.08)",
               color: "rgba(255,255,255,0.7)",
               fontFamily: "sans-serif",
-              caretColor: "#D4AF37",
+              caretColor: "#FFFFFF",
             }}
-            onFocus={(e) => e.currentTarget.style.borderColor = "rgba(212,175,55,0.35)"}
+            onFocus={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)"}
             onBlur={(e) => e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"}
           />
           {search && (
@@ -147,7 +147,7 @@ export default function CatalogGrid({
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-light transition-colors duration-300"
-              style={{ color: showFilters ? "#D4AF37" : "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
+              style={{ color: showFilters ? "#FFFFFF" : "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
             >
               <SlidersHorizontal size={14} />
               Filtros {activeCount > 0 && `(${activeCount})`}
@@ -156,7 +156,7 @@ export default function CatalogGrid({
               <button
                 onClick={clearAll}
                 className="flex items-center gap-1 text-xs font-light"
-                style={{ color: "rgba(212,175,55,0.7)", fontFamily: "sans-serif" }}
+                style={{ color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}
               >
                 <X size={12} /> Limpiar
               </button>
@@ -174,7 +174,7 @@ export default function CatalogGrid({
                 <div>
                   <p
                     className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
-                    style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
                   >
                     Marca
                   </p>
@@ -200,7 +200,7 @@ export default function CatalogGrid({
                   <div>
                     <p
                       className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
-                      style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                      style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
                     >
                       Categoría
                     </p>
@@ -219,7 +219,7 @@ export default function CatalogGrid({
                   <div>
                     <p
                       className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
-                      style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                      style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
                     >
                       Familia
                     </p>
@@ -252,9 +252,9 @@ export default function CatalogGrid({
               <button
                 onClick={clearAll}
                 className="ml-auto text-xs font-light flex items-center gap-1 transition-colors duration-200"
-                style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}
-                onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
-                onMouseLeave={e => e.currentTarget.style.color = "rgba(212,175,55,0.6)"}
+                style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
+                onMouseEnter={e => e.currentTarget.style.color = "#FFFFFF"}
+                onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.6)"}
               >
                 <X size={12} /> Limpiar todo
               </button>
@@ -265,7 +265,7 @@ export default function CatalogGrid({
         {/* Divider */}
         <div
           className="mb-10 h-px"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent)" }}
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }}
         />
 
         {/* Results count */}
@@ -306,13 +306,13 @@ export default function CatalogGrid({
           >
             <div
               className="w-16 h-16 flex items-center justify-center mb-6"
-              style={{ border: "1px solid rgba(212,175,55,0.2)" }}
+              style={{ border: "1px solid rgba(255,255,255,0.2)" }}
             >
-              <span style={{ color: "rgba(212,175,55,0.4)", fontSize: "24px" }}>✦</span>
+              <span style={{ color: "rgba(255,255,255,0.4)", fontSize: "24px" }}>✦</span>
             </div>
             <p
               className="text-lg font-light mb-2"
-              style={{ fontFamily: "'Cormorant Garamond', serif", color: "rgba(255,255,255,0.6)" }}
+              style={{ fontFamily: "'Montserrat', sans-serif", color: "rgba(255,255,255,0.6)" }}
             >
               No hay perfumes con esos filtros
             </p>
@@ -325,9 +325,9 @@ export default function CatalogGrid({
             <button
               onClick={clearAll}
               className="px-6 py-3 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300"
-              style={{ border: "1px solid rgba(212,175,55,0.3)", color: "#D4AF37", fontFamily: "sans-serif" }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#D4AF37"; e.currentTarget.style.color = "#0B0B0B"; }}
-              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#D4AF37"; }}
+              style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#FFFFFF", fontFamily: "sans-serif" }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#FFFFFF"; e.currentTarget.style.color = "#000000"; }}
+              onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#FFFFFF"; }}
             >
               Ver todos los perfumes
             </button>
@@ -344,9 +344,9 @@ function Chip({ label, onRemove }: { label: string; onRemove: () => void }) {
     <span
       className="flex items-center gap-1.5 px-3 py-1 text-[11px] font-light capitalize"
       style={{
-        background: "rgba(212,175,55,0.1)",
-        border: "1px solid rgba(212,175,55,0.25)",
-        color: "#D4AF37",
+        background: "rgba(255,255,255,0.1)",
+        border: "1px solid rgba(255,255,255,0.25)",
+        color: "#FFFFFF",
         fontFamily: "sans-serif",
       }}
     >

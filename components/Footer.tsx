@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t px-6 py-16" style={{ background: "#0B0B0B", borderColor: "rgba(255,255,255,0.07)" }}>
+    <footer className="relative border-t px-6 py-16" style={{ background: "#000000", borderColor: "rgba(255,255,255,0.07)" }}>
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col items-start justify-between gap-12 md:flex-row md:items-center">
           {/* Brand */}
@@ -11,8 +11,8 @@ export default function Footer() {
               <span
                 className="text-2xl font-light tracking-[0.18em] uppercase"
                 style={{
-                  fontFamily: "'Cormorant Garamond', serif",
-                  background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 40%, #B8941F 100%)",
+                  fontFamily: "'Montserrat', sans-serif",
+                  background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}
@@ -21,7 +21,7 @@ export default function Footer() {
               </span>
               <span
                 className="text-[9px] tracking-[0.45em] uppercase font-light mt-1"
-                style={{ color: "rgba(212,175,55,0.45)", fontFamily: "sans-serif" }}
+                style={{ color: "rgba(255,255,255,0.45)", fontFamily: "sans-serif" }}
               >
                 Perfumería Árabe Premium
               </span>
@@ -39,7 +39,7 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <p
               className="text-[10px] tracking-[0.35em] uppercase font-light"
-              style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+              style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
             >
               Navegación
             </p>
@@ -52,7 +52,7 @@ export default function Footer() {
                 <Link
                   key={link.href}
                   href={link.href}
-                  className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#D4AF37]"
+                  className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#FFFFFF]"
                   style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}
                 >
                   {link.label}
@@ -65,7 +65,7 @@ export default function Footer() {
           <div className="flex flex-col gap-4">
             <p
               className="text-[10px] tracking-[0.35em] uppercase font-light"
-              style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+              style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
             >
               Contacto
             </p>
@@ -74,7 +74,7 @@ export default function Footer() {
                 href="https://instagram.com/oudelsurperfumes"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#D4AF37]"
+                className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#FFFFFF]"
                 style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}
               >
                 Instagram
@@ -83,7 +83,7 @@ export default function Footer() {
                 href="https://wa.me/5492920528440"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#D4AF37]"
+                className="text-xs tracking-[0.15em] font-light transition-colors duration-300 hover:text-[#FFFFFF]"
                 style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}
               >
                 WhatsApp
@@ -95,7 +95,7 @@ export default function Footer() {
         {/* Divider */}
         <div
           className="mt-14 h-px"
-          style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent)" }}
+          style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }}
         />
 
         <div className="mt-6 flex flex-col items-center justify-between gap-3 md:flex-row">
@@ -107,7 +107,7 @@ export default function Footer() {
           </p>
           <p
             className="text-[10px] tracking-[0.15em] font-light"
-            style={{ color: "rgba(212,175,55,0.25)", fontFamily: "sans-serif" }}
+            style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
           >
             Perfumería Árabe · Argentina
           </p>

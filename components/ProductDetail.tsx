@@ -68,7 +68,7 @@ export default function ProductDetail({
   ].slice(0, 3);
 
   return (
-    <main className="bg-[#0B0B0B] text-white">
+    <main className="bg-[#000000] text-white">
 
       {/* ─── MOBILE LAYOUT ─── */}
       <div className="lg:hidden">
@@ -76,7 +76,7 @@ export default function ProductDetail({
         {/* Hero image — full width */}
         <div className="relative w-full" style={{ aspectRatio: "1/1", background: "#111", marginTop: "88px" }}>
           <div className="absolute inset-0 pointer-events-none z-10"
-            style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(212,175,55,0.04) 0%, transparent 70%)" }} />
+            style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.04) 0%, transparent 70%)" }} />
 
           <img
             src={perfume.image}
@@ -114,7 +114,7 @@ export default function ProductDetail({
 
           {/* Bottom gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-16 z-10"
-            style={{ background: "linear-gradient(to top, #0B0B0B, transparent)" }} />
+            style={{ background: "linear-gradient(to top, #000000, transparent)" }} />
         </div>
 
         {/* Mobile info */}
@@ -122,7 +122,7 @@ export default function ProductDetail({
 
           {/* Brand + Name + Price */}
           <p className="text-[9px] tracking-[0.45em] uppercase font-light mb-2"
-            style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
+            style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
             {perfume.brand}
           </p>
           <h1 className="text-3xl font-normal leading-tight mb-4"
@@ -133,8 +133,8 @@ export default function ProductDetail({
           <div className="flex items-baseline gap-3 mb-6">
             <span className="text-3xl font-light"
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                background: "linear-gradient(90deg, #D4AF37, #F0D875, #B8941F)",
+                fontFamily: "'Montserrat', sans-serif",
+                background: "linear-gradient(90deg, #FFFFFF, #FFFFFF, #CCCCCC)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}>
@@ -147,7 +147,7 @@ export default function ProductDetail({
               </span>
             )}
             <span className="ml-auto text-[9px] tracking-[0.25em] uppercase font-light px-2 py-1"
-              style={{ border: "1px solid rgba(212,175,55,0.2)", color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
+              style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
               {perfume.ml}ml
             </span>
           </div>
@@ -163,9 +163,9 @@ export default function ProductDetail({
           {/* Inspirado en */}
           {perfume.inspiredBy && (
             <div className="mb-6 px-4 py-3"
-              style={{ border: "1px solid rgba(212,175,55,0.15)", background: "rgba(212,175,55,0.03)" }}>
+              style={{ border: "1px solid rgba(255,255,255,0.15)", background: "rgba(255,255,255,0.03)" }}>
               <p className="text-[8px] tracking-[0.4em] uppercase font-light mb-1"
-                style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
                 Inspirado en
               </p>
               <p className="text-sm font-light" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
@@ -178,9 +178,9 @@ export default function ProductDetail({
           <div className="grid grid-cols-2 gap-px mb-6"
             style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
             {specs.map(({ label, value }) => (
-              <div key={label} className="px-4 py-3" style={{ background: "#0B0B0B" }}>
+              <div key={label} className="px-4 py-3" style={{ background: "#000000" }}>
                 <p className="text-[8px] tracking-[0.3em] uppercase font-light mb-1"
-                  style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                  style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
                   {label}
                 </p>
                 <p className="text-sm font-light text-white" style={{ fontFamily: "sans-serif" }}>{value}</p>
@@ -191,7 +191,7 @@ export default function ProductDetail({
           {/* Sensory bars */}
           <div className="px-4 py-4" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
             <p className="text-[8px] tracking-[0.4em] uppercase font-light mb-4"
-              style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+              style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
               Perfil sensorial
             </p>
             <div className="space-y-3">
@@ -208,7 +208,7 @@ export default function ProductDetail({
                       viewport={{ once: true }}
                       transition={{ duration: 1.2, delay: i * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
                       className="absolute top-1/2 -translate-y-1/2 h-[1.5px]"
-                      style={{ background: "linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.3))" }}
+                      style={{ background: "linear-gradient(90deg, #FFFFFF, rgba(255,255,255,0.3))" }}
                     />
                   </div>
                 </div>
@@ -219,7 +219,7 @@ export default function ProductDetail({
 
         {/* Sticky bottom bar — mobile */}
         <div className="fixed bottom-0 left-0 right-0 z-50 px-4 py-4"
-          style={{ background: "rgba(11,11,11,0.97)", borderTop: "1px solid rgba(212,175,55,0.15)", backdropFilter: "blur(20px)" }}>
+          style={{ background: "rgba(0,0,0,0.97)", borderTop: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(20px)" }}>
           <div className="flex gap-3">
             <a href={waConsultUrl} target="_blank" rel="noopener noreferrer"
               className="flex items-center justify-center px-4 py-4 text-[10px] tracking-[0.2em] uppercase font-light transition-all duration-300"
@@ -235,10 +235,10 @@ export default function ProductDetail({
               <a href={waUrl} target="_blank" rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 py-4 text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300"
                 style={{
-                  background: "linear-gradient(90deg, #D4AF37, #C9A227)",
-                  color: "#0B0B0B",
+                  background: "linear-gradient(90deg, #FFFFFF, #E0E0E0)",
+                  color: "#000000",
                   fontFamily: "sans-serif",
-                  boxShadow: "0 0 30px rgba(212,175,55,0.2)",
+                  boxShadow: "0 0 30px rgba(255,255,255,0.2)",
                 }}>
                 <MessageCircle size={15} />
                 Comprar por WhatsApp
@@ -260,18 +260,18 @@ export default function ProductDetail({
           <div className="mx-auto max-w-7xl flex items-center gap-2 text-[11px] tracking-[0.25em] uppercase font-light"
             style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}>
             <Link href="/" style={{ color: "rgba(255,255,255,0.3)" }}
-              onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
+              onMouseEnter={e => e.currentTarget.style.color = "#FFFFFF"}
               onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.3)"}>
               Inicio
             </Link>
             <span>/</span>
             <Link href="/catalog" style={{ color: "rgba(255,255,255,0.3)" }}
-              onMouseEnter={e => e.currentTarget.style.color = "#D4AF37"}
+              onMouseEnter={e => e.currentTarget.style.color = "#FFFFFF"}
               onMouseLeave={e => e.currentTarget.style.color = "rgba(255,255,255,0.3)"}>
               Catálogo
             </Link>
             <span>/</span>
-            <span style={{ color: "rgba(212,175,55,0.7)" }}>{perfume.name}</span>
+            <span style={{ color: "rgba(255,255,255,0.7)" }}>{perfume.name}</span>
           </div>
         </div>
 
@@ -291,15 +291,15 @@ export default function ProductDetail({
                   aspectRatio: "1/1",
                 }}>
                 <div className="absolute inset-0 pointer-events-none"
-                  style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(212,175,55,0.05) 0%, transparent 65%)" }} />
+                  style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.05) 0%, transparent 65%)" }} />
                 <img src={perfume.image} alt={perfume.name} className="w-full h-full object-contain p-12" />
                 {perfume.badge && (
                   <div className="absolute top-5 left-5">
                     <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
                       style={{
-                        background: perfume.badge === "Más vendido" ? "#D4AF37" : "transparent",
-                        color: perfume.badge === "Más vendido" ? "#0B0B0B" : "#D4AF37",
-                        border: perfume.badge === "Más vendido" ? "none" : "1px solid rgba(212,175,55,0.4)",
+                        background: perfume.badge === "Más vendido" ? "#FFFFFF" : "transparent",
+                        color: perfume.badge === "Más vendido" ? "#000000" : "#FFFFFF",
+                        border: perfume.badge === "Más vendido" ? "none" : "1px solid rgba(255,255,255,0.4)",
                         fontFamily: "sans-serif",
                       }}>
                       {perfume.badge}
@@ -326,13 +326,13 @@ export default function ProductDetail({
               </div>
 
               {perfume.inspiredBy ? (
-                <div className="mt-5 px-6 py-4" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.03)" }}>
-                  <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-1" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>Inspirado en</p>
+                <div className="mt-5 px-6 py-4" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.03)" }}>
+                  <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-1" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>Inspirado en</p>
                   <p className="text-sm font-light" style={{ color: "rgba(255,255,255,0.55)", fontFamily: "sans-serif" }}>{perfume.inspiredBy}</p>
                 </div>
               ) : (
-                <div className="mt-5 px-6 py-4" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(212,175,55,0.02)" }}>
-                  <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-1" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>Importado directamente</p>
+                <div className="mt-5 px-6 py-4" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.02)" }}>
+                  <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-1" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>Importado directamente</p>
                   <p className="text-sm font-light" style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}>Perfume 100% original. Garantizamos autenticidad en cada frasco.</p>
                 </div>
               )}
@@ -345,28 +345,28 @@ export default function ProductDetail({
               transition={{ duration: 0.9, delay: 0.15, ease: [0.25, 0.46, 0.45, 0.94] }}
               className="flex flex-col"
             >
-              <p className="text-[10px] tracking-[0.55em] uppercase font-light mb-4" style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>{perfume.brand}</p>
+              <p className="text-[10px] tracking-[0.55em] uppercase font-light mb-4" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>{perfume.brand}</p>
               <h1 className="text-5xl font-normal leading-[1.05] mb-6" style={{ fontFamily: "var(--font-perfume)" }}>{perfume.name}</h1>
               <p className="text-sm leading-loose mb-8 font-light" style={{ color: "rgba(255,255,255,0.45)", fontFamily: "sans-serif", maxWidth: "38ch" }}>{perfume.description}</p>
-              <div className="h-px mb-8" style={{ background: "linear-gradient(90deg, rgba(212,175,55,0.2), transparent)" }} />
+              <div className="h-px mb-8" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.2), transparent)" }} />
 
               <div className="flex items-baseline gap-4 mb-8">
-                <span className="text-5xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif", background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 50%, #B8941F 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{activePrice}</span>
+                <span className="text-5xl font-light" style={{ fontFamily: "'Montserrat', sans-serif", background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{activePrice}</span>
                 {offerActive && <span className="text-xl line-through font-light" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}>{perfume.price}</span>}
-                <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5" style={{ border: "1px solid rgba(212,175,55,0.2)", color: "rgba(212,175,55,0.7)", fontFamily: "sans-serif" }}>{perfume.ml}ml</span>
+                <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}>{perfume.ml}ml</span>
               </div>
 
               <div className="grid grid-cols-2 gap-px mb-8" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
                 {specs.map(({ label, value }) => (
-                  <div key={label} className="px-5 py-4" style={{ background: "#0B0B0B" }}>
-                    <p className="text-[9px] tracking-[0.3em] uppercase font-light mb-1" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>{label}</p>
+                  <div key={label} className="px-5 py-4" style={{ background: "#000000" }}>
+                    <p className="text-[9px] tracking-[0.3em] uppercase font-light mb-1" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{label}</p>
                     <p className="text-sm font-light text-white" style={{ fontFamily: "sans-serif" }}>{value}</p>
                   </div>
                 ))}
               </div>
 
               <div className="mb-8 px-5 py-5" style={{ background: "rgba(255,255,255,0.02)", border: "1px solid rgba(255,255,255,0.05)" }}>
-                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-5" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>Perfil sensorial</p>
+                <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-5" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>Perfil sensorial</p>
                 <div className="space-y-4">
                   {sensory.map(({ label, value }, i) => (
                     <div key={label} className="flex items-center gap-4">
@@ -378,7 +378,7 @@ export default function ProductDetail({
                           viewport={{ once: true, margin: "-40px" }}
                           transition={{ duration: 1.2, delay: i * 0.12, ease: [0.25, 0.46, 0.45, 0.94] }}
                           className="absolute top-1/2 -translate-y-1/2 h-[1.5px]"
-                          style={{ background: "linear-gradient(90deg, #D4AF37, rgba(212,175,55,0.3))" }}
+                          style={{ background: "linear-gradient(90deg, #FFFFFF, rgba(255,255,255,0.3))" }}
                         />
                       </div>
                     </div>
@@ -392,16 +392,16 @@ export default function ProductDetail({
                 <div className="flex flex-col gap-3">
                   <a href={waUrl} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 w-full py-5 text-sm tracking-[0.3em] uppercase font-medium transition-all duration-300"
-                    style={{ background: "linear-gradient(90deg, #D4AF37 0%, #C9A227 100%)", color: "#0B0B0B", boxShadow: "0 4px 40px rgba(212,175,55,0.2)", fontFamily: "sans-serif" }}
-                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 6px 50px rgba(212,175,55,0.4)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 4px 40px rgba(212,175,55,0.2)"; e.currentTarget.style.transform = "translateY(0)"; }}>
+                    style={{ background: "linear-gradient(90deg, #FFFFFF 0%, #E0E0E0 100%)", color: "#000000", boxShadow: "0 4px 40px rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}
+                    onMouseEnter={e => { e.currentTarget.style.boxShadow = "0 6px 50px rgba(255,255,255,0.4)"; e.currentTarget.style.transform = "translateY(-1px)"; }}
+                    onMouseLeave={e => { e.currentTarget.style.boxShadow = "0 4px 40px rgba(255,255,255,0.2)"; e.currentTarget.style.transform = "translateY(0)"; }}>
                     <MessageCircle size={16} />
                     Comprar por WhatsApp
                   </a>
                   <a href={waConsultUrl} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 w-full py-4 text-xs tracking-[0.3em] uppercase font-light transition-all duration-300"
                     style={{ color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.08)", fontFamily: "sans-serif" }}
-                    onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)"; e.currentTarget.style.color = "rgba(212,175,55,0.8)"; }}
+                    onMouseEnter={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.color = "rgba(255,255,255,0.8)"; }}
                     onMouseLeave={e => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.08)"; e.currentTarget.style.color = "rgba(255,255,255,0.35)"; }}>
                     Consultar antes de comprar
                   </a>
@@ -417,10 +417,10 @@ export default function ProductDetail({
       {relatedPerfumes.length > 0 && (
         <section className="pb-36 lg:pb-24 pt-4">
           <div className="mx-auto max-w-7xl">
-            <div className="h-px mb-12 mx-5 lg:mx-6" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }} />
+            <div className="h-px mb-12 mx-5 lg:mx-6" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }} />
             <div className="mb-8 px-5 lg:px-6">
-              <p className="text-[10px] tracking-[0.5em] uppercase mb-2 font-light" style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>También te puede interesar</p>
-              <h2 className="text-2xl lg:text-3xl font-light" style={{ fontFamily: "'Cormorant Garamond', serif" }}>Otras Fragancias</h2>
+              <p className="text-[10px] tracking-[0.5em] uppercase mb-2 font-light" style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>También te puede interesar</p>
+              <h2 className="text-2xl lg:text-3xl font-light" style={{ fontFamily: "'Montserrat', sans-serif" }}>Otras Fragancias</h2>
             </div>
 
             {/* Mobile: horizontal scroll */}
@@ -431,12 +431,12 @@ export default function ProductDetail({
                   style={{ width: "62vw", background: "#111", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "linear-gradient(145deg, #181818, #111)" }}>
                     <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-6" style={{ mixBlendMode: "luminosity", opacity: 0.9 }} />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(11,11,11,0.7) 0%, transparent 50%)" }} />
+                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 50%)" }} />
                   </div>
                   <div className="px-4 py-3">
-                    <p className="text-[8px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
+                    <p className="text-[8px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
                     <h3 className="text-base font-normal mb-1 leading-snug" style={{ fontFamily: "var(--font-perfume)", color: "rgba(255,255,255,0.9)" }}>{rel.name}</h3>
-                    <span className="text-sm font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
+                    <span className="text-sm font-light" style={{ color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
                   </div>
                 </Link>
               ))}
@@ -453,16 +453,16 @@ export default function ProductDetail({
                   <Link href={`/product/${rel.slug}`}>
                     <div className="group overflow-hidden transition-all duration-500"
                       style={{ background: "#111", border: "1px solid rgba(255,255,255,0.05)" }}
-                      onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(212,175,55,0.2)"}
+                      onMouseEnter={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)"}
                       onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"}>
                       <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "linear-gradient(145deg, #181818, #111)" }}>
                         <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(11,11,11,0.5) 0%, transparent 50%)" }} />
+                        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 50%)" }} />
                       </div>
                       <div className="px-6 py-5">
-                        <p className="text-[9px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
+                        <p className="text-[9px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
                         <h3 className="text-xl font-normal mb-2" style={{ fontFamily: "var(--font-perfume)" }}>{rel.name}</h3>
-                        <span className="text-lg font-light" style={{ color: "#D4AF37", fontFamily: "'Cormorant Garamond', serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
+                        <span className="text-lg font-light" style={{ color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}>{getActivePrice(rel.price, rel.offer)}</span>
                       </div>
                     </div>
                   </Link>

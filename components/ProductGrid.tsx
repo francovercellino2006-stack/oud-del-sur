@@ -6,12 +6,12 @@ export default function ProductGrid() {
     (perfume) => perfume.badge === "Más vendido"
   );
   return (
-    <section id="destacados" className="relative py-28 px-6" style={{ background: "#0B0B0B" }}>
+    <section id="destacados" className="relative py-28 px-6" style={{ background: "#000000" }}>
       {/* Top border accent */}
       <div
         className="absolute top-0 inset-x-0 h-px"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.25), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)",
         }}
       />
  
@@ -21,7 +21,7 @@ export default function ProductGrid() {
           {/* Eyebrow */}
           <p
             className="text-xs tracking-[0.45em] uppercase font-light mb-5"
-            style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+            style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
           >
             Colección
           </p>
@@ -29,12 +29,12 @@ export default function ProductGrid() {
           {/* Title */}
           <h2
             className="text-5xl md:text-6xl font-light text-white mb-5"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             Más{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 50%, #B8941F 100%)",
+                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -55,7 +55,7 @@ export default function ProductGrid() {
           <div
             className="mt-8 mx-auto w-16 h-px"
             style={{
-              background: "linear-gradient(90deg, transparent, #D4AF37, transparent)",
+              background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)",
             }}
           />
         </div>
@@ -71,10 +71,10 @@ export default function ProductGrid() {
         <div className="mt-16 text-center">
           <a
             href="/catalog"
-           className="inline-flex items-center gap-3 px-10 py-4 text-sm tracking-[0.2em] uppercase font-light transition-all duration-300 hover:bg-[#D4AF37] hover:text-black"
+           className="inline-flex items-center gap-3 px-10 py-4 text-sm tracking-[0.2em] uppercase font-light transition-all duration-300 hover:bg-[#FFFFFF] hover:text-black"
             style={{
-              border: "1px solid rgba(212,175,55,0.35)",
-              color: "#D4AF37",
+              border: "1px solid rgba(255,255,255,0.35)",
+              color: "#FFFFFF",
               fontFamily: "sans-serif",
             }}
            
@@ -88,7 +88,7 @@ export default function ProductGrid() {
       <div
         className="absolute bottom-0 inset-x-0 h-px"
         style={{
-          background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)",
+          background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)",
         }}
       />
     </section>

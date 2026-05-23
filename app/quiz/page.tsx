@@ -107,11 +107,11 @@ export default function QuizPage() {
   return (
     <>
       <Navbar />
-      <main className="min-h-screen bg-[#0B0B0B] flex flex-col">
+      <main className="min-h-screen bg-[#000000] flex flex-col">
 
         {/* Gold glow top */}
         <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] pointer-events-none"
-          style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(212,175,55,0.07) 0%, transparent 70%)" }}
+          style={{ background: "radial-gradient(ellipse at 50% 0%, rgba(255,255,255,0.07) 0%, transparent 70%)" }}
         />
 
         <div className="flex-1 flex flex-col items-center justify-center px-6 py-32">
@@ -132,22 +132,22 @@ export default function QuizPage() {
                     <div
                       key={i}
                       className="h-px flex-1 transition-all duration-500"
-                      style={{ background: i <= step ? "#D4AF37" : "rgba(255,255,255,0.1)" }}
+                      style={{ background: i <= step ? "#FFFFFF" : "rgba(255,255,255,0.1)" }}
                     />
                   ))}
                   <span className="text-[10px] tracking-[0.3em] uppercase font-light ml-2 shrink-0"
-                    style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
                     {step + 1} / {steps.length}
                   </span>
                 </div>
 
                 {/* Question */}
                 <p className="text-[10px] tracking-[0.45em] uppercase font-light mb-4"
-                  style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
+                  style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
                   {current.subtitle}
                 </p>
                 <h2 className="text-4xl md:text-5xl font-light text-white mb-12 leading-tight"
-                  style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                  style={{ fontFamily: "'Montserrat', sans-serif" }}>
                   {current.question}
                 </h2>
 
@@ -161,20 +161,20 @@ export default function QuizPage() {
                         onClick={() => select(opt.value)}
                         className="group flex flex-col items-start p-6 text-left transition-all duration-300"
                         style={{
-                          background: selected ? "rgba(212,175,55,0.08)" : "linear-gradient(160deg, #141414, #0f0f0f)",
-                          border: selected ? "1px solid rgba(212,175,55,0.5)" : "1px solid rgba(255,255,255,0.06)",
+                          background: selected ? "rgba(255,255,255,0.08)" : "linear-gradient(160deg, #141414, #0f0f0f)",
+                          border: selected ? "1px solid rgba(255,255,255,0.5)" : "1px solid rgba(255,255,255,0.06)",
                         }}
                         onMouseEnter={(e) => {
-                          if (!selected) e.currentTarget.style.borderColor = "rgba(212,175,55,0.25)";
+                          if (!selected) e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
                         }}
                         onMouseLeave={(e) => {
                           if (!selected) e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
                         }}
                       >
-                        <span className="text-lg font-light mb-1 group-hover:text-[#D4AF37] transition-colors duration-300"
+                        <span className="text-lg font-light mb-1 group-hover:text-[#FFFFFF] transition-colors duration-300"
                           style={{
-                            fontFamily: "'Cormorant Garamond', serif",
-                            color: selected ? "#D4AF37" : "white",
+                            fontFamily: "'Montserrat', sans-serif",
+                            color: selected ? "#FFFFFF" : "white",
                           }}>
                           {opt.label}
                         </span>
@@ -210,14 +210,14 @@ export default function QuizPage() {
                 {/* Header */}
                 <div className="text-center mb-14">
                   <p className="text-xs tracking-[0.45em] uppercase font-light mb-4"
-                    style={{ color: "#D4AF37", fontFamily: "sans-serif" }}>
+                    style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}>
                     Tu recomendación personalizada
                   </p>
                   <h2 className="text-5xl font-light text-white mb-4"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                    style={{ fontFamily: "'Montserrat', sans-serif" }}>
                     Estos son{" "}
                     <span style={{
-                      background: "linear-gradient(90deg, #D4AF37, #F0D875, #B8941F)",
+                      background: "linear-gradient(90deg, #FFFFFF, #FFFFFF, #CCCCCC)",
                       WebkitBackgroundClip: "text",
                       WebkitTextFillColor: "transparent",
                     }}>
@@ -225,7 +225,7 @@ export default function QuizPage() {
                     </span>
                   </h2>
                   <div className="mx-auto w-16 h-px"
-                    style={{ background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }} />
+                    style={{ background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)" }} />
                 </div>
 
                 {/* Results grid */}
@@ -245,7 +245,7 @@ export default function QuizPage() {
                           display: "flex",
                         }}
                         onMouseEnter={(e) => {
-                          (e.currentTarget as HTMLElement).style.borderColor = "rgba(212,175,55,0.25)";
+                          (e.currentTarget as HTMLElement).style.borderColor = "rgba(255,255,255,0.25)";
                           (e.currentTarget as HTMLElement).style.boxShadow = "0 16px 50px rgba(0,0,0,0.7)";
                         }}
                         onMouseLeave={(e) => {
@@ -262,25 +262,25 @@ export default function QuizPage() {
                         </div>
                         <div className="p-5">
                           <p className="text-[9px] tracking-[0.3em] uppercase mb-1 font-light"
-                            style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}>
+                            style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
                             {p.brand}
                           </p>
-                          <h3 className="text-lg font-light text-white mb-3 group-hover:text-[#D4AF37] transition-colors duration-300 leading-tight"
-                            style={{ fontFamily: "'Cormorant Garamond', serif" }}>
+                          <h3 className="text-lg font-light text-white mb-3 group-hover:text-[#FFFFFF] transition-colors duration-300 leading-tight"
+                            style={{ fontFamily: "'Montserrat', sans-serif" }}>
                             {p.name}
                           </h3>
                           <div className="flex items-center justify-between">
                             <span className="font-light"
                               style={{
-                                fontFamily: "'Cormorant Garamond', serif",
-                                background: "linear-gradient(90deg, #D4AF37, #F0D875)",
+                                fontFamily: "'Montserrat', sans-serif",
+                                background: "linear-gradient(90deg, #FFFFFF, #FFFFFF)",
                                 WebkitBackgroundClip: "text",
                                 WebkitTextFillColor: "transparent",
                               }}>
                               {p.price}
                             </span>
                             <ArrowRight size={13} className="opacity-0 group-hover:opacity-100 transition-opacity"
-                              style={{ color: "#D4AF37" }} />
+                              style={{ color: "#FFFFFF" }} />
                           </div>
                         </div>
                       </Link>
@@ -293,13 +293,13 @@ export default function QuizPage() {
                   <button onClick={reset}
                     className="flex items-center gap-2 px-6 py-3 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300"
                     style={{ border: "1px solid rgba(255,255,255,0.12)", color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
-                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(212,175,55,0.3)"; e.currentTarget.style.color = "#D4AF37"; }}
+                    onMouseEnter={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.3)"; e.currentTarget.style.color = "#FFFFFF"; }}
                     onMouseLeave={(e) => { e.currentTarget.style.borderColor = "rgba(255,255,255,0.12)"; e.currentTarget.style.color = "rgba(255,255,255,0.5)"; }}>
                     <RotateCcw size={13} /> Repetir quiz
                   </button>
                   <Link href="/catalog"
                     className="flex items-center gap-2 px-6 py-3 text-xs tracking-[0.2em] uppercase font-medium transition-all duration-300"
-                    style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                    style={{ background: "#FFFFFF", color: "#000000", fontFamily: "sans-serif" }}>
                     Ver catálogo completo <ArrowRight size={13} />
                   </Link>
                 </div>

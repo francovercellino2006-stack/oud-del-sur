@@ -8,10 +8,10 @@ import { getActivePrice, isOfferActive } from "../utils/price";
 export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
   const bestsellers = perfumes.filter((p) => p.badge === "Más vendido" && !p.outOfStock).slice(0, 4);
   return (
-    <section id="destacados" className="relative px-6 py-28" style={{ background: "#0B0B0B" }}>
+    <section id="destacados" className="relative px-6 py-28" style={{ background: "#000000" }}>
       <div
         className="absolute top-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.25), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }}
       />
 
       <div className="mx-auto max-w-7xl">
@@ -25,18 +25,18 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
         >
           <p
             className="text-xs tracking-[0.45em] uppercase font-light mb-5"
-            style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+            style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
           >
             Los más elegidos
           </p>
           <h2
             className="text-5xl md:text-6xl font-light text-white mb-5"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             Más{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 50%, #B8941F 100%)",
+                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -46,7 +46,7 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
           </h2>
           <div
             className="mx-auto w-16 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }}
+            style={{ background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)" }}
           />
         </motion.div>
 
@@ -66,8 +66,8 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                 border: "1px solid rgba(255,255,255,0.06)",
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,55,0.25)";
-                e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,175,55,0.1)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
+                e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
@@ -86,7 +86,7 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                 {/* Badge */}
                 <div
                   className="absolute top-3 left-3 px-2 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
-                  style={{ background: "#D4AF37", color: "#0B0B0B" }}
+                  style={{ background: "#FFFFFF", color: "#000000" }}
                 >
                   Más vendido
                 </div>
@@ -96,12 +96,12 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
               <div className="flex flex-col flex-1 p-5">
                 <p
                   className="text-[9px] tracking-[0.3em] uppercase font-light mb-1"
-                  style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                  style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
                 >
                   {perfume.brand}
                 </p>
                 <h3
-                  className="text-lg font-normal text-white mb-2 group-hover:text-[#D4AF37] transition-colors duration-300 leading-tight"
+                  className="text-lg font-normal text-white mb-2 group-hover:text-[#FFFFFF] transition-colors duration-300 leading-tight"
                   style={{ fontFamily: "var(--font-perfume)" }}
                 >
                   {perfume.name}
@@ -116,8 +116,8 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                     <span
                       className="text-base font-light"
                       style={{
-                        fontFamily: "'Cormorant Garamond', serif",
-                        background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 100%)",
+                        fontFamily: "'Montserrat', sans-serif",
+                        background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 100%)",
                         WebkitBackgroundClip: "text",
                         WebkitTextFillColor: "transparent",
                       }}
@@ -132,9 +132,9 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
                   </div>
                   <div
                     className="flex items-center justify-center w-7 h-7 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-300"
-                    style={{ border: "1px solid rgba(212,175,55,0.3)" }}
+                    style={{ border: "1px solid rgba(255,255,255,0.3)" }}
                   >
-                    <ArrowRight size={12} style={{ color: "#D4AF37" }} />
+                    <ArrowRight size={12} style={{ color: "#FFFFFF" }} />
                   </div>
                 </div>
               </div>
@@ -146,7 +146,7 @@ export default function BestSellers({ perfumes }: { perfumes: Perfume[] }) {
 
       <div
         className="absolute bottom-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
       />
     </section>
   );

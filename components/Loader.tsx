@@ -20,13 +20,13 @@ export default function Loader() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-          style={{ background: "#0B0B0B" }}
+          style={{ background: "#000000" }}
         >
           {/* Gold glow */}
           <div
             className="absolute inset-0 pointer-events-none"
             style={{
-              background: "radial-gradient(ellipse at 50% 50%, rgba(212,175,55,0.07) 0%, transparent 65%)",
+              background: "radial-gradient(ellipse at 50% 50%, rgba(255,255,255,0.07) 0%, transparent 65%)",
             }}
           />
 
@@ -40,8 +40,8 @@ export default function Loader() {
             <span
               className="text-3xl font-light tracking-[0.25em] uppercase"
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
-                background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 40%, #B8941F 100%)",
+                fontFamily: "'Montserrat', sans-serif",
+                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -51,12 +51,12 @@ export default function Loader() {
 
             <div
               className="w-12 h-px"
-              style={{ background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }}
+              style={{ background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)" }}
             />
 
             <span
               className="text-[9px] tracking-[0.55em] uppercase font-light"
-              style={{ color: "rgba(212,175,55,0.45)", fontFamily: "sans-serif" }}
+              style={{ color: "rgba(255,255,255,0.45)", fontFamily: "sans-serif" }}
             >
               Perfumería Árabe
             </span>
@@ -72,7 +72,7 @@ export default function Loader() {
               initial={{ x: "-100%" }}
               animate={{ x: "100%" }}
               transition={{ duration: 1.6, delay: 0.3, ease: "easeInOut" }}
-              style={{ background: "linear-gradient(90deg, transparent, #D4AF37, transparent)", width: "100%" }}
+              style={{ background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)", width: "100%" }}
             />
           </motion.div>
         </motion.div>

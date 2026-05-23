@@ -28,10 +28,10 @@ const benefits = [
 
 export default function Benefits() {
   return (
-    <section className="relative px-6 py-24" style={{ background: "#0B0B0B" }}>
+    <section className="relative px-6 py-24" style={{ background: "#000000" }}>
       <div
         className="absolute top-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
       />
 
       <div className="mx-auto max-w-7xl grid gap-4 md:grid-cols-4">
@@ -54,22 +54,22 @@ export default function Benefits() {
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  background: "radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.06) 0%, transparent 65%)",
+                  background: "radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.06) 0%, transparent 65%)",
                 }}
               />
 
               {/* Icon */}
               <div
                 className="mb-5 flex items-center justify-center w-11 h-11"
-                style={{ border: "1px solid rgba(212,175,55,0.25)" }}
+                style={{ border: "1px solid rgba(255,255,255,0.25)" }}
               >
-                <Icon size={18} style={{ color: "#D4AF37" }} strokeWidth={1.5} />
+                <Icon size={18} style={{ color: "#FFFFFF" }} strokeWidth={1.5} />
               </div>
 
               {/* Title */}
               <h3
-                className="text-base font-light text-white mb-2 group-hover:text-[#D4AF37] transition-colors duration-300"
-                style={{ fontFamily: "'Cormorant Garamond', serif", fontSize: "1.1rem" }}
+                className="text-base font-light text-white mb-2 group-hover:text-[#FFFFFF] transition-colors duration-300"
+                style={{ fontFamily: "'Montserrat', sans-serif", fontSize: "1.1rem" }}
               >
                 {item.title}
               </h3>
@@ -85,7 +85,7 @@ export default function Benefits() {
               {/* Bottom accent line */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)" }}
+                style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)" }}
               />
             </motion.div>
           );
@@ -94,7 +94,7 @@ export default function Benefits() {
 
       <div
         className="absolute bottom-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.1), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.1), transparent)" }}
       />
     </section>
   );

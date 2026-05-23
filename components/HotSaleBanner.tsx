@@ -10,11 +10,11 @@ export default function HotSaleBanner() {
 
   return (
     <div className="fixed top-0 left-0 right-0 z-[100] overflow-hidden flex items-center"
-      style={{ background: "#D4AF37", height: "32px" }}>
+      style={{ background: "#FFFFFF", height: "32px" }}>
       <div className="flex items-center whitespace-nowrap animate-ticker" style={{ width: "max-content" }}>
         {items.map((t, i) => (
           <span key={i} className="text-[11px] font-medium tracking-[0.18em] mx-2"
-            style={{ color: "#0B0B0B", fontFamily: "sans-serif" }}>
+            style={{ color: "#000000", fontFamily: "sans-serif" }}>
             {t}
           </span>
         ))}

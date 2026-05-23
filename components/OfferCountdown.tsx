@@ -25,19 +25,19 @@ export default function OfferCountdown({ discount, endsAt }: { discount: number;
 
   return (
     <div className="flex items-center gap-4 px-4 py-3 mb-6"
-      style={{ background: "rgba(212,175,55,0.06)", border: "1px solid rgba(212,175,55,0.2)" }}>
+      style={{ background: "rgba(255,255,255,0.06)", border: "1px solid rgba(255,255,255,0.2)" }}>
       <div className="flex flex-col">
         <span className="text-[9px] tracking-[0.35em] uppercase font-light mb-1"
-          style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}>
+          style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
           Oferta especial
         </span>
         <span className="text-2xl font-light"
-          style={{ fontFamily: "'Cormorant Garamond', serif", color: "#D4AF37" }}>
+          style={{ fontFamily: "'Montserrat', sans-serif", color: "#FFFFFF" }}>
           −{discount}%
         </span>
       </div>
 
-      <div className="w-px h-10 shrink-0" style={{ background: "rgba(212,175,55,0.2)" }} />
+      <div className="w-px h-10 shrink-0" style={{ background: "rgba(255,255,255,0.2)" }} />
 
       <div className="flex flex-col">
         <span className="text-[9px] tracking-[0.3em] uppercase font-light mb-2"
@@ -48,7 +48,7 @@ export default function OfferCountdown({ discount, endsAt }: { discount: number;
           {[{ v: time.h, l: "hs" }, { v: time.m, l: "min" }, { v: time.s, l: "seg" }].map(({ v, l }) => (
             <div key={l} className="flex flex-col items-center">
               <span className="text-lg font-light leading-none"
-                style={{ fontFamily: "'Cormorant Garamond', serif", color: "white" }}>
+                style={{ fontFamily: "'Montserrat', sans-serif", color: "white" }}>
                 {pad(v)}
               </span>
               <span className="text-[9px] font-light mt-0.5"

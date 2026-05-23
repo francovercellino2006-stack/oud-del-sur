@@ -27,10 +27,10 @@ const testimonials = [
 
 export default function Testimonials() {
   return (
-    <section className="relative px-6 py-28" style={{ background: "#0B0B0B" }}>
+    <section className="relative px-6 py-28" style={{ background: "#000000" }}>
       <div
         className="absolute top-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.2), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent)" }}
       />
 
       {/* Ambient glow */}
@@ -39,7 +39,7 @@ export default function Testimonials() {
         style={{
           width: "600px",
           height: "300px",
-          background: "radial-gradient(ellipse, rgba(212,175,55,0.04) 0%, transparent 70%)",
+          background: "radial-gradient(ellipse, rgba(255,255,255,0.04) 0%, transparent 70%)",
         }}
       />
 
@@ -55,18 +55,18 @@ export default function Testimonials() {
         >
           <p
             className="text-xs tracking-[0.45em] uppercase font-light mb-5"
-            style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+            style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
           >
             Clientes reales
           </p>
           <h2
             className="text-5xl md:text-6xl font-light text-white mb-5"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             Lo que dicen{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 50%, #B8941F 100%)",
+                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -76,7 +76,7 @@ export default function Testimonials() {
           </h2>
           <div
             className="mx-auto w-16 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }}
+            style={{ background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)" }}
           />
         </motion.div>
 
@@ -98,15 +98,15 @@ export default function Testimonials() {
               {/* Hover glow */}
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
-                style={{ background: "radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.05) 0%, transparent 65%)" }}
+                style={{ background: "radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.05) 0%, transparent 65%)" }}
               />
 
               {/* Instagram icon */}
               <div className="mb-6">
                 <svg width="16" height="16" viewBox="0 0 24 24" fill="none">
-                  <rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(212,175,55,0.4)" strokeWidth="1.5"/>
-                  <circle cx="12" cy="12" r="4" stroke="rgba(212,175,55,0.4)" strokeWidth="1.5"/>
-                  <circle cx="17.5" cy="6.5" r="1" fill="rgba(212,175,55,0.4)"/>
+                  <rect x="2" y="2" width="20" height="20" rx="5" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"/>
+                  <circle cx="12" cy="12" r="4" stroke="rgba(255,255,255,0.4)" strokeWidth="1.5"/>
+                  <circle cx="17.5" cy="6.5" r="1" fill="rgba(255,255,255,0.4)"/>
                 </svg>
               </div>
 
@@ -115,7 +115,7 @@ export default function Testimonials() {
                 <blockquote
                   className="flex-1 text-xl font-light leading-snug mb-7 italic"
                   style={{
-                    fontFamily: "'Cormorant Garamond', serif",
+                    fontFamily: "'Montserrat', sans-serif",
                     color: "rgba(255,255,255,0.75)",
                   }}
                 >
@@ -126,8 +126,8 @@ export default function Testimonials() {
                   <span
                     className="text-xs tracking-[0.25em] uppercase font-light px-3 py-1.5"
                     style={{
-                      border: "1px solid rgba(212,175,55,0.2)",
-                      color: "rgba(212,175,55,0.5)",
+                      border: "1px solid rgba(255,255,255,0.2)",
+                      color: "rgba(255,255,255,0.5)",
                       fontFamily: "sans-serif",
                     }}
                   >
@@ -139,14 +139,14 @@ export default function Testimonials() {
               {/* Divider */}
               <div
                 className="mb-5 h-px"
-                style={{ background: "linear-gradient(90deg, rgba(212,175,55,0.2), transparent)" }}
+                style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.2), transparent)" }}
               />
 
               {/* Bottom */}
               <div className="flex flex-col gap-1">
                 <span
                   className="text-xs tracking-[0.2em] font-light"
-                  style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+                  style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
                 >
                   {t.handle}
                 </span>
@@ -161,7 +161,7 @@ export default function Testimonials() {
               {/* Bottom accent */}
               <div
                 className="absolute bottom-0 left-0 right-0 h-px opacity-0 group-hover:opacity-100 transition-opacity duration-500"
-                style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.3), transparent)" }}
+                style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent)" }}
               />
             </motion.div>
           ))}
@@ -175,21 +175,21 @@ export default function Testimonials() {
           transition={{ duration: 0.7, delay: 0.5 }}
           className="mt-14 flex items-center justify-center gap-3"
         >
-          <div className="h-px flex-1 max-w-[80px]" style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.2))" }} />
+          <div className="h-px flex-1 max-w-[80px]" style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.2))" }} />
           <p
             className="text-xs tracking-[0.3em] uppercase font-light"
             style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
           >
             +20 pedidos enviados a todo el país
           </p>
-          <div className="h-px flex-1 max-w-[80px]" style={{ background: "linear-gradient(90deg, rgba(212,175,55,0.2), transparent)" }} />
+          <div className="h-px flex-1 max-w-[80px]" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.2), transparent)" }} />
         </motion.div>
 
       </div>
 
       <div
         className="absolute bottom-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
       />
     </section>
   );

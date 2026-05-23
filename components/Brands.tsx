@@ -12,7 +12,7 @@ const brands = [
     description: "La casa de perfumería árabe más reconocida del mundo. Creadores del icónico Oud Mood y Raghba.",
     specialty: "Orientales · Dulces · Oud",
     founded: "2007",
-    accent: "#D4AF37",
+    accent: "#FFFFFF",
   },
 
   {
@@ -29,7 +29,7 @@ const brands = [
     description: "Perfumería niche del Medio Oriente. Almizcles blancos y composiciones únicas de autor.",
     specialty: "Almizcle · Florales · Niche",
     founded: "2000",
-    accent: "#D4AF37",
+    accent: "#FFFFFF",
   },
   {
     name: "Maison Alhambra",
@@ -45,18 +45,18 @@ const brands = [
     description: "Tradición perfumera árabe desde hace décadas. Maestros del oud puro y especias orientales.",
     specialty: "Oud · Especiados · Clásicos",
     founded: "1979",
-    accent: "#D4AF37",
+    accent: "#FFFFFF",
   },
 ];
  
 export default function Brands() {
     
   return (
-    <section id="marcas" className="relative py-28 px-6" style={{ background: "#0B0B0B" }}>
+    <section id="marcas" className="relative py-28 px-6" style={{ background: "#000000" }}>
       {/* Top accent */}
       <div
         className="absolute top-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.25), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.25), transparent)" }}
       />
  
       <div className="mx-auto max-w-7xl">
@@ -70,18 +70,18 @@ export default function Brands() {
         >
           <p
             className="text-xs tracking-[0.45em] uppercase font-light mb-5"
-            style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+            style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
           >
             Casas de Perfumería
           </p>
           <h2
             className="text-5xl md:text-6xl font-light text-white mb-5"
-            style={{ fontFamily: "'Cormorant Garamond', serif" }}
+            style={{ fontFamily: "'Montserrat', sans-serif" }}
           >
             Marcas{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 50%, #B8941F 100%)",
+                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -97,7 +97,7 @@ export default function Brands() {
           </p>
           <div
             className="mt-8 mx-auto w-16 h-px"
-            style={{ background: "linear-gradient(90deg, transparent, #D4AF37, transparent)" }}
+            style={{ background: "linear-gradient(90deg, transparent, #FFFFFF, transparent)" }}
           />
         </motion.div>
  
@@ -127,8 +127,8 @@ return (
                 transition: { duration: 0.3 },
               }}
               onMouseEnter={(e) => {
-                e.currentTarget.style.borderColor = "rgba(212,175,55,0.25)";
-                e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(212,175,55,0.1)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
+                e.currentTarget.style.boxShadow = "0 16px 50px rgba(0,0,0,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";
@@ -139,7 +139,7 @@ return (
               <div
                 className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 pointer-events-none"
                 style={{
-                  background: "radial-gradient(ellipse at 0% 0%, rgba(212,175,55,0.05) 0%, transparent 60%)",
+                  background: "radial-gradient(ellipse at 0% 0%, rgba(255,255,255,0.05) 0%, transparent 60%)",
                 }}
               />
  
@@ -147,23 +147,23 @@ return (
               <div className="flex items-start justify-between mb-5">
                 <div>
                   <h3
-                    className="text-2xl font-light text-white mb-1 group-hover:text-[#D4AF37] transition-colors duration-300"
-                    style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                    className="text-2xl font-light text-white mb-1 group-hover:text-[#FFFFFF] transition-colors duration-300"
+                    style={{ fontFamily: "'Montserrat', sans-serif" }}
                   >
                     {brand.name}
                   </h3>
                   <p
                     className="text-[10px] tracking-[0.3em] uppercase font-light"
-                    style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
                   >
                     {brand.origin}
                   </p>
                 </div>
                 <div
                   className="flex items-center justify-center w-9 h-9 shrink-0 opacity-0 group-hover:opacity-100 translate-x-2 group-hover:translate-x-0 transition-all duration-400"
-                  style={{ border: "1px solid rgba(212,175,55,0.3)" }}
+                  style={{ border: "1px solid rgba(255,255,255,0.3)" }}
                 >
-                  <ArrowRight size={14} style={{ color: "#D4AF37" }} />
+                  <ArrowRight size={14} style={{ color: "#FFFFFF" }} />
                 </div>
               </div>
  
@@ -180,7 +180,7 @@ return (
                 style={{ borderTop: "1px solid rgba(255,255,255,0.05)" }}>
                 <span
                   className="text-[10px] tracking-[0.15em] font-light"
-                  style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}
+                  style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
                 >
                   {brand.specialty}
                 </span>
@@ -205,27 +205,27 @@ return (
             transition={{ duration: 0.55, delay: brands.length * 0.09 }}
             className="group flex flex-col items-center justify-center p-7 transition-all duration-500 min-h-[200px]"
             style={{
-              border: "1px dashed rgba(212,175,55,0.2)",
+              border: "1px dashed rgba(255,255,255,0.2)",
               background: "transparent",
             }}
             onMouseEnter={(e) => {
-              e.currentTarget.style.borderColor = "rgba(212,175,55,0.5)";
-              e.currentTarget.style.background = "rgba(212,175,55,0.03)";
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)";
+              e.currentTarget.style.background = "rgba(255,255,255,0.03)";
             }}
             onMouseLeave={(e) => {
-              e.currentTarget.style.borderColor = "rgba(212,175,55,0.2)";
+              e.currentTarget.style.borderColor = "rgba(255,255,255,0.2)";
               e.currentTarget.style.background = "transparent";
             }}
           >
             <div
               className="w-12 h-12 flex items-center justify-center mb-4 transition-all duration-300 group-hover:scale-110"
-              style={{ border: "1px solid rgba(212,175,55,0.3)" }}
+              style={{ border: "1px solid rgba(255,255,255,0.3)" }}
             >
-              <ArrowRight size={18} style={{ color: "#D4AF37" }} />
+              <ArrowRight size={18} style={{ color: "#FFFFFF" }} />
             </div>
             <p
               className="text-sm tracking-[0.2em] uppercase font-light text-center"
-              style={{ color: "rgba(212,175,55,0.7)", fontFamily: "sans-serif" }}
+              style={{ color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}
             >
               Ver catálogo
               <br />completo
@@ -244,7 +244,7 @@ return (
               <span
                 key={i}
                 className="shrink-0 text-2xl font-light tracking-widest text-white whitespace-nowrap"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
               >
                 {brand.name}
               </span>
@@ -256,7 +256,7 @@ return (
       {/* Bottom accent */}
       <div
         className="absolute bottom-0 inset-x-0 h-px"
-        style={{ background: "linear-gradient(90deg, transparent, rgba(212,175,55,0.15), transparent)" }}
+        style={{ background: "linear-gradient(90deg, transparent, rgba(255,255,255,0.15), transparent)" }}
       />
     </section>
   );

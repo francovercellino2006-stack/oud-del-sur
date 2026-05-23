@@ -42,9 +42,9 @@ export default function Navbar() {
             <span
               className="text-xl font-light tracking-[0.18em] uppercase"
               style={{
-                fontFamily: "'Cormorant Garamond', serif",
+                fontFamily: "'Montserrat', sans-serif",
                 background:
-                  "linear-gradient(90deg, #D4AF37 0%, #F0D875 40%, #B8941F 100%)",
+                  "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -53,7 +53,7 @@ export default function Navbar() {
             </span>
             <span
               className="text-[9px] tracking-[0.45em] uppercase font-light mt-0.5"
-              style={{ color: "rgba(212,175,55,0.5)", fontFamily: "sans-serif" }}
+              style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
             >
               Perfumería Árabe
             </span>
@@ -68,7 +68,7 @@ export default function Navbar() {
               <Link
                 key={link.href}
                 href={link.href}
-               className="text-xs tracking-[0.25em] uppercase font-light transition-colors duration-300 hover:text-[#D4AF37]"
+               className="text-xs tracking-[0.25em] uppercase font-light transition-colors duration-300 hover:text-[#FFFFFF]"
                 style={{ color: "rgba(255,255,255,0.55)", fontFamily: "sans-serif" }}
                
               >
@@ -83,13 +83,13 @@ export default function Navbar() {
             <button onClick={() => setCartOpen(true)}
               className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
               style={{ color: "rgba(255,255,255,0.45)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
               aria-label="Carrito">
               <ShoppingBag size={16} />
               {items.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
-                  style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                  style={{ background: "#FFFFFF", color: "#000000", fontFamily: "sans-serif" }}>
                   {items.length}
                 </span>
               )}
@@ -97,13 +97,13 @@ export default function Navbar() {
 
             <Link href="/favorites" className="relative hidden md:flex items-center justify-center w-8 h-8 transition-colors duration-300"
               style={{ color: "rgba(255,255,255,0.45)" }}
-              onMouseEnter={(e) => (e.currentTarget.style.color = "#D4AF37")}
+              onMouseEnter={(e) => (e.currentTarget.style.color = "#FFFFFF")}
               onMouseLeave={(e) => (e.currentTarget.style.color = "rgba(255,255,255,0.45)")}
               aria-label="Favoritos">
               <Heart size={16} />
               {favorites.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
-                  style={{ background: "#D4AF37", color: "#0B0B0B", fontFamily: "sans-serif" }}>
+                  style={{ background: "#FFFFFF", color: "#000000", fontFamily: "sans-serif" }}>
                   {favorites.length}
                 </span>
               )}
@@ -130,7 +130,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-40 flex flex-col px-6 pt-24 pb-10"
-            style={{ background: "rgba(11,11,11,0.97)", backdropFilter: "blur(16px)" }}
+            style={{ background: "rgba(0,0,0,0.97)", backdropFilter: "blur(16px)" }}
           >
             <nav className="flex flex-col">
               {[
@@ -155,8 +155,8 @@ export default function Navbar() {
                     }}
                   >
                     <span className="w-5 h-px flex-shrink-0 transition-all duration-300 group-hover:w-8"
-                      style={{ background: "#D4AF37", opacity: 0.6 }} />
-                    <span className="group-hover:text-[#D4AF37] transition-colors duration-300">
+                      style={{ background: "#FFFFFF", opacity: 0.6 }} />
+                    <span className="group-hover:text-[#FFFFFF] transition-colors duration-300">
                       {link.label}
                     </span>
                   </Link>
@@ -169,14 +169,14 @@ export default function Navbar() {
                 className="mb-8 h-px"
                 style={{
                   background:
-                    "linear-gradient(90deg, transparent, rgba(212,175,55,0.4), transparent)",
+                    "linear-gradient(90deg, transparent, rgba(255,255,255,0.4), transparent)",
                 }}
               />
               <Link
                 href="/catalog"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center w-full py-4 text-sm tracking-[0.25em] uppercase font-medium transition-all duration-300"
-                style={{ background: "#D4AF37", color: "#0B0B0B" }}
+                style={{ background: "#FFFFFF", color: "#000000" }}
               >
                 Ver Catálogo Completo
               </Link>

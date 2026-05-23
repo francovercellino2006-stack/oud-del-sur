@@ -27,7 +27,7 @@ export default function Hero() {
           top: "30%", left: "30%",
           width: "600px", height: "600px",
           borderRadius: "50%",
-          background: "radial-gradient(circle, rgba(212,175,55,0.07) 0%, transparent 70%)",
+          background: "radial-gradient(circle, rgba(255,255,255,0.07) 0%, transparent 70%)",
           transform: "translate(-50%, -50%)",
         }}
       />
@@ -46,10 +46,10 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="flex items-center gap-3 mb-10"
             >
-              <div className="h-px w-10" style={{ background: "#D4AF37" }} />
+              <div className="h-px w-10" style={{ background: "#FFFFFF" }} />
               <span
                 className="text-xs tracking-[0.45em] uppercase font-light"
-                style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+                style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
               >
                 Perfumería Árabe · Viedma, Argentina
               </span>
@@ -61,7 +61,7 @@ export default function Hero() {
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 1, delay: 0.35 }}
               className="mb-7 leading-[1.05]"
-              style={{ fontFamily: "'Cormorant Garamond', serif" }}
+              style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
               <span className="block text-5xl md:text-7xl font-light text-white">
                 Perfumes Árabes
@@ -69,7 +69,7 @@ export default function Hero() {
               <span
                 className="block text-5xl md:text-7xl font-light"
                 style={{
-                  background: "linear-gradient(90deg, #D4AF37 0%, #F0D875 40%, #B8941F 100%)",
+                  background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}
@@ -100,9 +100,9 @@ export default function Hero() {
                 href="/catalog"
                 className="group inline-flex items-center justify-center gap-3 px-8 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:scale-105"
                 style={{
-                  background: "#D4AF37",
-                  color: "#0B0B0B",
-                  boxShadow: "0 4px 30px rgba(212,175,55,0.3)",
+                  background: "#FFFFFF",
+                  color: "#000000",
+                  boxShadow: "0 4px 30px rgba(255,255,255,0.3)",
                   fontFamily: "sans-serif",
                 }}
               >
@@ -126,7 +126,7 @@ export default function Hero() {
                 <div key={i} className="flex flex-col">
                   <span
                     className="text-2xl font-light"
-                    style={{ fontFamily: "'Cormorant Garamond', serif", color: "#D4AF37" }}
+                    style={{ fontFamily: "'Montserrat', sans-serif", color: "#FFFFFF" }}
                   >
                     {stat.value}
                   </span>
@@ -152,25 +152,25 @@ export default function Hero() {
               href="/quiz"
               className="group relative flex flex-col items-center justify-center text-center p-14 w-full transition-all duration-500"
               style={{
-                border: "1px solid rgba(212,175,55,0.15)",
-                background: "rgba(212,175,55,0.03)",
+                border: "1px solid rgba(255,255,255,0.15)",
+                background: "rgba(255,255,255,0.03)",
                 backdropFilter: "blur(8px)",
                 minHeight: "380px",
               }}
               onMouseEnter={e => {
-                e.currentTarget.style.borderColor = "rgba(212,175,55,0.35)";
-                e.currentTarget.style.background = "rgba(212,175,55,0.06)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.35)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.06)";
               }}
               onMouseLeave={e => {
-                e.currentTarget.style.borderColor = "rgba(212,175,55,0.15)";
-                e.currentTarget.style.background = "rgba(212,175,55,0.03)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.15)";
+                e.currentTarget.style.background = "rgba(255,255,255,0.03)";
               }}
             >
               {/* Corner accents */}
-              <span className="absolute top-0 left-0 w-6 h-6 border-t border-l" style={{ borderColor: "#D4AF37" }} />
-              <span className="absolute top-0 right-0 w-6 h-6 border-t border-r" style={{ borderColor: "#D4AF37" }} />
-              <span className="absolute bottom-0 left-0 w-6 h-6 border-b border-l" style={{ borderColor: "#D4AF37" }} />
-              <span className="absolute bottom-0 right-0 w-6 h-6 border-b border-r" style={{ borderColor: "#D4AF37" }} />
+              <span className="absolute top-0 left-0 w-6 h-6 border-t border-l" style={{ borderColor: "#FFFFFF" }} />
+              <span className="absolute top-0 right-0 w-6 h-6 border-t border-r" style={{ borderColor: "#FFFFFF" }} />
+              <span className="absolute bottom-0 left-0 w-6 h-6 border-b border-l" style={{ borderColor: "#FFFFFF" }} />
+              <span className="absolute bottom-0 right-0 w-6 h-6 border-b border-r" style={{ borderColor: "#FFFFFF" }} />
 
               {/* Eyebrow */}
               <motion.p
@@ -178,7 +178,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.8 }}
                 className="text-[9px] tracking-[0.55em] uppercase font-light mb-8"
-                style={{ color: "rgba(212,175,55,0.6)", fontFamily: "sans-serif" }}
+                style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
               >
                 Descubrí tu fragancia
               </motion.p>
@@ -189,11 +189,11 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.9 }}
                 className="text-4xl font-light leading-snug mb-6"
-                style={{ fontFamily: "'Cormorant Garamond', serif" }}
+                style={{ fontFamily: "'Montserrat', sans-serif" }}
               >
                 ¿Cuál es tu<br />
                 <span style={{
-                  background: "linear-gradient(90deg, #D4AF37, #F0D875, #B8941F)",
+                  background: "linear-gradient(90deg, #FFFFFF, #FFFFFF, #CCCCCC)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}>
@@ -218,7 +218,7 @@ export default function Hero() {
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 1.1 }}
                 className="flex items-center gap-3 text-sm tracking-[0.25em] uppercase font-medium transition-all duration-300"
-                style={{ color: "#D4AF37", fontFamily: "sans-serif" }}
+                style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
               >
                 Comenzar quiz
                 <ArrowRight size={15} className="group-hover:translate-x-1 transition-transform duration-300" />
@@ -245,7 +245,7 @@ export default function Hero() {
           animate={{ y: [0, 8, 0] }}
           transition={{ duration: 2, repeat: Infinity, ease: "easeInOut" }}
           className="w-px h-10"
-          style={{ background: "linear-gradient(to bottom, rgba(212,175,55,0.6), transparent)" }}
+          style={{ background: "linear-gradient(to bottom, rgba(255,255,255,0.6), transparent)" }}
         />
       </motion.div>
     </section>
