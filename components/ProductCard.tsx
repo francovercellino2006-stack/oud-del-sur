@@ -156,16 +156,16 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         </div>
 
         {/* Info */}
-        <div className="flex flex-col p-2 lg:p-5 pb-2 lg:pb-3">
+        <div className="flex flex-col p-3 lg:p-5 pb-3 lg:pb-3">
           <span
-            className="hidden lg:block text-[10px] tracking-[0.35em] uppercase font-light mb-1"
-            style={{ color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}
+            className="text-[9px] lg:text-[10px] tracking-[0.3em] uppercase font-light mb-1"
+            style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
           >
             {perfume.brand}
           </span>
 
           <h3
-            className="text-[11px] lg:text-xl font-normal text-white mb-1 lg:mb-2 leading-snug"
+            className="text-sm lg:text-xl font-normal text-white mb-2 leading-snug"
             style={{ fontFamily: "var(--font-perfume)" }}
           >
             {perfume.name}
@@ -178,16 +178,16 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
             {perfume.description}
           </p>
 
-          <div className="flex items-baseline gap-1 lg:gap-3 mb-2 lg:mb-5">
+          <div className="flex items-baseline gap-2 mb-2 lg:mb-5">
             <span
-              className="text-xs lg:text-2xl font-light"
+              className="text-sm lg:text-2xl font-light"
               style={{ color: "#FFFFFF", fontFamily: "'Montserrat', sans-serif" }}
             >
               {getActivePrice(perfume.price, perfume.offer)}
             </span>
             {isOfferActive(perfume.offer) && (
               <span
-                className="text-[10px] lg:text-sm line-through font-light"
+                className="text-xs lg:text-sm line-through font-light"
                 style={{ color: "rgba(255,255,255,0.25)", fontFamily: "sans-serif" }}
               >
                 {perfume.price}

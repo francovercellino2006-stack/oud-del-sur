@@ -280,7 +280,7 @@ export default function CatalogGrid({
         {filtered.length > 0 ? (
           <motion.div
             layout
-            className="grid gap-3 grid-cols-3 lg:grid-cols-3 lg:gap-6"
+            className="grid gap-3 grid-cols-2 lg:grid-cols-3 lg:gap-6"
           >
             <AnimatePresence mode="popLayout">
               {filtered.map((perfume, i) => (
