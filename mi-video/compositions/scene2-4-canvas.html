@@ -1,0 +1,174 @@
+<template id="scene2-4-canvas-template">
+  <div
+    data-composition-id="scene2-4-canvas"
+    data-width="1920"
+    data-height="1080"
+    data-duration="12.5"
+  >
+    <div class="canvas">
+
+      <!-- Video principal -->
+      <video id="main-video" class="main-video clip" src="../assets/IMG_0115.MOV" muted playsinline preload="auto"
+        data-start="0" data-duration="12.5" data-track-index="0"></video>
+      <audio id="main-audio" class="main-audio clip" src="../assets/IMG_0115.MOV" preload="auto"
+        data-start="0" data-duration="12.5" data-track-index="1"></audio>
+
+      <!-- Vignette oscuro en bordes -->
+      <div class="vignette"></div>
+
+      <!-- Barra dorada inferior -->
+      <div class="gold-bar"></div>
+
+      <!-- Marca de agua esquina -->
+      <div class="watermark">OUD DEL SUR</div>
+
+      <!-- Título central (aparece a mitad del video) -->
+      <div class="center-title">
+        <div class="ct-line-top"></div>
+        <div class="ct-main">Perfumes Árabes Originales</div>
+        <div class="ct-sub">VIEDMA · PATAGONIA · ARGENTINA</div>
+        <div class="ct-line-bottom"></div>
+      </div>
+
+    </div>
+
+    <style>
+      [data-composition-id="scene2-4-canvas"] .canvas {
+        width: 1920px;
+        height: 1080px;
+        background: #000;
+        position: relative;
+        overflow: hidden;
+      }
+      [data-composition-id="scene2-4-canvas"] .main-video {
+        position: absolute;
+        top: 0; left: 0;
+        width: 1920px;
+        height: 1080px;
+        object-fit: cover;
+      }
+      [data-composition-id="scene2-4-canvas"] .vignette {
+        position: absolute;
+        top: 0; left: 0;
+        width: 1920px; height: 1080px;
+        background: radial-gradient(ellipse at center,
+          transparent 40%,
+          rgba(0,0,0,0.35) 70%,
+          rgba(0,0,0,0.65) 100%
+        );
+        pointer-events: none;
+      }
+      [data-composition-id="scene2-4-canvas"] .gold-bar {
+        position: absolute;
+        bottom: 0; left: 0;
+        width: 1920px;
+        height: 3px;
+        background: linear-gradient(90deg, transparent 0%, #D4AF37 20%, #D4AF37 80%, transparent 100%);
+      }
+      [data-composition-id="scene2-4-canvas"] .watermark {
+        position: absolute;
+        top: 48px;
+        right: 60px;
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 22px;
+        font-weight: 300;
+        letter-spacing: 0.4em;
+        color: rgba(212, 175, 55, 0.75);
+        text-shadow: 0 1px 8px rgba(0,0,0,0.6);
+      }
+      [data-composition-id="scene2-4-canvas"] .center-title {
+        position: absolute;
+        top: 50%; left: 50%;
+        text-align: center;
+        width: 1300px;
+      }
+      [data-composition-id="scene2-4-canvas"] .ct-line-top,
+      [data-composition-id="scene2-4-canvas"] .ct-line-bottom {
+        height: 1px;
+        width: 600px;
+        background: linear-gradient(90deg, transparent, #D4AF37, transparent);
+        margin: 0 auto 20px;
+      }
+      [data-composition-id="scene2-4-canvas"] .ct-line-bottom {
+        margin: 20px auto 0;
+      }
+      [data-composition-id="scene2-4-canvas"] .ct-main {
+        font-family: Georgia, 'Times New Roman', serif;
+        font-size: 80px;
+        font-weight: 300;
+        color: white;
+        letter-spacing: 0.05em;
+        font-style: italic;
+        text-shadow: 0 2px 20px rgba(0,0,0,0.8);
+        line-height: 1.1;
+      }
+      [data-composition-id="scene2-4-canvas"] .ct-sub {
+        font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif;
+        font-size: 17px;
+        font-weight: 300;
+        letter-spacing: 0.45em;
+        color: rgba(212, 175, 55, 0.85);
+        text-shadow: 0 1px 10px rgba(0,0,0,0.7);
+        margin-top: 16px;
+      }
+    </style>
+
+    <script src="https://cdn.jsdelivr.net/npm/gsap@3.14.2/dist/gsap.min.js"></script>
+    <script>
+      (function () {
+        const s = '[data-composition-id="scene2-4-canvas"]';
+        const tl = gsap.timeline({ paused: true });
+
+        // Center the title overlay
+        gsap.set(`${s} .center-title`, { xPercent: -50, yPercent: -50 });
+
+        // Initial states
+        gsap.set(`${s} .watermark`, { opacity: 0 });
+        gsap.set(`${s} .gold-bar`, { scaleX: 0, transformOrigin: 'center center' });
+        gsap.set(`${s} .ct-line-top`, { scaleX: 0, transformOrigin: 'center center' });
+        gsap.set(`${s} .ct-line-bottom`, { scaleX: 0, transformOrigin: 'center center' });
+        gsap.set(`${s} .ct-main`, { opacity: 0, y: 20 });
+        gsap.set(`${s} .ct-sub`, { opacity: 0 });
+
+        // Sync video playback with timeline seek
+        const video = document.querySelector('[data-composition-id="scene2-4-canvas"] .main-video');
+        const audio = document.querySelector('[data-composition-id="scene2-4-canvas"] .main-audio');
+
+        tl.call(() => {}, [], 0);
+
+        if (video) {
+          tl.to(video, {
+            currentTime: 12.5,
+            duration: 12.5,
+            ease: 'none',
+          }, 0);
+        }
+        if (audio) {
+          tl.to(audio, {
+            currentTime: 12.5,
+            duration: 12.5,
+            ease: 'none',
+          }, 0);
+        }
+
+        // Watermark fade in
+        tl.to(`${s} .watermark`, { opacity: 1, duration: 1.0, ease: 'power2.out' }, 0.5);
+
+        // Gold bar draws in
+        tl.to(`${s} .gold-bar`, { scaleX: 1, duration: 1.2, ease: 'power2.out' }, 0.3);
+
+        // Center title appears at 5.5s
+        tl.to(`${s} .ct-line-top`, { scaleX: 1, duration: 0.6, ease: 'power2.out' }, 5.5);
+        tl.to(`${s} .ct-main`, { opacity: 1, y: 0, duration: 0.9, ease: 'power3.out' }, 5.8);
+        tl.to(`${s} .ct-sub`, { opacity: 1, duration: 0.6, ease: 'power2.out' }, 6.5);
+        tl.to(`${s} .ct-line-bottom`, { scaleX: 1, duration: 0.6, ease: 'power2.out' }, 6.7);
+
+        // Fade out title before end
+        tl.to(`${s} .center-title`, { opacity: 0, duration: 0.6, ease: 'power2.in' }, 11.2);
+
+        window.__timelines = window.__timelines || {};
+        window.__timelines['scene2-4-canvas'] = tl;
+      })();
+    </script>
+  </div>
+</template>
