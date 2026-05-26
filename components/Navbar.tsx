@@ -55,7 +55,7 @@ export default function Navbar() {
               className="text-[9px] tracking-[0.45em] uppercase font-light mt-0.5"
               style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
             >
-              Perfumería Árabe
+              Viedma, Río Negro
             </span>
           </Link>
  

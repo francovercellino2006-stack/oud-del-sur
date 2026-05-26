@@ -23,7 +23,7 @@ export default function Footer() {
                 className="text-[9px] tracking-[0.45em] uppercase font-light mt-1"
                 style={{ color: "rgba(255,255,255,0.45)", fontFamily: "sans-serif" }}
               >
-                Perfumería Árabe Premium
+                Perfumería Árabe · Viedma, Río Negro
               </span>
             </Link>
             <p
