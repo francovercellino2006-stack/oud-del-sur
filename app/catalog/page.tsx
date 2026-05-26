@@ -30,7 +30,7 @@ export default async function CatalogPage({
     <>
       <Navbar />
 
-      <main className="min-h-screen bg-[#1C1C1E]">
+      <main className="min-h-screen bg-[#1A1510]">
 
         {/* Header */}
         <div className="relative pt-36 pb-16 px-6 border-b border-white/5">

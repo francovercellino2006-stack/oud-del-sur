@@ -46,7 +46,7 @@ export default function Hero() {
               transition={{ duration: 0.7, delay: 0.2 }}
               className="flex items-center gap-3 mb-10"
             >
-              <div className="h-px w-10" style={{ background: "#FFFFFF" }} />
+              <div className="h-px w-10" style={{ background: "#E8D5B0" }} />
               <span
                 className="text-xs tracking-[0.45em] uppercase font-light"
                 style={{ color: "#FFFFFF", fontFamily: "sans-serif" }}
@@ -69,7 +69,7 @@ export default function Hero() {
               <span
                 className="block text-5xl md:text-7xl font-light"
                 style={{
-                  background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
+                  background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 40%, #C4A882 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}
@@ -100,8 +100,8 @@ export default function Hero() {
                 href="/catalog"
                 className="group inline-flex items-center justify-center gap-3 px-8 py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300 hover:scale-105"
                 style={{
-                  background: "#FFFFFF",
-                  color: "#1C1C1E",
+                  background: "#E8D5B0",
+                  color: "#1A1510",
                   boxShadow: "0 4px 30px rgba(255,255,255,0.3)",
                   fontFamily: "sans-serif",
                 }}

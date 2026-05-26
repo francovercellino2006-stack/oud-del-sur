@@ -9,7 +9,7 @@ import { useCart } from "../hooks/useCart";
 import { applyDiscount, getActivePrice, isOfferActive } from "../utils/price";
  
 const BADGE_STYLES: Record<string, { bg: string; color: string; border: string }> = {
-  "Más vendido": { bg: "#FFFFFF",              color: "#1C1C1E", border: "transparent" },
+  "Más vendido": { bg: "#FFFFFF",              color: "#1A1510", border: "transparent" },
   "Nuevo":       { bg: "transparent",          color: "#ffffff", border: "rgba(255,255,255,0.25)" },
   "Top":         { bg: "transparent",          color: "#FFFFFF", border: "rgba(255,255,255,0.5)" },
   "Exclusivo":   { bg: "rgba(255,255,255,0.1)", color: "#FFFFFF", border: "rgba(255,255,255,0.4)" },
@@ -47,13 +47,13 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
       }}
       whileHover={{
         y: -8,
-        boxShadow: "0 20px 60px rgba(17,17,17,0.8), 0 0 0 1px rgba(255,255,255,0.12)",
+        boxShadow: "0 20px 60px rgba(26,21,16,0.8), 0 0 0 1px rgba(255,255,255,0.12)",
       }}
     >
       {/* Overlay agotado */}
       {perfume.outOfStock && (
         <div className="absolute inset-0 z-30 flex items-center justify-center pointer-events-none"
-          style={{ background: "rgba(17,17,17,0.6)", backdropFilter: "blur(2px)" }}>
+          style={{ background: "rgba(26,21,16,0.6)", backdropFilter: "blur(2px)" }}>
           <span className="px-4 py-2 text-xs tracking-[0.3em] uppercase font-light"
             style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
             Agotado
@@ -90,7 +90,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
         onClick={() => toggle(perfume.slug)}
         className="absolute top-3 right-3 z-20 flex items-center justify-center w-8 h-8 transition-all duration-300"
         style={{
-          background: fav ? "rgba(255,255,255,0.15)" : "rgba(17,17,17,0.4)",
+          background: fav ? "rgba(255,255,255,0.15)" : "rgba(26,21,16,0.4)",
           border: `1px solid ${fav ? "rgba(255,255,255,0.5)" : "rgba(255,255,255,0.1)"}`,
           backdropFilter: "blur(8px)",
         }}
@@ -118,7 +118,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
           <div
             className="absolute inset-0"
             style={{
-              background: "linear-gradient(180deg, transparent 40%, rgba(17,17,17,0.95) 100%)",
+              background: "linear-gradient(180deg, transparent 40%, rgba(26,21,16,0.95) 100%)",
             }}
           />
           <div
@@ -235,7 +235,7 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
           }}
           onMouseEnter={e => {
             e.currentTarget.style.background = "#FFFFFF";
-            e.currentTarget.style.color = "#1C1C1E";
+            e.currentTarget.style.color = "#1A1510";
           }}
           onMouseLeave={e => {
             e.currentTarget.style.background = "transparent";

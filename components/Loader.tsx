@@ -20,7 +20,7 @@ export default function Loader() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.9, ease: [0.25, 0.46, 0.45, 0.94] }}
           className="fixed inset-0 z-[9999] flex flex-col items-center justify-center"
-          style={{ background: "#1C1C1E" }}
+          style={{ background: "#1A1510" }}
         >
           {/* Gold glow */}
           <div
@@ -41,7 +41,7 @@ export default function Loader() {
               className="text-3xl font-light tracking-[0.25em] uppercase"
               style={{
                 fontFamily: "'Montserrat', sans-serif",
-                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
+                background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 40%, #C4A882 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}

@@ -52,7 +52,7 @@ const brands = [
 export default function Brands() {
     
   return (
-    <section id="marcas" className="relative py-28 px-6" style={{ background: "#1C1C1E" }}>
+    <section id="marcas" className="relative py-28 px-6" style={{ background: "#1A1510" }}>
       {/* Top accent */}
       <div
         className="absolute top-0 inset-x-0 h-px"
@@ -81,7 +81,7 @@ export default function Brands() {
             Marcas{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)",
+                background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 50%, #C4A882 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -128,7 +128,7 @@ return (
               }}
               onMouseEnter={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.25)";
-                e.currentTarget.style.boxShadow = "0 16px 50px rgba(17,17,17,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
+                e.currentTarget.style.boxShadow = "0 16px 50px rgba(26,21,16,0.7), 0 0 0 1px rgba(255,255,255,0.1)";
               }}
               onMouseLeave={(e) => {
                 e.currentTarget.style.borderColor = "rgba(255,255,255,0.06)";

@@ -44,7 +44,7 @@ export default function Navbar() {
               style={{
                 fontFamily: "'Montserrat', sans-serif",
                 background:
-                  "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
+                  "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 40%, #C4A882 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}
@@ -89,7 +89,7 @@ export default function Navbar() {
               <ShoppingBag size={16} />
               {items.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
-                  style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}>
+                  style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}>
                   {items.length}
                 </span>
               )}
@@ -103,7 +103,7 @@ export default function Navbar() {
               <Heart size={16} />
               {favorites.length > 0 && (
                 <span className="absolute -top-1 -right-1 flex items-center justify-center w-4 h-4 text-[9px] font-medium rounded-full"
-                  style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}>
+                  style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}>
                   {favorites.length}
                 </span>
               )}
@@ -130,7 +130,7 @@ export default function Navbar() {
             exit={{ opacity: 0, y: -16 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-40 flex flex-col px-6 pt-24 pb-10"
-            style={{ background: "rgba(17,17,17,0.97)", backdropFilter: "blur(16px)" }}
+            style={{ background: "rgba(26,21,16,0.97)", backdropFilter: "blur(16px)" }}
           >
             <nav className="flex flex-col">
               {[
@@ -155,7 +155,7 @@ export default function Navbar() {
                     }}
                   >
                     <span className="w-5 h-px flex-shrink-0 transition-all duration-300 group-hover:w-8"
-                      style={{ background: "#FFFFFF", opacity: 0.6 }} />
+                      style={{ background: "#E8D5B0", opacity: 0.6 }} />
                     <span className="group-hover:text-[#FFFFFF] transition-colors duration-300">
                       {link.label}
                     </span>
@@ -176,7 +176,7 @@ export default function Navbar() {
                 href="/catalog"
                 onClick={() => setMenuOpen(false)}
                 className="flex items-center justify-center w-full py-4 text-sm tracking-[0.25em] uppercase font-medium transition-all duration-300"
-                style={{ background: "#FFFFFF", color: "#1C1C1E" }}
+                style={{ background: "#E8D5B0", color: "#1A1510" }}
               >
                 Ver Catálogo Completo
               </Link>

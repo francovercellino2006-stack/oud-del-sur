@@ -70,7 +70,7 @@ export default function ProductDetail({
   ].slice(0, 3);
 
   return (
-    <main className="bg-[#1C1C1E] text-white">
+    <main className="bg-[#1A1510] text-white">
       <TransferModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
@@ -95,7 +95,7 @@ export default function ProductDetail({
           {/* Back button */}
           <Link href="/catalog"
             className="absolute top-4 left-4 z-20 flex items-center justify-center w-8 h-8 transition-all duration-200"
-            style={{ background: "rgba(17,17,17,0.45)", backdropFilter: "blur(8px)" }}>
+            style={{ background: "rgba(26,21,16,0.45)", backdropFilter: "blur(8px)" }}>
             <ArrowLeft size={14} style={{ color: "rgba(255,255,255,0.6)" }} />
           </Link>
 
@@ -112,7 +112,7 @@ export default function ProductDetail({
           {/* Out of stock overlay */}
           {perfume.outOfStock && (
             <div className="absolute inset-0 z-20 flex items-center justify-center"
-              style={{ background: "rgba(17,17,17,0.65)" }}>
+              style={{ background: "rgba(26,21,16,0.65)" }}>
               <span className="text-sm tracking-[0.3em] uppercase font-light px-4 py-2"
                 style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
                 Sin stock
@@ -122,7 +122,7 @@ export default function ProductDetail({
 
           {/* Bottom gradient */}
           <div className="absolute bottom-0 left-0 right-0 h-16 z-10"
-            style={{ background: "linear-gradient(to top, #1C1C1E, transparent)" }} />
+            style={{ background: "linear-gradient(to top, #1A1510, transparent)" }} />
         </div>
 
         {/* Mobile info */}
@@ -186,7 +186,7 @@ export default function ProductDetail({
           <div className="grid grid-cols-2 gap-px mb-6"
             style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
             {specs.map(({ label, value }) => (
-              <div key={label} className="px-4 py-3" style={{ background: "#1C1C1E" }}>
+              <div key={label} className="px-4 py-3" style={{ background: "#1A1510" }}>
                 <p className="text-[8px] tracking-[0.3em] uppercase font-light mb-1"
                   style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>
                   {label}
@@ -227,7 +227,7 @@ export default function ProductDetail({
 
         {/* Sticky bottom bar — mobile */}
         <div className="fixed bottom-0 left-0 right-0 z-50 px-4 py-4"
-          style={{ background: "rgba(17,17,17,0.97)", borderTop: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(20px)" }}>
+          style={{ background: "rgba(26,21,16,0.97)", borderTop: "1px solid rgba(255,255,255,0.15)", backdropFilter: "blur(20px)" }}>
           <div className="flex gap-3">
             <a href={waConsultUrl} target="_blank" rel="noopener noreferrer"
               className="flex items-center justify-center px-4 py-4 text-[10px] tracking-[0.2em] uppercase font-light transition-all duration-300"
@@ -243,8 +243,8 @@ export default function ProductDetail({
               <button onClick={() => setModalOpen(true)}
                 className="flex-1 flex items-center justify-center gap-2 py-4 text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300"
                 style={{
-                  background: "#FFFFFF",
-                  color: "#1C1C1E",
+                  background: "#E8D5B0",
+                  color: "#1A1510",
                   fontFamily: "sans-serif",
                 }}>
                 <CreditCard size={15} />
@@ -305,7 +305,7 @@ export default function ProductDetail({
                     <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
                       style={{
                         background: perfume.badge === "Más vendido" ? "#FFFFFF" : "transparent",
-                        color: perfume.badge === "Más vendido" ? "#1C1C1E" : "#FFFFFF",
+                        color: perfume.badge === "Más vendido" ? "#1A1510" : "#FFFFFF",
                         border: perfume.badge === "Más vendido" ? "none" : "1px solid rgba(255,255,255,0.4)",
                         fontFamily: "sans-serif",
                       }}>
@@ -323,7 +323,7 @@ export default function ProductDetail({
                 )}
                 {perfume.outOfStock && (
                   <div className="absolute inset-0 flex items-center justify-center"
-                    style={{ background: "rgba(17,17,17,0.65)" }}>
+                    style={{ background: "rgba(26,21,16,0.65)" }}>
                     <span className="text-sm tracking-[0.35em] uppercase font-light px-5 py-2"
                       style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
                       Sin stock
@@ -358,14 +358,14 @@ export default function ProductDetail({
               <div className="h-px mb-8" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.2), transparent)" }} />
 
               <div className="flex items-baseline gap-4 mb-8">
-                <span className="text-5xl font-light" style={{ fontFamily: "'Montserrat', sans-serif", background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{activePrice}</span>
+                <span className="text-5xl font-light" style={{ fontFamily: "'Montserrat', sans-serif", background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 50%, #C4A882 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{activePrice}</span>
                 {offerActive && <span className="text-xl line-through font-light" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}>{perfume.price}</span>}
                 <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}>{perfume.ml}ml</span>
               </div>
 
               <div className="grid grid-cols-2 gap-px mb-8" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
                 {specs.map(({ label, value }) => (
-                  <div key={label} className="px-5 py-4" style={{ background: "#1C1C1E" }}>
+                  <div key={label} className="px-5 py-4" style={{ background: "#1A1510" }}>
                     <p className="text-[9px] tracking-[0.3em] uppercase font-light mb-1" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{label}</p>
                     <p className="text-sm font-light text-white" style={{ fontFamily: "sans-serif" }}>{value}</p>
                   </div>
@@ -399,7 +399,7 @@ export default function ProductDetail({
                 <div className="flex flex-col gap-3">
                   <button onClick={() => setModalOpen(true)}
                     className="flex items-center justify-center gap-3 w-full py-5 text-sm tracking-[0.3em] uppercase font-medium transition-all duration-300"
-                    style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}
+                    style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}
                     onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 30px rgba(255,255,255,0.15)"; }}
                     onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
                     <CreditCard size={16} />
@@ -439,7 +439,7 @@ export default function ProductDetail({
                   style={{ width: "62vw", background: "#111", border: "1px solid rgba(255,255,255,0.06)" }}>
                   <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "linear-gradient(145deg, #181818, #111)" }}>
                     <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-6" style={{ mixBlendMode: "luminosity", opacity: 0.9 }} />
-                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,17,17,0.7) 0%, transparent 50%)" }} />
+                    <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(26,21,16,0.7) 0%, transparent 50%)" }} />
                   </div>
                   <div className="px-4 py-3">
                     <p className="text-[8px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>
@@ -465,7 +465,7 @@ export default function ProductDetail({
                       onMouseLeave={e => e.currentTarget.style.borderColor = "rgba(255,255,255,0.05)"}>
                       <div className="relative overflow-hidden" style={{ aspectRatio: "1/1", background: "linear-gradient(145deg, #181818, #111)" }}>
                         <img src={rel.image} alt={rel.name} className="w-full h-full object-contain p-8 transition-transform duration-700 group-hover:scale-105" />
-                        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(17,17,17,0.5) 0%, transparent 50%)" }} />
+                        <div className="absolute inset-0" style={{ background: "linear-gradient(to top, rgba(26,21,16,0.5) 0%, transparent 50%)" }} />
                       </div>
                       <div className="px-6 py-5">
                         <p className="text-[9px] tracking-[0.3em] uppercase mb-1 font-light" style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}>{rel.brand}</p>

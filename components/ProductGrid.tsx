@@ -6,7 +6,7 @@ export default function ProductGrid() {
     (perfume) => perfume.badge === "Más vendido"
   );
   return (
-    <section id="destacados" className="relative py-28 px-6" style={{ background: "#1C1C1E" }}>
+    <section id="destacados" className="relative py-28 px-6" style={{ background: "#1A1510" }}>
       {/* Top border accent */}
       <div
         className="absolute top-0 inset-x-0 h-px"
@@ -34,7 +34,7 @@ export default function ProductGrid() {
             Más{" "}
             <span
               style={{
-                background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 50%, #CCCCCC 100%)",
+                background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 50%, #C4A882 100%)",
                 WebkitBackgroundClip: "text",
                 WebkitTextFillColor: "transparent",
               }}

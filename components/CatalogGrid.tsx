@@ -82,7 +82,7 @@ export default function CatalogGrid({
       className="px-4 py-2 text-xs tracking-[0.15em] uppercase font-light transition-all duration-300 whitespace-nowrap"
       style={{
         background:   active ? "#FFFFFF"                      : "transparent",
-        color:        active ? "#1C1C1E"                      : "rgba(255,255,255,0.5)",
+        color:        active ? "#1A1510"                      : "rgba(255,255,255,0.5)",
         border:       active ? "1px solid #FFFFFF"            : "1px solid rgba(255,255,255,0.1)",
         fontFamily:   "sans-serif",
       }}
@@ -104,7 +104,7 @@ export default function CatalogGrid({
   );
 
   return (
-    <section className="px-6 py-16" style={{ background: "#1C1C1E" }}>
+    <section className="px-6 py-16" style={{ background: "#1A1510" }}>
       <div className="mx-auto max-w-7xl">
 
         {/* ── Search bar ── */}
@@ -326,7 +326,7 @@ export default function CatalogGrid({
               onClick={clearAll}
               className="px-6 py-3 text-xs tracking-[0.2em] uppercase font-light transition-all duration-300"
               style={{ border: "1px solid rgba(255,255,255,0.3)", color: "#FFFFFF", fontFamily: "sans-serif" }}
-              onMouseEnter={e => { e.currentTarget.style.background = "#FFFFFF"; e.currentTarget.style.color = "#1C1C1E"; }}
+              onMouseEnter={e => { e.currentTarget.style.background = "#FFFFFF"; e.currentTarget.style.color = "#1A1510"; }}
               onMouseLeave={e => { e.currentTarget.style.background = "transparent"; e.currentTarget.style.color = "#FFFFFF"; }}
             >
               Ver todos los perfumes

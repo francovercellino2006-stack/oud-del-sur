@@ -26,7 +26,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
             exit={{ opacity: 0 }}
             transition={{ duration: 0.3 }}
             className="fixed inset-0 z-[60]"
-            style={{ background: "rgba(17,17,17,0.7)", backdropFilter: "blur(4px)" }}
+            style={{ background: "rgba(26,21,16,0.7)", backdropFilter: "blur(4px)" }}
             onClick={onClose}
           />
 
@@ -51,7 +51,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                 </span>
                 {items.length > 0 && (
                   <span className="flex items-center justify-center w-5 h-5 text-[10px] font-medium rounded-full"
-                    style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}>
+                    style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}>
                     {items.length}
                   </span>
                 )}
@@ -129,7 +129,7 @@ export default function CartDrawer({ open, onClose }: CartDrawerProps) {
                   rel="noopener noreferrer"
                   onClick={onClose}
                   className="flex items-center justify-center gap-3 w-full py-4 text-sm tracking-[0.2em] uppercase font-medium transition-all duration-300"
-                  style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif",
+                  style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif",
                     boxShadow: "0 4px 30px rgba(255,255,255,0.25)" }}
                   onMouseEnter={(e) => (e.currentTarget.style.background = "#E8C84A")}
                   onMouseLeave={(e) => (e.currentTarget.style.background = "#FFFFFF")}

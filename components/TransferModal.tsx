@@ -77,7 +77,7 @@ export default function TransferModal({ open, onClose, productName, price }: Tra
       <div
         className="w-full max-w-md overflow-y-auto"
         style={{
-          background: "#1C1C1E",
+          background: "#1A1510",
           border: "1px solid rgba(255,255,255,0.08)",
           maxHeight: "90vh",
         }}
@@ -146,7 +146,7 @@ export default function TransferModal({ open, onClose, productName, price }: Tra
               className="flex items-center justify-center gap-2 w-full py-4 mt-6 text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300"
               style={{
                 background: allFilled ? "#FFFFFF" : "rgba(255,255,255,0.1)",
-                color: allFilled ? "#1C1C1E" : "rgba(255,255,255,0.25)",
+                color: allFilled ? "#1A1510" : "rgba(255,255,255,0.25)",
                 fontFamily: "sans-serif",
                 cursor: allFilled ? "pointer" : "not-allowed",
               }}
@@ -199,7 +199,7 @@ export default function TransferModal({ open, onClose, productName, price }: Tra
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full py-4 text-xs tracking-[0.25em] uppercase font-medium"
-              style={{ background: "#FFFFFF", color: "#1C1C1E", fontFamily: "sans-serif" }}
+              style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}
             >
               <MessageCircle size={14} />
               Enviar comprobante por WhatsApp

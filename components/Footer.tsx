@@ -2,7 +2,7 @@ import Link from "next/link";
 
 export default function Footer() {
   return (
-    <footer className="relative border-t px-6 py-16" style={{ background: "#1C1C1E", borderColor: "rgba(255,255,255,0.07)" }}>
+    <footer className="relative border-t px-6 py-16" style={{ background: "#1A1510", borderColor: "rgba(255,255,255,0.07)" }}>
       <div className="mx-auto max-w-7xl">
         <div className="flex flex-col items-start justify-between gap-12 md:flex-row md:items-center">
           {/* Brand */}
@@ -12,7 +12,7 @@ export default function Footer() {
                 className="text-2xl font-light tracking-[0.18em] uppercase"
                 style={{
                   fontFamily: "'Montserrat', sans-serif",
-                  background: "linear-gradient(90deg, #FFFFFF 0%, #FFFFFF 40%, #CCCCCC 100%)",
+                  background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 40%, #C4A882 100%)",
                   WebkitBackgroundClip: "text",
                   WebkitTextFillColor: "transparent",
                 }}
