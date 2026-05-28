@@ -16,6 +16,7 @@ export interface Perfume {
   inspiredBy?: string;
   offer?: { discount: number; endsAt: string };
   outOfStock?: boolean;
+  isDecant?: boolean;
 }
 
 const HOT_SALE = { discount: 15, endsAt: "2026-05-20T23:59:00" };

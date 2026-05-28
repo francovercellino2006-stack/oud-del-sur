@@ -30,6 +30,7 @@ export default function CatalogGrid({
   const [brand,    setBrand]    = useState(initialBrand    ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
   const [family,   setFamily]   = useState(initialFamily   ?? "");
+  const [productType, setProductType] = useState<"" | "perfume" | "decant">("");
   const [search,   setSearch]   = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
@@ -55,17 +56,20 @@ export default function CatalogGrid({
       if (brand    && p.brand    !== brand)    return false;
       if (category && p.category !== category) return false;
       if (family   && p.family   !== family)   return false;
+      if (productType === "decant"  && !p.isDecant)  return false;
+      if (productType === "perfume" &&  p.isDecant)  return false;
       if (q && ![p.name, p.brand, p.description, p.family].some((s) => s.toLowerCase().includes(q))) return false;
       return true;
     });
-  }, [brand, category, family, search]);
+  }, [brand, category, family, productType, search]);
 
-  const activeCount = [brand, category, family].filter(Boolean).length;
+  const activeCount = [brand, category, family, productType].filter(Boolean).length;
 
   const clearAll = () => {
     setBrand("");
     setCategory("");
     setFamily("");
+    setProductType("");
   };
 
   const FilterBtn = ({
@@ -195,7 +199,22 @@ export default function CatalogGrid({
                   </div>
                 </div>
 
-                {/* Row 2: Category + Family */}
+                {/* Row 2: Tipo */}
+                <div>
+                  <p
+                    className="text-[10px] tracking-[0.35em] uppercase mb-3 font-light"
+                    style={{ color: "rgba(255,255,255,0.5)", fontFamily: "sans-serif" }}
+                  >
+                    Tipo
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    <FilterBtn label="Todos"    active={productType === ""}        onClick={() => setProductType("")} />
+                    <FilterBtn label="Perfumes" active={productType === "perfume"} onClick={() => setProductType(productType === "perfume" ? "" : "perfume")} />
+                    <FilterBtn label="Decants"  active={productType === "decant"}  onClick={() => setProductType(productType === "decant"  ? "" : "decant")} />
+                  </div>
+                </div>
+
+                {/* Row 3: Category + Family */}
                 <div className="flex flex-wrap gap-x-10 gap-y-5">
                   <div>
                     <p
@@ -246,6 +265,7 @@ export default function CatalogGrid({
               <span className="text-xs font-light" style={{ color: "rgba(255,255,255,0.3)", fontFamily: "sans-serif" }}>
                 Filtros activos:
               </span>
+              {productType && <Chip label={productType === "decant" ? "Decants" : "Perfumes"} onRemove={() => setProductType("")} />}
               {brand    && <Chip label={brand}    onRemove={() => setBrand("")} />}
               {category && <Chip label={category} onRemove={() => setCategory("")} />}
               {family   && <Chip label={family}   onRemove={() => setFamily("")} />}

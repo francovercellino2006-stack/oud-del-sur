@@ -18,6 +18,7 @@ export const perfumeSchema = {
     { name: 'ml', type: 'number', title: 'ML' },
     { name: 'inspiredBy', type: 'string', title: 'Inspirado en (opcional)' },
     { name: 'outOfStock', type: 'boolean', title: 'Agotado', initialValue: false },
+    { name: 'isDecant', type: 'boolean', title: 'Es Decant', initialValue: false },
     { name: 'offerDiscount', type: 'number', title: 'Descuento Hot Sale (%)' },
     { name: 'offerEndsAt', type: 'string', title: 'Oferta válida hasta (ej: 2026-05-20T23:59:00)' },
     { name: 'order', type: 'number', title: 'Orden en catálogo' },

@@ -6,7 +6,7 @@ const PERFUME_FIELDS = `
   name, brand, description, price, priceOriginal,
   "image": coalesce(imageUrl, image.asset->url),
   badge, category, family, duration, ml,
-  inspiredBy, outOfStock, offerDiscount, offerEndsAt
+  inspiredBy, outOfStock, isDecant, offerDiscount, offerEndsAt
 `
 
 function mapPerfume(raw: any): Perfume {

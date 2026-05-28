@@ -63,6 +63,12 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
 
       {/* Badges column — top left */}
       <div className="absolute top-3 left-3 z-20 flex flex-col gap-1">
+        {perfume.isDecant && (
+          <span className="px-2 py-1 text-[10px] tracking-[0.18em] uppercase font-medium"
+            style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}>
+            Decant
+          </span>
+        )}
         {!perfume.outOfStock && isOfferActive(perfume.offer) && (
           <span className="px-2 py-1 text-[10px] tracking-[0.15em] uppercase font-medium"
             style={{ background: "rgba(200,40,40,0.92)", color: "white", fontFamily: "sans-serif" }}>
