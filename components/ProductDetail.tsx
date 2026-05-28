@@ -99,6 +99,16 @@ export default function ProductDetail({
             <ArrowLeft size={14} style={{ color: "rgba(255,255,255,0.6)" }} />
           </Link>
 
+          {/* Decant badge — mobile */}
+          {perfume.isDecant && (
+            <div className="absolute top-4 left-4 z-20">
+              <span className="px-2 py-1 text-[9px] tracking-[0.18em] uppercase font-medium"
+                style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}>
+                Decant
+              </span>
+            </div>
+          )}
+
           {/* Badge único — solo si hay oferta */}
           {offerActive && (
             <div className="absolute top-4 right-4 z-20">
@@ -156,7 +166,7 @@ export default function ProductDetail({
             )}
             <span className="ml-auto text-[9px] tracking-[0.25em] uppercase font-light px-2 py-1"
               style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
-              {perfume.ml}ml
+              {perfume.ml}ml{perfume.isDecant ? " · Decant" : ""}
             </span>
           </div>
 
@@ -300,8 +310,14 @@ export default function ProductDetail({
                 <div className="absolute inset-0 pointer-events-none"
                   style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.05) 0%, transparent 65%)" }} />
                 <img src={perfume.image} alt={perfume.name} className="w-full h-full object-contain p-12" />
-                {perfume.badge && (
-                  <div className="absolute top-5 left-5">
+                <div className="absolute top-5 left-5 flex flex-col gap-1.5">
+                  {perfume.isDecant && (
+                    <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
+                      style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}>
+                      Decant
+                    </span>
+                  )}
+                  {perfume.badge && (
                     <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
                       style={{
                         background: perfume.badge === "Más vendido" ? "#FFFFFF" : "transparent",
@@ -311,8 +327,8 @@ export default function ProductDetail({
                       }}>
                       {perfume.badge}
                     </span>
-                  </div>
-                )}
+                  )}
+                </div>
                 {offerActive && (
                   <div className="absolute top-5 right-5">
                     <span className="px-3 py-1 text-[9px] tracking-[0.2em] uppercase font-medium"
@@ -360,7 +376,7 @@ export default function ProductDetail({
               <div className="flex items-baseline gap-4 mb-8">
                 <span className="text-5xl font-light" style={{ fontFamily: "'Montserrat', sans-serif", background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 50%, #C4A882 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{activePrice}</span>
                 {offerActive && <span className="text-xl line-through font-light" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}>{perfume.price}</span>}
-                <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}>{perfume.ml}ml</span>
+                <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}>{perfume.ml}ml{perfume.isDecant ? " · Decant" : ""}</span>
               </div>
 
               <div className="grid grid-cols-2 gap-px mb-8" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
