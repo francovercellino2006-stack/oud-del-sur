@@ -5,8 +5,10 @@ const PERFUME_FIELDS = `
   "slug": slug.current,
   name, brand, description, price, priceOriginal,
   "image": coalesce(imageUrl, image.asset->url),
+  "imageDecant": coalesce(imageDecantUrl, imageDecant.asset->url),
   badge, category, family, duration, ml,
-  inspiredBy, outOfStock, isDecant, offerDiscount, offerEndsAt
+  inspiredBy, outOfStock, isDecant, offerDiscount, offerEndsAt,
+  variants[]{ ml, price }
 `
 
 function mapPerfume(raw: any): Perfume {

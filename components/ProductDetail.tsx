@@ -50,8 +50,28 @@ export default function ProductDetail({
 }) {
   const [modalOpen, setModalOpen] = useState(false);
 
-  const activePrice  = getActivePrice(perfume.price, perfume.offer);
-  const offerActive  = isOfferActive(perfume.offer);
+  // Build sorted list: full bottle first, then decant variants by ml asc
+  const allVariants = [
+    { ml: perfume.ml, price: perfume.price, isBase: true },
+    ...(perfume.variants ?? []).map(v => ({ ...v, isBase: false })),
+  ].sort((a, b) => b.ml - a.ml); // big → small
+
+  const [selectedMl, setSelectedMl] = useState<number>(perfume.ml);
+
+  const selectedVariant = allVariants.find(v => v.ml === selectedMl) ?? allVariants[0];
+  const isBaseSelected  = selectedVariant.ml === perfume.ml;
+
+  // Price: apply hot-sale discount only on the full bottle
+  const activePrice = isBaseSelected
+    ? getActivePrice(perfume.price, perfume.offer)
+    : selectedVariant.price;
+
+  const offerActive  = isOfferActive(perfume.offer) && isBaseSelected;
+
+  // Image: switch to decant photo when a decant size is selected
+  const activeImage = !isBaseSelected && perfume.imageDecant
+    ? perfume.imageDecant
+    : perfume.image;
   const sensory      = SENSORY[perfume.family] ?? SENSORY.orientales;
 
   const waConsult    = encodeURIComponent(`Hola! Quería consultar sobre *${perfume.name}* (${perfume.brand}) antes de comprarlo. ¿Me podés dar más info?`);
@@ -74,7 +94,7 @@ export default function ProductDetail({
       <TransferModal
         open={modalOpen}
         onClose={() => setModalOpen(false)}
-        productName={`${perfume.name} — ${perfume.brand}`}
+        productName={`${perfume.name} — ${perfume.brand} (${selectedMl}ml)`}
         price={activePrice}
       />
 
@@ -87,9 +107,9 @@ export default function ProductDetail({
             style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.04) 0%, transparent 70%)" }} />
 
           <img
-            src={perfume.image}
+            src={activeImage}
             alt={perfume.name}
-            className="w-full h-full object-contain p-8"
+            className="w-full h-full object-contain p-8 transition-opacity duration-300"
           />
 
           {/* Back button */}
@@ -148,7 +168,7 @@ export default function ProductDetail({
             {perfume.name}
           </h1>
 
-          <div className="flex items-baseline gap-3 mb-6">
+          <div className="flex items-baseline gap-3 mb-5">
             <span className="text-3xl font-light"
               style={{
                 fontFamily: "'Montserrat', sans-serif",
@@ -164,11 +184,34 @@ export default function ProductDetail({
                 {perfume.price}
               </span>
             )}
-            <span className="ml-auto text-[9px] tracking-[0.25em] uppercase font-light px-2 py-1"
-              style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.6)", fontFamily: "sans-serif" }}>
-              {perfume.ml}ml{perfume.isDecant ? " · Decant" : ""}
-            </span>
           </div>
+
+          {/* Selector de ML — mobile */}
+          {allVariants.length > 1 && (
+            <div className="mb-6">
+              <p className="text-[9px] tracking-[0.35em] uppercase font-light mb-3"
+                style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}>
+                Tamaño
+              </p>
+              <div className="flex flex-wrap gap-2">
+                {allVariants.map(v => (
+                  <button
+                    key={v.ml}
+                    onClick={() => setSelectedMl(v.ml)}
+                    className="px-4 py-2 text-xs tracking-[0.15em] uppercase font-light transition-all duration-200"
+                    style={{
+                      background:   selectedMl === v.ml ? "#FFFFFF"                       : "transparent",
+                      color:        selectedMl === v.ml ? "#1A1510"                       : "rgba(255,255,255,0.5)",
+                      border:       selectedMl === v.ml ? "1px solid #FFFFFF"             : "1px solid rgba(255,255,255,0.12)",
+                      fontFamily:   "sans-serif",
+                    }}
+                  >
+                    {v.ml}ml
+                  </button>
+                ))}
+              </div>
+            </div>
+          )}
 
           <div className="h-px mb-6" style={{ background: "rgba(255,255,255,0.06)" }} />
 
@@ -309,7 +352,7 @@ export default function ProductDetail({
                 }}>
                 <div className="absolute inset-0 pointer-events-none"
                   style={{ background: "radial-gradient(ellipse at 50% 20%, rgba(255,255,255,0.05) 0%, transparent 65%)" }} />
-                <img src={perfume.image} alt={perfume.name} className="w-full h-full object-contain p-12" />
+                <img src={activeImage} alt={perfume.name} className="w-full h-full object-contain p-12 transition-opacity duration-300" />
                 <div className="absolute top-5 left-5 flex flex-col gap-1.5">
                   {perfume.isDecant && (
                     <span className="px-3 py-1 text-[9px] tracking-[0.25em] uppercase font-medium"
@@ -373,11 +416,37 @@ export default function ProductDetail({
               <p className="text-sm leading-loose mb-8 font-light" style={{ color: "rgba(255,255,255,0.45)", fontFamily: "sans-serif", maxWidth: "38ch" }}>{perfume.description}</p>
               <div className="h-px mb-8" style={{ background: "linear-gradient(90deg, rgba(255,255,255,0.2), transparent)" }} />
 
-              <div className="flex items-baseline gap-4 mb-8">
+              <div className="flex items-baseline gap-4 mb-6">
                 <span className="text-5xl font-light" style={{ fontFamily: "'Montserrat', sans-serif", background: "linear-gradient(90deg, #E8D5B0 0%, #F5ECD8 50%, #C4A882 100%)", WebkitBackgroundClip: "text", WebkitTextFillColor: "transparent" }}>{activePrice}</span>
                 {offerActive && <span className="text-xl line-through font-light" style={{ color: "rgba(255,255,255,0.2)", fontFamily: "sans-serif" }}>{perfume.price}</span>}
-                <span className="ml-auto text-[10px] tracking-[0.3em] uppercase font-light px-3 py-1.5" style={{ border: "1px solid rgba(255,255,255,0.2)", color: "rgba(255,255,255,0.7)", fontFamily: "sans-serif" }}>{perfume.ml}ml{perfume.isDecant ? " · Decant" : ""}</span>
               </div>
+
+              {/* Selector de ML — desktop */}
+              {allVariants.length > 1 && (
+                <div className="mb-8">
+                  <p className="text-[9px] tracking-[0.4em] uppercase font-light mb-3"
+                    style={{ color: "rgba(255,255,255,0.4)", fontFamily: "sans-serif" }}>
+                    Tamaño
+                  </p>
+                  <div className="flex flex-wrap gap-2">
+                    {allVariants.map(v => (
+                      <button
+                        key={v.ml}
+                        onClick={() => setSelectedMl(v.ml)}
+                        className="px-5 py-2.5 text-xs tracking-[0.2em] uppercase font-light transition-all duration-200"
+                        style={{
+                          background: selectedMl === v.ml ? "#FFFFFF"                   : "transparent",
+                          color:      selectedMl === v.ml ? "#1A1510"                   : "rgba(255,255,255,0.5)",
+                          border:     selectedMl === v.ml ? "1px solid #FFFFFF"         : "1px solid rgba(255,255,255,0.12)",
+                          fontFamily: "sans-serif",
+                        }}
+                      >
+                        {v.ml}ml
+                      </button>
+                    ))}
+                  </div>
+                </div>
+              )}
 
               <div className="grid grid-cols-2 gap-px mb-8" style={{ border: "1px solid rgba(255,255,255,0.05)", background: "rgba(255,255,255,0.05)" }}>
                 {specs.map(({ label, value }) => (

@@ -17,6 +17,8 @@ export interface Perfume {
   offer?: { discount: number; endsAt: string };
   outOfStock?: boolean;
   isDecant?: boolean;
+  imageDecant?: string;
+  variants?: { ml: number; price: string }[];
 }
 
 const HOT_SALE = { discount: 15, endsAt: "2026-05-20T23:59:00" };
