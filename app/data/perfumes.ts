@@ -10,7 +10,7 @@ export interface Perfume {
   image: string;
   badge: PerfumeBadge;
   category: "hombre" | "mujer" | "unisex";
-  family: "dulces" | "frescos" | "orientales" | "maderosos" | "florales" | "aromaticas acuaticas";
+  family: "dulces" | "frescos" | "orientales" | "maderosos" | "florales" | "aromaticas" | "aromaticas acuaticas";
   duration: string;
   ml: number;
   inspiredBy?: string;
