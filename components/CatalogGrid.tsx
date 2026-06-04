@@ -7,7 +7,7 @@ import { X, SlidersHorizontal, Search } from "lucide-react";
 import ProductCard from "./ProductCard";
 import type { Perfume } from "../app/data/perfumes";
 
-const BRANDS    = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi"];
+const BRANDS    = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi", "Al Wataniah"];
 const CATS      = ["hombre", "mujer", "unisex"] as const;
 const FAMILIES  = ["dulces", "frescos", "orientales", "maderosos", "florales"] as const;
 
