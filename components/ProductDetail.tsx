@@ -2,11 +2,10 @@
 
 import { useState } from "react";
 import { motion } from "framer-motion";
-import { MessageCircle, ArrowLeft, CreditCard } from "lucide-react";
+import { MessageCircle, ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import type { Perfume } from "../app/data/perfumes";
 import { getActivePrice, isOfferActive } from "../utils/price";
-import TransferModal from "./TransferModal";
 
 const SENSORY: Record<string, { label: string; value: number }[]> = {
   orientales: [
@@ -48,8 +47,6 @@ export default function ProductDetail({
   perfume: Perfume;
   allPerfumes?: Perfume[];
 }) {
-  const [modalOpen, setModalOpen] = useState(false);
-
   // Build sorted list: full bottle first, then decant variants by ml asc
   const allVariants = [
     { ml: perfume.ml, price: perfume.price, isBase: true },
@@ -74,6 +71,9 @@ export default function ProductDetail({
     : perfume.image;
   const sensory      = SENSORY[perfume.family] ?? SENSORY.orientales;
 
+  const waBuy        = encodeURIComponent(`Hola! Quiero comprar *${perfume.name}* — ${perfume.brand} (${selectedMl}ml) — ${activePrice}. ¿Tienen stock?`);
+  const waBuyUrl     = `https://wa.me/5492920528440?text=${waBuy}`;
+
   const waConsult    = encodeURIComponent(`Hola! Quería consultar sobre *${perfume.name}* (${perfume.brand}) antes de comprarlo. ¿Me podés dar más info?`);
   const waConsultUrl = `https://wa.me/5492920528440?text=${waConsult}`;
 
@@ -91,12 +91,6 @@ export default function ProductDetail({
 
   return (
     <main className="bg-[#1A1510] text-white">
-      <TransferModal
-        open={modalOpen}
-        onClose={() => setModalOpen(false)}
-        productName={`${perfume.name} — ${perfume.brand} (${selectedMl}ml)`}
-        price={activePrice}
-      />
 
       {/* ─── MOBILE LAYOUT ─── */}
       <div className="lg:hidden">
@@ -293,16 +287,16 @@ export default function ProductDetail({
                 Sin stock
               </div>
             ) : (
-              <button onClick={() => setModalOpen(true)}
+              <a href={waBuyUrl} target="_blank" rel="noopener noreferrer"
                 className="flex-1 flex items-center justify-center gap-2 py-4 text-xs tracking-[0.25em] uppercase font-medium transition-all duration-300"
                 style={{
                   background: "#E8D5B0",
                   color: "#1A1510",
                   fontFamily: "sans-serif",
                 }}>
-                <CreditCard size={15} />
+                <MessageCircle size={15} />
                 Comprar
-              </button>
+              </a>
             )}
           </div>
           <p className="text-center text-[9px] mt-2 font-light tracking-wide"
@@ -482,14 +476,14 @@ export default function ProductDetail({
                 <div className="flex items-center justify-center w-full py-5 text-sm tracking-[0.3em] uppercase font-light" style={{ background: "rgba(255,255,255,0.03)", color: "rgba(255,255,255,0.25)", border: "1px solid rgba(255,255,255,0.06)", fontFamily: "sans-serif" }}>Sin stock disponible</div>
               ) : (
                 <div className="flex flex-col gap-3">
-                  <button onClick={() => setModalOpen(true)}
+                  <a href={waBuyUrl} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 w-full py-5 text-sm tracking-[0.3em] uppercase font-medium transition-all duration-300"
                     style={{ background: "#E8D5B0", color: "#1A1510", fontFamily: "sans-serif" }}
-                    onMouseEnter={e => { e.currentTarget.style.transform = "translateY(-1px)"; e.currentTarget.style.boxShadow = "0 6px 30px rgba(255,255,255,0.15)"; }}
-                    onMouseLeave={e => { e.currentTarget.style.transform = "translateY(0)"; e.currentTarget.style.boxShadow = "none"; }}>
-                    <CreditCard size={16} />
-                    Comprar — Transferencia
-                  </button>
+                    onMouseEnter={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(-1px)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "0 6px 30px rgba(255,255,255,0.15)"; }}
+                    onMouseLeave={e => { (e.currentTarget as HTMLAnchorElement).style.transform = "translateY(0)"; (e.currentTarget as HTMLAnchorElement).style.boxShadow = "none"; }}>
+                    <MessageCircle size={16} />
+                    Comprar por WhatsApp
+                  </a>
                   <a href={waConsultUrl} target="_blank" rel="noopener noreferrer"
                     className="flex items-center justify-center gap-3 w-full py-4 text-xs tracking-[0.3em] uppercase font-light transition-all duration-300"
                     style={{ color: "rgba(255,255,255,0.35)", border: "1px solid rgba(255,255,255,0.08)", fontFamily: "sans-serif" }}
