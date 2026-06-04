@@ -9,7 +9,7 @@ import type { Perfume } from "../app/data/perfumes";
 
 const BRANDS    = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi", "Al Wataniah"];
 const CATS      = ["hombre", "mujer", "unisex"] as const;
-const FAMILIES  = ["dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "acuaticas"] as const;
+const FAMILIES  = ["dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas acuaticas"] as const;
 
 interface CatalogGridProps {
   perfumes:         Perfume[];
