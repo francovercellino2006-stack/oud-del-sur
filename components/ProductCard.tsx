@@ -35,10 +35,10 @@ export default function ProductCard({ perfume, index = 0 }: ProductCardProps) {
  
   return (
     <motion.div
-      initial={{ opacity: 0, y: 40 }}
-      whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true, margin: "-60px" }}
-      transition={{ duration: 0.6, delay: index * 0.1, ease: [0.25, 0.46, 0.45, 0.94] }}
+      initial={{ opacity: 0 }}
+      whileInView={{ opacity: 1 }}
+      viewport={{ once: true, margin: "-20px" }}
+      transition={{ duration: 0.4, delay: index * 0.04, ease: "easeOut" }}
       className="group relative flex flex-col overflow-hidden"
       style={{
         background: "linear-gradient(160deg, #141414 0%, #0e0e0e 100%)",
