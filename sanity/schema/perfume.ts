@@ -15,7 +15,7 @@ export const perfumeSchema = {
     { name: 'imageDecantUrl', type: 'string', title: 'URL imagen decant (alternativa)' },
     { name: 'badge', type: 'string', title: 'Badge', options: { list: [{ title: 'Ninguno', value: '' }, 'Más vendido', 'Nuevo', 'Top', 'Exclusivo'] } },
     { name: 'category', type: 'string', title: 'Categoría', options: { list: ['hombre', 'mujer', 'unisex'] } },
-    { name: 'family', type: 'string', title: 'Familia', options: { list: ['dulces', 'frescos', 'orientales', 'maderosos', 'florales'] } },
+    { name: 'family', type: 'string', title: 'Familia', options: { list: ['dulces', 'frescos', 'orientales', 'maderosos', 'florales', 'aromaticas', 'acuaticas'] } },
     { name: 'duration', type: 'string', title: 'Duración (ej: 8-10 hs)' },
     { name: 'ml', type: 'number', title: 'ML (frasco completo)' },
     {
