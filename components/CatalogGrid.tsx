@@ -146,8 +146,8 @@ export default function CatalogGrid({
         {/* ── Filter bar ── */}
         <div className="mb-10">
 
-          {/* Mobile toggle */}
-          <div className="flex items-center justify-between mb-5 md:hidden">
+          {/* Toggle — visible en mobile y desktop */}
+          <div className="flex items-center justify-between mb-5">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-light transition-colors duration-300"
@@ -167,13 +167,17 @@ export default function CatalogGrid({
             )}
           </div>
 
-          {/* Desktop filters always visible, mobile collapsible */}
-          <AnimatePresence>
-            {(showFilters || true) && (
+          {/* Panel colapsable */}
+          <AnimatePresence initial={false}>
+            {showFilters && (
               <motion.div
-                initial={false}
-                className="space-y-5"
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
+                style={{ overflow: "hidden" }}
               >
+              <div className="space-y-5 pb-2">
                 {/* Row 1: Brands */}
                 <div>
                   <p
@@ -254,6 +258,7 @@ export default function CatalogGrid({
                     </div>
                   </div>
                 </div>
+              </div>
               </motion.div>
             )}
           </AnimatePresence>
