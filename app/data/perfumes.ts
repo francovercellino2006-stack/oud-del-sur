@@ -19,6 +19,8 @@ export interface Perfume {
   isDecant?: boolean;
   imageDecant?: string;
   variants?: { ml: number; price: string }[];
+  notes?: { top: string[]; heart: string[]; base: string[] };
+  sensory?: { label: string; value: number }[];
 }
 
 const HOT_SALE = { discount: 15, endsAt: "2026-05-20T23:59:00" };
@@ -38,6 +40,17 @@ export const perfumes: Perfume[] = [
     duration: "10-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["ámbar", "naranja", "bergamota"],
+      heart: ["oud", "sándalo", "rosa"],
+      base:  ["vainilla", "almizcle", "incienso"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 80 },
+      { label: "Intensidad", value: 90 },
+      { label: "Frescura",   value: 15 },
+      { label: "Maderas",    value: 70 },
+    ],
   },
   {
     slug: "khamrah",
@@ -53,6 +66,17 @@ export const perfumes: Perfume[] = [
     ml: 100,
     inspiredBy: "Baccarat Rouge 540 · Maison Francis Kurkdjian",
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "cereza", "frambuesa"],
+      heart: ["rosa", "jazmín", "vainilla"],
+      base:  ["oud", "ámbar", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 95 },
+      { label: "Intensidad", value: 65 },
+      { label: "Frescura",   value: 10 },
+      { label: "Maderas",    value: 30 },
+    ],
   },
   {
     slug: "qhawah",
@@ -67,6 +91,17 @@ export const perfumes: Perfume[] = [
     duration: "8-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["café arábigo", "cardamomo", "bergamota"],
+      heart: ["especias orientales", "oud"],
+      base:  ["sándalo", "vainilla", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 40 },
+      { label: "Intensidad", value: 80 },
+      { label: "Frescura",   value: 20 },
+      { label: "Maderas",    value: 75 },
+    ],
   },
   {
     slug: "dukhan",
@@ -81,6 +116,17 @@ export const perfumes: Perfume[] = [
     duration: "10-14 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["humo", "pimienta", "especias"],
+      heart: ["oud", "resinas", "incienso"],
+      base:  ["sándalo", "madera ahumada", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 20 },
+      { label: "Intensidad", value: 95 },
+      { label: "Frescura",   value: 10 },
+      { label: "Maderas",    value: 80 },
+    ],
   },
   {
     slug: "honor-and-glory",
@@ -95,6 +141,17 @@ export const perfumes: Perfume[] = [
     duration: "8-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "limón", "mandarina"],
+      heart: ["vainilla", "rosa", "jazmín"],
+      base:  ["ámbar", "almizcle", "cedro"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 85 },
+      { label: "Intensidad", value: 55 },
+      { label: "Frescura",   value: 20 },
+      { label: "Maderas",    value: 35 },
+    ],
   },
   {
     slug: "oud-for-glory",
@@ -109,6 +166,17 @@ export const perfumes: Perfume[] = [
     duration: "10-14 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["especias", "pimienta rosa", "cardamomo"],
+      heart: ["oud árabe", "maderas nobles"],
+      base:  ["sándalo", "ámbar", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 35 },
+      { label: "Intensidad", value: 85 },
+      { label: "Frescura",   value: 15 },
+      { label: "Maderas",    value: 90 },
+    ],
   },
   {
     slug: "noble-blush",
@@ -123,6 +191,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "frambuesa", "pera"],
+      heart: ["rosa", "peonía", "jazmín"],
+      base:  ["almizcle blanco", "vainilla", "cedro"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 60 },
+      { label: "Intensidad", value: 45 },
+      { label: "Frescura",   value: 75 },
+      { label: "Maderas",    value: 20 },
+    ],
   },
   {
     slug: "sublime",
@@ -137,6 +216,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["mango", "maracuyá", "bergamota"],
+      heart: ["jazmín", "ylang ylang", "crema"],
+      base:  ["vainilla", "coco", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 88 },
+      { label: "Intensidad", value: 55 },
+      { label: "Frescura",   value: 30 },
+      { label: "Maderas",    value: 20 },
+    ],
   },
   {
     slug: "atlas",
@@ -151,6 +241,17 @@ export const perfumes: Perfume[] = [
     duration: "12-14 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "cardamomo", "pimienta"],
+      heart: ["oud árabe", "cedro del Atlas", "sándalo"],
+      base:  ["almizcle", "ámbar", "vetiver"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 25 },
+      { label: "Intensidad", value: 75 },
+      { label: "Frescura",   value: 35 },
+      { label: "Maderas",    value: 95 },
+    ],
   },
   {
     slug: "club-de-nuit-iconic",
@@ -166,6 +267,17 @@ export const perfumes: Perfume[] = [
     ml: 100,
     inspiredBy: "Bleu de Chanel · Chanel",
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "limón", "pomelo"],
+      heart: ["jazmín", "geranio", "lavanda"],
+      base:  ["ámbar", "cedro", "pachulí"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 15 },
+      { label: "Intensidad", value: 55 },
+      { label: "Frescura",   value: 95 },
+      { label: "Maderas",    value: 45 },
+    ],
   },
   {
     slug: "club-de-nuit-intense",
@@ -181,6 +293,17 @@ export const perfumes: Perfume[] = [
     ml: 100,
     inspiredBy: "Creed Aventus · Creed",
     offer: HOT_SALE,
+    notes: {
+      top:   ["piña", "bergamota", "abedul"],
+      heart: ["jazmín", "rosa", "pachulí"],
+      base:  ["ámbar", "almizcle", "vetiver"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 30 },
+      { label: "Intensidad", value: 80 },
+      { label: "Frescura",   value: 55 },
+      { label: "Maderas",    value: 85 },
+    ],
   },
   {
     slug: "club-de-nuit-urban-man",
@@ -195,6 +318,17 @@ export const perfumes: Perfume[] = [
     duration: "8-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "mandarina", "lavanda"],
+      heart: ["geranio", "cardamomo", "iris"],
+      base:  ["ámbar", "cedro", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 25 },
+      { label: "Intensidad", value: 65 },
+      { label: "Frescura",   value: 60 },
+      { label: "Maderas",    value: 80 },
+    ],
   },
   {
     slug: "9pm-night-out",
@@ -209,6 +343,17 @@ export const perfumes: Perfume[] = [
     duration: "10-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "lavanda", "cardamomo"],
+      heart: ["ámbar", "especias", "rosa"],
+      base:  ["vainilla", "oud", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 70 },
+      { label: "Intensidad", value: 80 },
+      { label: "Frescura",   value: 30 },
+      { label: "Maderas",    value: 55 },
+    ],
   },
   {
     slug: "9pm-elixir",
@@ -224,6 +369,17 @@ export const perfumes: Perfume[] = [
     ml: 100,
     offer: HOT_SALE,
     outOfStock: true,
+    notes: {
+      top:   ["bergamota", "canela", "cardamomo"],
+      heart: ["vainilla", "jazmín", "especias"],
+      base:  ["ámbar", "sándalo", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 90 },
+      { label: "Intensidad", value: 70 },
+      { label: "Frescura",   value: 15 },
+      { label: "Maderas",    value: 40 },
+    ],
   },
   {
     slug: "9am",
@@ -239,6 +395,17 @@ export const perfumes: Perfume[] = [
     ml: 100,
     inspiredBy: "Acqua di Gio · Giorgio Armani",
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "limón", "mandarina"],
+      heart: ["jazmín", "salvia", "geranio"],
+      base:  ["cedro", "vetiver", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 15 },
+      { label: "Intensidad", value: 40 },
+      { label: "Frescura",   value: 90 },
+      { label: "Maderas",    value: 35 },
+    ],
   },
   {
     slug: "mandaryn-sky",
@@ -253,6 +420,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["mandarina", "naranja", "bergamota"],
+      heart: ["jazmín", "heliotropo", "violeta"],
+      base:  ["vainilla", "almizcle blanco", "sándalo"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 55 },
+      { label: "Intensidad", value: 40 },
+      { label: "Frescura",   value: 85 },
+      { label: "Maderas",    value: 25 },
+    ],
   },
   {
     slug: "hawas-for-her",
@@ -267,6 +445,17 @@ export const perfumes: Perfume[] = [
     duration: "8-12 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["frutos rojos", "melocotón", "bergamota"],
+      heart: ["rosa", "violeta", "jazmín"],
+      base:  ["vainilla", "almizcle blanco", "cedro"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 45 },
+      { label: "Intensidad", value: 40 },
+      { label: "Frescura",   value: 80 },
+      { label: "Maderas",    value: 20 },
+    ],
   },
   {
     slug: "mayar",
@@ -281,6 +470,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["mango", "maracuyá", "bergamota"],
+      heart: ["jazmín", "flores blancas", "rosa"],
+      base:  ["almizcle", "vainilla", "sándalo"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 80 },
+      { label: "Intensidad", value: 50 },
+      { label: "Frescura",   value: 35 },
+      { label: "Maderas",    value: 15 },
+    ],
   },
   {
     slug: "yara-candy",
@@ -295,6 +495,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["frambuesa", "fresa", "ciruela"],
+      heart: ["crema", "vainilla", "caramelo"],
+      base:  ["almizcle", "sándalo", "ámbar"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 95 },
+      { label: "Intensidad", value: 50 },
+      { label: "Frescura",   value: 15 },
+      { label: "Maderas",    value: 10 },
+    ],
   },
   {
     slug: "yara-pink",
@@ -309,6 +520,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["mango", "guayaba", "bergamota"],
+      heart: ["flores tropicales", "crema", "jazmín"],
+      base:  ["almizcle", "vainilla", "sándalo"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 85 },
+      { label: "Intensidad", value: 45 },
+      { label: "Frescura",   value: 25 },
+      { label: "Maderas",    value: 15 },
+    ],
   },
   {
     slug: "yara-touse",
@@ -323,6 +545,17 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["mango", "coco", "maracuyá"],
+      heart: ["jazmín", "ylang ylang", "crema"],
+      base:  ["vainilla", "almizcle", "sándalo"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 80 },
+      { label: "Intensidad", value: 50 },
+      { label: "Frescura",   value: 30 },
+      { label: "Maderas",    value: 15 },
+    ],
   },
   {
     slug: "asad",
@@ -337,6 +570,17 @@ export const perfumes: Perfume[] = [
     duration: "10-14 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "pimienta", "cardamomo"],
+      heart: ["oud", "especias orientales", "rosa"],
+      base:  ["vainilla", "ámbar", "almizcle"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 65 },
+      { label: "Intensidad", value: 90 },
+      { label: "Frescura",   value: 20 },
+      { label: "Maderas",    value: 70 },
+    ],
   },
   {
     slug: "eternal-touch",
@@ -351,5 +595,16 @@ export const perfumes: Perfume[] = [
     duration: "8-10 hs",
     ml: 100,
     offer: HOT_SALE,
+    notes: {
+      top:   ["bergamota", "rosa", "pera"],
+      heart: ["jazmín", "lirio del valle", "iris"],
+      base:  ["almizcle", "vainilla", "cedro"],
+    },
+    sensory: [
+      { label: "Dulzor",     value: 55 },
+      { label: "Intensidad", value: 45 },
+      { label: "Frescura",   value: 65 },
+      { label: "Maderas",    value: 30 },
+    ],
   },
 ];
