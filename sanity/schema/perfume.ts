@@ -5,7 +5,7 @@ export const perfumeSchema = {
   fields: [
     { name: 'name', type: 'string', title: 'Nombre' },
     { name: 'slug', type: 'slug', title: 'Slug', options: { source: 'name' } },
-    { name: 'brand', type: 'string', title: 'Marca', options: { list: ['Lattafa', 'Armaf', 'Afnan', 'Maison Alhambra', 'Rasasi', 'Al Wataniah'] } },
+    { name: 'brand', type: 'string', title: 'Marca', options: { list: ['Lattafa', 'Armaf', 'Afnan', 'Maison Alhambra', 'Rasasi', 'Al Wataniah', 'French Avenue'] } },
     { name: 'description', type: 'text', title: 'Descripción', rows: 3 },
     { name: 'price', type: 'string', title: 'Precio (ej: $74.000)' },
     { name: 'priceOriginal', type: 'string', title: 'Precio original (opcional)' },
