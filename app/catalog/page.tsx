@@ -52,16 +52,7 @@ export default async function CatalogPage({
               className="text-5xl md:text-6xl font-light text-white mb-4"
               style={{ fontFamily: "'Montserrat', sans-serif" }}
             >
-              {params.brand ?? "Catálogo"}{" "}
-              <span
-                style={{
-                  background: "linear-gradient(90deg, #FFFFFF, #FFFFFF, #CCCCCC)",
-                  WebkitBackgroundClip: "text",
-                  WebkitTextFillColor: "transparent",
-                }}
-              >
-                Premium
-              </span>
+              {params.brand ?? "Catálogo"}
             </h1>
             <p
               className="text-sm font-light"
