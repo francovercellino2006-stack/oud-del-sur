@@ -164,15 +164,7 @@ export default function CatalogGrid({
           </div>
 
           {/* Panel colapsable */}
-          <AnimatePresence initial={false}>
-            {showFilters && (
-              <motion.div
-                initial={{ opacity: 0, height: 0 }}
-                animate={{ opacity: 1, height: "auto" }}
-                exit={{ opacity: 0, height: 0 }}
-                transition={{ duration: 0.3, ease: [0.25, 0.46, 0.45, 0.94] }}
-                style={{ overflow: "hidden" }}
-              >
+          {showFilters && (
               <div className="space-y-5 pb-2">
                 {/* Row 1: Brands */}
                 <div>
@@ -255,9 +247,7 @@ export default function CatalogGrid({
                   </div>
                 </div>
               </div>
-              </motion.div>
-            )}
-          </AnimatePresence>
+          )}
 
           {/* Active filters summary + clear */}
           {activeCount > 0 && (
