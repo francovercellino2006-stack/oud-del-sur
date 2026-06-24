@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal, Search } from "lucide-react";
 import ProductCard from "./ProductCard";
@@ -25,6 +25,7 @@ export default function CatalogGrid({
   initialFamily,
 }: CatalogGridProps) {
   const router       = useRouter();
+  const searchParams = useSearchParams();
 
   const [brand,    setBrand]    = useState(initialBrand    ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
@@ -33,18 +34,21 @@ export default function CatalogGrid({
   const [search,   setSearch]   = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  // Sync state → URL (skip if URL already matches to avoid loops)
+  // Sync state → URL
   useEffect(() => {
     const params = new URLSearchParams();
     if (brand)    params.set("brand",    brand);
     if (category) params.set("category", category);
     if (family)   params.set("family",   family);
-    const target = params.toString();
-    const current = new URLSearchParams(window.location.search).toString();
-    if (target !== current) {
-      router.replace(`/catalog?${target}`, { scroll: false });
-    }
-  }, [brand, category, family, router]);
+    router.replace(`/catalog?${params.toString()}`, { scroll: false });
+  }, [brand, category, family]);
+
+  // Sync URL → state (back/forward navigation)
+  useEffect(() => {
+    setBrand(searchParams.get("brand")    ?? "");
+    setCategory(searchParams.get("category") ?? "");
+    setFamily(searchParams.get("family")   ?? "");
+  }, [searchParams]);
 
   const filtered = useMemo<Perfume[]>(() => {
     const q = search.toLowerCase().trim();
@@ -142,8 +146,8 @@ export default function CatalogGrid({
         {/* ── Filter bar ── */}
         <div className="mb-10">
 
-          {/* Toggle — visible en mobile y desktop */}
-          <div className="flex items-center justify-between mb-5">
+          {/* Mobile toggle */}
+          <div className="flex items-center justify-between mb-5 md:hidden">
             <button
               onClick={() => setShowFilters(!showFilters)}
               className="flex items-center gap-2 text-xs tracking-[0.2em] uppercase font-light transition-colors duration-300"
@@ -163,9 +167,13 @@ export default function CatalogGrid({
             )}
           </div>
 
-          {/* Panel colapsable */}
-          {showFilters && (
-              <div className="space-y-5 pb-2">
+          {/* Desktop filters always visible, mobile collapsible */}
+          <AnimatePresence>
+            {(showFilters || true) && (
+              <motion.div
+                initial={false}
+                className="space-y-5"
+              >
                 {/* Row 1: Brands */}
                 <div>
                   <p
@@ -246,8 +254,9 @@ export default function CatalogGrid({
                     </div>
                   </div>
                 </div>
-              </div>
-          )}
+              </motion.div>
+            )}
+          </AnimatePresence>
 
           {/* Active filters summary + clear */}
           {activeCount > 0 && (
