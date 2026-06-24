@@ -1,7 +1,6 @@
 "use client";
 
-import { useState, useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useState, useMemo } from "react";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal, Search } from "lucide-react";
 import ProductCard from "./ProductCard";
@@ -24,31 +23,12 @@ export default function CatalogGrid({
   initialCategory,
   initialFamily,
 }: CatalogGridProps) {
-  const router       = useRouter();
-  const searchParams = useSearchParams();
-
   const [brand,    setBrand]    = useState(initialBrand    ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
   const [family,   setFamily]   = useState(initialFamily   ?? "");
   const [productType, setProductType] = useState<"" | "perfume" | "decant">("");
   const [search,   setSearch]   = useState("");
   const [showFilters, setShowFilters] = useState(false);
-
-  // Sync state → URL
-  useEffect(() => {
-    const params = new URLSearchParams();
-    if (brand)    params.set("brand",    brand);
-    if (category) params.set("category", category);
-    if (family)   params.set("family",   family);
-    router.replace(`/catalog?${params.toString()}`, { scroll: false });
-  }, [brand, category, family]);
-
-  // Sync URL → state (back/forward navigation)
-  useEffect(() => {
-    setBrand(searchParams.get("brand")    ?? "");
-    setCategory(searchParams.get("category") ?? "");
-    setFamily(searchParams.get("family")   ?? "");
-  }, [searchParams]);
 
   const safePerfumes = useMemo(() => perfumes.filter((p) => p.name && p.slug && p.price), [perfumes]);
 
