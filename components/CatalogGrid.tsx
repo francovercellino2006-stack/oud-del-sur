@@ -50,18 +50,23 @@ export default function CatalogGrid({
     setFamily(searchParams.get("family")   ?? "");
   }, [searchParams]);
 
+  const safePerfumes = useMemo(() => perfumes.filter((p) => p.name && p.slug && p.price), [perfumes]);
+
   const filtered = useMemo<Perfume[]>(() => {
     const q = search.toLowerCase().trim();
-    return perfumes.filter((p) => {
+    return safePerfumes.filter((p) => {
       if (brand    && p.brand    !== brand)    return false;
       if (category && p.category !== category) return false;
       if (family   && p.family   !== family)   return false;
       if (productType === "decant"  && !p.isDecant)  return false;
       if (productType === "perfume" &&  p.isDecant)  return false;
-      if (q && ![p.name, p.brand, p.description, p.family].some((s) => (s ?? "").toLowerCase().includes(q))) return false;
+      if (q) {
+        const fields = [p.name ?? "", p.brand ?? "", p.description ?? "", p.family ?? ""];
+        if (!fields.some((s) => s.toLowerCase().includes(q))) return false;
+      }
       return true;
     });
-  }, [brand, category, family, productType, search]);
+  }, [safePerfumes, brand, category, family, productType, search]);
 
   const activeCount = [brand, category, family, productType].filter(Boolean).length;
 
