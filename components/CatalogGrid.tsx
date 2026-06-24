@@ -58,7 +58,7 @@ export default function CatalogGrid({
       if (family   && p.family   !== family)   return false;
       if (productType === "decant"  && !p.isDecant)  return false;
       if (productType === "perfume" &&  p.isDecant)  return false;
-      if (q && ![p.name, p.brand, p.description, p.family].some((s) => s.toLowerCase().includes(q))) return false;
+      if (q && ![p.name, p.brand, p.description, p.family].some((s) => (s ?? "").toLowerCase().includes(q))) return false;
       return true;
     });
   }, [brand, category, family, productType, search]);
