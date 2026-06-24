@@ -1,7 +1,7 @@
 "use client";
 
 import { useState, useEffect, useMemo } from "react";
-import { useRouter, useSearchParams } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { motion, AnimatePresence } from "framer-motion";
 import { X, SlidersHorizontal, Search } from "lucide-react";
 import ProductCard from "./ProductCard";
@@ -25,7 +25,6 @@ export default function CatalogGrid({
   initialFamily,
 }: CatalogGridProps) {
   const router       = useRouter();
-  const searchParams = useSearchParams();
 
   const [brand,    setBrand]    = useState(initialBrand    ?? "");
   const [category, setCategory] = useState(initialCategory ?? "");
@@ -34,21 +33,18 @@ export default function CatalogGrid({
   const [search,   setSearch]   = useState("");
   const [showFilters, setShowFilters] = useState(false);
 
-  // Sync state → URL
+  // Sync state → URL (skip if URL already matches to avoid loops)
   useEffect(() => {
     const params = new URLSearchParams();
     if (brand)    params.set("brand",    brand);
     if (category) params.set("category", category);
     if (family)   params.set("family",   family);
-    router.replace(`/catalog?${params.toString()}`, { scroll: false });
-  }, [brand, category, family]);
-
-  // Sync URL → state (back/forward navigation)
-  useEffect(() => {
-    setBrand(searchParams.get("brand")    ?? "");
-    setCategory(searchParams.get("category") ?? "");
-    setFamily(searchParams.get("family")   ?? "");
-  }, [searchParams]);
+    const target = params.toString();
+    const current = new URLSearchParams(window.location.search).toString();
+    if (target !== current) {
+      router.replace(`/catalog?${target}`, { scroll: false });
+    }
+  }, [brand, category, family, router]);
 
   const filtered = useMemo<Perfume[]>(() => {
     const q = search.toLowerCase().trim();
