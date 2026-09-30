@@ -56,14 +56,25 @@ function toSlug(str) {
 }
 
 async function buscarFragranticaUrl(nombre, marca) {
-  const query = `site:fragrantica.com ${nombre} ${marca} perfume`;
-  const res = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&kl=es-es`, { headers: HEADERS });
-  const html = await res.text();
-  const matches = [...html.matchAll(/https?:\/\/www\.fragrantica\.com\/perfume\/[^"&\s>]+/g)];
-  if (matches.length === 0) return null;
-  const nameSlug = nombre.toLowerCase().replace(/\s+/g, "-");
-  const best = matches.find(m => m[0].toLowerCase().includes(nameSlug)) ?? matches[0];
-  return best[0].split("&")[0];
+  // Intentar con variaciones progresivamente más cortas
+  const variaciones = [
+    `${nombre} ${marca}`,
+    nombre,
+    nombre.split(" ").slice(0, 2).join(" "), // primeras 2 palabras
+    nombre.split(" ")[0],                     // primera palabra
+  ].filter((v, i, arr) => arr.indexOf(v) === i); // sin duplicados
+
+  for (const variante of variaciones) {
+    const query = `site:fragrantica.com ${variante} perfume`;
+    const res = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&kl=es-es`, { headers: HEADERS });
+    const html = await res.text();
+    const matches = [...html.matchAll(/https?:\/\/www\.fragrantica\.com\/perfume\/[^"&\s>]+/g)];
+    if (matches.length === 0) continue;
+    const nameSlug = variante.toLowerCase().replace(/\s+/g, "-");
+    const best = matches.find(m => m[0].toLowerCase().includes(nameSlug)) ?? matches[0];
+    return best[0].split("&")[0];
+  }
+  return null;
 }
 
 async function scrapFragrantica(url) {
