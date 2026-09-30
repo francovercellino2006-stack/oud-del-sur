@@ -440,6 +440,22 @@ async function crearPerfume() {
     isDecant: false,
   };
 
+  // Verificar si ya existe un perfume con el mismo slug o nombre
+  const existente = await client.fetch(
+    `*[_type == "perfume" && (slug.current == $slug || lower(name) == $nameLower)][0]{ _id, name }`,
+    { slug, nameLower: nombre.toLowerCase() }
+  );
+  if (existente) {
+    console.log(`⚠️   Ya existe "${existente.name}" en Sanity (ID: ${existente._id}).`);
+    const usar = (await ask("   ¿Actualizar ese perfume en vez de crear uno nuevo? [s/N]: ")).trim();
+    if (usar.toLowerCase().startsWith("s")) {
+      await buscarYGuardar(nombre, marca, existente._id);
+      return;
+    }
+    console.log("   Creando de todas formas con slug alternativo...");
+    doc.slug = { _type: "slug", current: `${slug}-2` };
+  }
+
   console.log("\n⬆️   Creando perfume en Sanity...");
   const created = await client.create(doc);
   console.log(`✅  Perfume creado con ID: ${created._id}`);
