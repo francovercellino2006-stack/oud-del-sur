@@ -272,7 +272,31 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
   if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 100)}...`);
   console.log(`  Imagen:      ${datos.imageUrl ? "✅ encontrada" : "❌ no encontrada"}`);
 
-  const primero = await ask("¿Poner este perfume primero en el catálogo? [s/N]: ");
+  // Completar a mano los datos que faltan
+  if (!datos.category) {
+    console.log("\n  Categorías: 1) hombre  2) mujer  3) unisex");
+    const c = (await ask("  Categoría (número o texto, Enter para saltar): ")).trim();
+    if (c === "1") datos.category = "hombre";
+    else if (c === "2") datos.category = "mujer";
+    else if (c === "3") datos.category = "unisex";
+    else if (["hombre","mujer","unisex"].includes(c)) datos.category = c;
+  }
+
+  if (!datos.family) {
+    console.log("\n  Familias: 1) dulces  2) frescos  3) orientales  4) maderosos  5) florales  6) aromaticas  7) aromaticas acuaticas");
+    const f = (await ask("  Familia (número o texto, Enter para saltar): ")).trim();
+    const familias = ["dulces","frescos","orientales","maderosos","florales","aromaticas","aromaticas acuaticas"];
+    const fn = parseInt(f);
+    if (!isNaN(fn) && fn >= 1 && fn <= familias.length) datos.family = familias[fn - 1];
+    else if (familias.includes(f)) datos.family = f;
+  }
+
+  if (!datos.duration) {
+    const d = (await ask("  Duración (ej: 6-10 hs, Enter para saltar): ")).trim();
+    if (d) datos.duration = d;
+  }
+
+  const primero = await ask("\n¿Poner este perfume primero en el catálogo? [s/N]: ");
   const ok = await ask("¿Guardar datos? [s/N]: ");
   if (!ok.toLowerCase().startsWith("s")) { console.log("Cancelado."); return false; }
 
