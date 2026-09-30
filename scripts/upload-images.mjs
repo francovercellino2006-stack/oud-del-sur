@@ -178,13 +178,21 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
   if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 80)}...`);
   console.log(`  Imagen:      ${datos.imageUrl ? "✅ encontrada" : "❌ no encontrada"}`);
 
-  const ok = await ask("\n¿Guardar? [s/N]: ");
+  const primero = await ask("¿Poner este perfume primero en el catálogo? [s/N]: ");
+  const ok = await ask("¿Guardar datos? [s/N]: ");
   if (!ok.toLowerCase().startsWith("s")) { console.log("Cancelado."); return false; }
 
   const patch = {};
   if (datos.category) patch.category = datos.category;
   if (datos.family && FAMILIES_VALID.includes(datos.family)) patch.family = datos.family;
   if (datos.description) patch.description = datos.description;
+
+  if (primero.toLowerCase().startsWith("s")) {
+    // Traer el order más bajo actual y restar 1
+    const minOrder = await client.fetch(`*[_type == "perfume"] | order(order asc)[0].order`);
+    patch.order = (minOrder ?? 1) - 1;
+    console.log(`📌  Orden: ${patch.order} (primero en catálogo)`);
+  }
 
   if (datos.imageUrl) {
     console.log("\n⬇️   Descargando imagen...");
