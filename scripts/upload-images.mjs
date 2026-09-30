@@ -1,10 +1,11 @@
 /**
- * Busca la mejor imagen del perfume en internet y la sube a Sanity.
+ * Agrega o completa perfumes en Sanity usando datos de Fragrantica.
  *
  * USO:
  *   node scripts/upload-images.mjs
  *
- * Muestra la lista de perfumes sin imagen → elegís uno → busca la foto → la sube.
+ * - Elegís un perfume existente para completarle los datos
+ * - O escribís "0" para crear uno nuevo desde cero
  */
 
 import { createClient } from "@sanity/client";
@@ -19,143 +20,224 @@ const PROJECT_ID = "mbd1smgb";
 const DATASET    = "production";
 const TOKEN      = "skrVODsYlAdDv5WKNebAAyTvju3CEittxoUWqeizjdIJEZklhFpwS5S008nAKM3J5qB7df6WqXirjErsZGHlVJkatYzWiVdSYzdPUW2zARAIdzN6WMXk6cqDjTckm9bv3vjugxLX9HDoDRCnDuQPpmvQTb5MBHUanrVXMjUxQdFhLiLK83SY";
 
-const client = createClient({
-  projectId:  PROJECT_ID,
-  dataset:    DATASET,
-  token:      TOKEN,
-  apiVersion: "2024-01-01",
-  useCdn:     false,
-});
+const BRANDS_VALID   = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi", "Al Wataniah", "French Avenue"];
+const FAMILIES_VALID = ["dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "aromaticas acuaticas"];
 
+const client = createClient({ projectId: PROJECT_ID, dataset: DATASET, token: TOKEN, apiVersion: "2024-01-01", useCdn: false });
 const rl = createInterface({ input: process.stdin, output: process.stdout });
 const ask = (q) => new Promise(res => rl.question(q, res));
 
-async function buscarImagen(query) {
-  const headers = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
-    "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
-  };
+const HEADERS = {
+  "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+  "Accept-Language": "es-ES,es;q=0.9,en;q=0.8",
+  "Accept": "text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8",
+};
 
-  const homeRes = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, { headers });
-  const homeHtml = await homeRes.text();
-  const vqdMatch = homeHtml.match(/vqd=['"]([^'"]+)['"]/);
-  if (!vqdMatch) throw new Error("No se pudo obtener el token de búsqueda.");
-  const vqd = vqdMatch[1];
+const ACCORD_MAP = [
+  { keywords: ["aquatic", "marine", "ozonic", "sea"],                          family: "aromaticas acuaticas" },
+  { keywords: ["aromatic", "herbal", "lavender", "fougere"],                   family: "aromaticas" },
+  { keywords: ["floral", "rose", "jasmine", "iris", "lily"],                   family: "florales" },
+  { keywords: ["woody", "oud", "sandalwood", "cedar", "vetiver", "patchouli"], family: "maderosos" },
+  { keywords: ["oriental", "amber", "balsamic", "incense", "spicy", "musky"],  family: "orientales" },
+  { keywords: ["sweet", "vanilla", "gourmand", "caramel", "fruity", "powdery"],family: "dulces" },
+  { keywords: ["fresh", "citrus", "green", "lemon", "bergamot"],               family: "frescos" },
+];
 
-  const searchUrl = `https://duckduckgo.com/i.js?l=es-es&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,,,,,&p=1`;
-  const imgRes = await fetch(searchUrl, { headers: { ...headers, Referer: "https://duckduckgo.com/" } });
-  const data = await imgRes.json();
+function acordToFamily(accords) {
+  const joined = accords.join(" ").toLowerCase();
+  for (const { keywords, family } of ACCORD_MAP) {
+    if (keywords.some(k => joined.includes(k))) return family;
+  }
+  return null;
+}
 
-  if (!data.results || data.results.length === 0) throw new Error("No se encontraron imágenes.");
+function toSlug(str) {
+  return str.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+}
 
-  const preferred = ["fragrantica", "parfum", "perfume", "oud", "lattafa", "armaf", "afnan", "rasasi", "amazon", "mercadolibre"];
-  const sorted = data.results.sort((a, b) => {
-    const aScore = preferred.some(s => (a.url ?? "").toLowerCase().includes(s)) ? 1 : 0;
-    const bScore = preferred.some(s => (b.url ?? "").toLowerCase().includes(s)) ? 1 : 0;
-    return bScore - aScore;
-  });
+async function buscarFragranticaUrl(nombre, marca) {
+  const query = `site:fragrantica.com ${nombre} ${marca} perfume`;
+  const res = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&kl=es-es`, { headers: HEADERS });
+  const html = await res.text();
+  const matches = [...html.matchAll(/https?:\/\/www\.fragrantica\.com\/perfume\/[^"&\s>]+/g)];
+  if (matches.length === 0) return null;
+  const nameSlug = nombre.toLowerCase().replace(/\s+/g, "-");
+  const best = matches.find(m => m[0].toLowerCase().includes(nameSlug)) ?? matches[0];
+  return best[0].split("&")[0];
+}
 
-  return sorted[0].image;
+async function scrapFragrantica(url) {
+  const res = await fetch(url, { headers: HEADERS });
+  if (!res.ok) throw new Error(`Fragrantica respondió ${res.status}`);
+  const html = await res.text();
+  const data = {};
+
+  const nameMatch = html.match(/<h1[^>]*itemprop="name"[^>]*>([^<]+)<\/h1>/i)
+    ?? html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
+  data.name = nameMatch?.[1]?.trim();
+
+  const descMatch = html.match(/<div[^>]*itemprop="description"[^>]*>([\s\S]*?)<\/div>/i);
+  if (descMatch) {
+    data.description = descMatch[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 400);
+  }
+
+  const titleLower = (html.match(/<title>([^<]+)<\/title>/i)?.[1] ?? "").toLowerCase();
+  const genderText = html.match(/for\s+(men|women|unisex)/i)?.[1]?.toLowerCase()
+    ?? (titleLower.includes("for men") ? "men" : titleLower.includes("for women") ? "women" : "unisex");
+  data.category = genderText === "men" ? "hombre" : genderText === "women" ? "mujer" : "unisex";
+
+  const accordMatches = [...html.matchAll(/class="[^"]*accord-box[^"]*"[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>/gi)];
+  const accords = accordMatches.map(m => m[1].trim().toLowerCase()).filter(Boolean);
+  if (accords.length > 0) {
+    data.family  = acordToFamily(accords);
+    data.accords = accords.slice(0, 5);
+  }
+
+  const imgMatch = html.match(/src="(https:\/\/fimgs\.net\/[^"]+\.jpg)"/i)
+    ?? html.match(/content="(https:\/\/fimgs\.net\/[^"]+)"/i);
+  data.imageUrl = imgMatch?.[1];
+
+  return data;
 }
 
 async function descargarImagen(url) {
   const ext = url.split("?")[0].match(/\.(jpg|jpeg|png|webp)/i)?.[1] ?? "jpg";
   const tmpPath = join(tmpdir(), `perfume-${Date.now()}.${ext}`);
-
-  const res = await fetch(url, {
-    headers: { "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36" },
-  });
-  if (!res.ok) throw new Error(`Error al descargar imagen: ${res.status}`);
-
+  const res = await fetch(url, { headers: HEADERS });
+  if (!res.ok) throw new Error(`HTTP ${res.status}`);
   await pipeline(res.body, createWriteStream(tmpPath));
   return tmpPath;
+}
+
+async function subirImagen(imageUrl, nombre) {
+  const tmpPath = await descargarImagen(imageUrl);
+  const asset = await client.assets.upload("image", createReadStream(tmpPath), { filename: `${nombre}.jpg` });
+  try { unlinkSync(tmpPath); } catch {}
+  return { _type: "image", asset: { _type: "reference", _ref: asset._id } };
+}
+
+async function buscarYGuardar(nombre, marca, perfumeId) {
+  console.log(`\n🌐  Buscando "${nombre}" en Fragrantica...`);
+  let fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
+  if (!fragUrl) { console.error("❌  No encontrado en Fragrantica."); return false; }
+
+  console.log(`📄  ${fragUrl}`);
+  console.log("🔎  Leyendo datos...");
+  let datos;
+  try { datos = await scrapFragrantica(fragUrl); }
+  catch (e) { console.error(`❌  Error: ${e.message}`); return false; }
+
+  console.log("\n══════════════════════════════════════════");
+  console.log("📊  DATOS ENCONTRADOS:");
+  console.log("══════════════════════════════════════════");
+  console.log(`  Categoría:   ${datos.category ?? "(no encontrado)"}`);
+  console.log(`  Familia:     ${datos.family ?? "(no encontrado)"}`);
+  if (datos.accords?.length) console.log(`  Acordes:     ${datos.accords.join(", ")}`);
+  if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 80)}...`);
+  console.log(`  Imagen:      ${datos.imageUrl ? "✅ encontrada" : "❌ no encontrada"}`);
+
+  const ok = await ask("\n¿Guardar? [s/N]: ");
+  if (!ok.toLowerCase().startsWith("s")) { console.log("Cancelado."); return false; }
+
+  const patch = {};
+  if (datos.category) patch.category = datos.category;
+  if (datos.family && FAMILIES_VALID.includes(datos.family)) patch.family = datos.family;
+  if (datos.description) patch.description = datos.description;
+
+  if (datos.imageUrl) {
+    console.log("\n⬇️   Descargando imagen...");
+    try {
+      patch.image = await subirImagen(datos.imageUrl, nombre);
+      console.log("✅  Imagen subida.");
+    } catch (e) { console.warn(`⚠️   Sin imagen: ${e.message}`); }
+  }
+
+  if (Object.keys(patch).length === 0) {
+    console.log("⚠️   Sin datos nuevos."); return true;
+  }
+
+  await client.patch(perfumeId).set(patch).commit();
+  console.log(`\n🎉  ¡Guardado! (${Object.keys(patch).join(", ")})`);
+  return true;
+}
+
+async function crearPerfume() {
+  console.log("\n── CREAR PERFUME NUEVO ──────────────────");
+  const nombre = (await ask("Nombre del perfume: ")).trim();
+  if (!nombre) return;
+
+  // Mostrar marcas
+  BRANDS_VALID.forEach((b, i) => console.log(`  ${i + 1}. ${b}`));
+  const marcaInput = await ask("Marca (número o nombre): ");
+  const num = parseInt(marcaInput);
+  const marca = !isNaN(num) && num >= 1 && num <= BRANDS_VALID.length
+    ? BRANDS_VALID[num - 1]
+    : marcaInput.trim();
+
+  const precio = await ask("Precio (ej: $74.000): ");
+  const ml = parseInt(await ask("ML (ej: 100): ") || "0");
+
+  // Crear documento base en Sanity
+  const slug = toSlug(nombre);
+  const doc = {
+    _type: "perfume",
+    name: nombre,
+    brand: marca,
+    price: precio,
+    ml: ml || undefined,
+    slug: { _type: "slug", current: slug },
+    outOfStock: false,
+    isDecant: false,
+  };
+
+  console.log("\n⬆️   Creando perfume en Sanity...");
+  const created = await client.create(doc);
+  console.log(`✅  Perfume creado con ID: ${created._id}`);
+
+  // Buscar datos en Fragrantica
+  await buscarYGuardar(nombre, marca, created._id);
 }
 
 async function main() {
   console.log("\n🔍  Cargando perfumes...");
   const perfumes = await client.fetch(
-    `*[_type == "perfume"] | order(name asc) { _id, name, brand, image, imageDecant }`
+    `*[_type == "perfume"] | order(name asc) { _id, name, brand, image, family, category }`
   );
 
-  const sinImagen = perfumes.filter(p => !p.image);
-  const conImagen = perfumes.filter(p => p.image);
-  const lista = [...sinImagen, ...conImagen];
-
   console.log("\n══════════════════════════════════════════");
-  console.log("📋  PERFUMES (sin imagen primero):");
+  console.log("📋  PERFUMES:");
   console.log("══════════════════════════════════════════");
-  lista.forEach((p, i) => {
+  console.log(`    0.      ➕  Crear perfume nuevo`);
+  perfumes.forEach((p, i) => {
     const img = p.image ? "🖼️ " : "   ";
-    console.log(`  ${String(i + 1).padStart(3)}.  ${img}  ${p.name}  —  ${p.brand}`);
+    const fam = p.family && p.category ? "✅" : "❌";
+    console.log(`  ${String(i + 1).padStart(3)}.  ${img}  ${fam}  ${p.name}  —  ${p.brand}`);
   });
-  console.log("\n🖼️ = ya tiene imagen\n");
+  console.log("\n🖼️ = imagen   ✅ = datos completos\n");
 
-  const input = await ask("Número o nombre del perfume: ");
-  const num = parseInt(input);
-  let perfume;
-  if (!isNaN(num) && num >= 1 && num <= lista.length) {
-    perfume = lista[num - 1];
+  const input = (await ask("Número o nombre: ")).trim();
+
+  if (input === "0") {
+    await crearPerfume();
   } else {
-    const q = input.toLowerCase();
-    perfume = lista.find(p => p.name.toLowerCase().includes(q));
-  }
-
-  if (!perfume) {
-    console.error(`❌  No se encontró "${input}"`);
-    rl.close(); return;
-  }
-
-  console.log(`\n✅  Perfume: ${perfume.name} — ${perfume.brand}`);
-
-  if (perfume.image) {
-    const ok = await ask("⚠️  Ya tiene imagen. ¿Reemplazar? [s/N]: ");
-    if (!ok.toLowerCase().startsWith("s")) {
-      console.log("Cancelado.");
-      rl.close(); return;
+    const num = parseInt(input);
+    let perfume;
+    if (!isNaN(num) && num >= 1 && num <= perfumes.length) {
+      perfume = perfumes[num - 1];
+    } else {
+      perfume = perfumes.find(p => p.name.toLowerCase().includes(input.toLowerCase()));
     }
+    if (!perfume) { console.error(`❌  No encontrado: "${input}"`); rl.close(); return; }
+
+    console.log(`\n✅  Seleccionado: ${perfume.name} — ${perfume.brand}`);
+    await buscarYGuardar(perfume.name, perfume.brand, perfume._id);
   }
 
-  const query = `${perfume.name} ${perfume.brand} perfume bottle`;
-  console.log(`\n🌐  Buscando imagen de "${perfume.name}"...`);
-
-  let imageUrl;
-  try {
-    imageUrl = await buscarImagen(query);
-    console.log(`📸  Imagen encontrada.`);
-  } catch (e) {
-    console.error(`❌  Error buscando imagen: ${e.message}`);
-    rl.close(); return;
-  }
-
-  console.log("⬇️   Descargando...");
-  let tmpPath;
-  try {
-    tmpPath = await descargarImagen(imageUrl);
-  } catch (e) {
-    console.error(`❌  Error descargando: ${e.message}`);
-    rl.close(); return;
-  }
-
-  console.log("⬆️   Subiendo a Sanity...");
-  try {
-    const asset = await client.assets.upload("image", createReadStream(tmpPath), {
-      filename: `${perfume.name}.jpg`,
-    });
-    await client.patch(perfume._id).set({
-      image: { _type: "image", asset: { _type: "reference", _ref: asset._id } },
-    }).commit();
-    console.log(`\n🎉  ¡Listo! Imagen de "${perfume.name}" subida a Sanity.`);
-  } catch (e) {
-    console.error(`❌  Error subiendo a Sanity: ${e.message}`);
-  } finally {
-    try { unlinkSync(tmpPath); } catch {}
-  }
-
-  const otro = await ask("\n¿Subir imagen de otro perfume? [s/N]: ");
+  const otro = await ask("\n¿Continuar con otro? [s/N]: ");
   rl.close();
   if (otro.toLowerCase().startsWith("s")) {
     spawn(process.execPath, [process.argv[1]], { stdio: "inherit" });
   }
 }
 
-main().catch(e => { console.error(e); rl.close(); process.exit(1); });
+main().catch(e => { console.error("\n❌ Error:", e.message); rl.close(); process.exit(1); });
