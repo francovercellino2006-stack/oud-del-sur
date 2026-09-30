@@ -194,6 +194,7 @@ async function subirImagen(imageUrl, nombre) {
 const TRUSTED_DOMAINS = [
   "fimgs.net",           // Fragrantica CDN
   "fragrantica.com",
+  "parfumo.net",
   "lattafaperfumes.com",
   "lattafa.ae",
   "armafperfumes.com",
@@ -267,6 +268,132 @@ async function buscarDatosDDG(nombre, marca) {
   return Object.keys(data).length > 0 ? data : null;
 }
 
+// Scraper de Parfumo.net — buena base de datos, menos bloqueos que Fragrantica
+async function scrapParfumo(nombre, marca) {
+  try {
+    const searchRes = await fetch(
+      `https://www.parfumo.net/Search/index?search=${encodeURIComponent(`${nombre} ${marca}`)}`,
+      { headers: HEADERS, signal: AbortSignal.timeout(10000) }
+    );
+    if (!searchRes.ok) return null;
+    const searchHtml = await searchRes.text();
+
+    const linkMatch = searchHtml.match(/href="(\/Perfumes\/[^"#?]+)"/);
+    if (!linkMatch) return null;
+
+    const perfRes = await fetch(`https://www.parfumo.net${linkMatch[1]}`, {
+      headers: HEADERS, signal: AbortSignal.timeout(10000)
+    });
+    if (!perfRes.ok) return null;
+    const html = await perfRes.text();
+    const data = {};
+
+    // Descripción: primer párrafo largo
+    const paras = [...html.matchAll(/<p[^>]*>([\s\S]{80,700}?)<\/p>/gi)]
+      .map(m => m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim())
+      .filter(p => !p.toLowerCase().includes("cookie") && !p.toLowerCase().includes("javascript"));
+    if (paras.length > 0) data.description = paras[0].slice(0, 400);
+
+    const lower = html.toLowerCase();
+
+    // Categoría
+    if (/\bfor men\b/.test(lower))        data.category = "hombre";
+    else if (/\bfor women\b/.test(lower)) data.category = "mujer";
+    else if (/\bunisex\b/.test(lower))    data.category = "unisex";
+
+    // Familia desde acordes
+    const accordMatches = [...html.matchAll(/class="[^"]*accord[^"]*"[\s\S]*?<span[^>]*>([^<]{3,30})<\/span>/gi)];
+    const accords = accordMatches.map(m => m[1].trim().toLowerCase()).filter(Boolean);
+    if (accords.length > 0) data.family = acordToFamily(accords);
+
+    // Duración
+    if (/very long lasting/i.test(html))  data.duration = "10+ hs";
+    else if (/long.?lasting/i.test(html)) data.duration = "6-10 hs";
+    else if (/moderate/i.test(html.slice(0, 5000))) data.duration = "4-6 hs";
+
+    // Imagen
+    const imgMatch = html.match(/src="(https:\/\/[^"]*parfumo\.net\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i);
+    if (imgMatch) data.imageUrl = imgMatch[1];
+
+    return Object.keys(data).length > 0 ? data : null;
+  } catch { return null; }
+}
+
+// Busca en DuckDuckGo Lite y visita las primeras páginas para extraer datos reales
+async function buscarDatosEnPaginas(nombre, marca) {
+  try {
+    const query = `${nombre} ${marca} perfume fragrance`;
+    const ddgRes = await fetch(
+      `https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query)}`,
+      { headers: HEADERS, signal: AbortSignal.timeout(10000) }
+    );
+    if (!ddgRes.ok) return null;
+    const ddgHtml = await ddgRes.text();
+
+    // Extraer URLs de resultados (DDG Lite las pone en href con posible redirect)
+    const rawUrls = [...ddgHtml.matchAll(/href="(https?:\/\/[^"]+)"/gi)]
+      .map(m => {
+        const u = m[1];
+        // Decodificar redirect de DDG: //duckduckgo.com/l/?uddg=ENCODED
+        if (u.includes("duckduckgo.com/l/")) {
+          try { return new URL(u).searchParams.get("uddg") ?? u; } catch { return u; }
+        }
+        return u;
+      })
+      .filter(u => !u.includes("duckduckgo") && !u.includes("google"))
+      .slice(0, 5);
+
+    const data = {};
+
+    for (const url of rawUrls) {
+      if (data.description && data.category && data.family) break;
+      try {
+        const res = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(8000) });
+        if (!res.ok) continue;
+        const html = await res.text();
+        const lower = html.toLowerCase();
+
+        // Descripción
+        if (!data.description) {
+          const paras = [...html.matchAll(/<p[^>]*>([\s\S]{80,600}?)<\/p>/gi)]
+            .map(m => m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim())
+            .filter(p => !p.toLowerCase().includes("cookie") && !p.toLowerCase().includes("javascript") && p.length > 80);
+          const primeraPalabra = nombre.split(" ")[0].toLowerCase();
+          const relevante = paras.find(p => p.toLowerCase().includes(primeraPalabra)) ?? paras[0];
+          if (relevante) data.description = relevante.slice(0, 400);
+        }
+
+        // Categoría
+        if (!data.category) {
+          if (/\bfor men\b|\bmasculine\b|\bmen'?s\b/.test(lower))        data.category = "hombre";
+          else if (/\bfor women\b|\bfeminine\b|\bwomen'?s\b/.test(lower)) data.category = "mujer";
+          else if (/\bunisex\b/.test(lower))                              data.category = "unisex";
+        }
+
+        // Familia
+        if (!data.family) data.family = acordToFamily(lower.split(/\W+/));
+
+        // Duración
+        if (!data.duration) {
+          if (/very long lasting/i.test(html))  data.duration = "10+ hs";
+          else if (/long.?lasting/i.test(html)) data.duration = "6-10 hs";
+          else if (/moderate longevity/i.test(html)) data.duration = "4-6 hs";
+        }
+
+        // Imagen de fuente confiable
+        if (!data.imageUrl) {
+          const imgMatch = html.match(
+            new RegExp(`src="(https://[^"]*(?:${TRUSTED_DOMAINS.join("|").replace(/\./g,"\\.")})[^"]+\\.(?:jpg|jpeg|png|webp)[^"]*)"`, "i")
+          );
+          if (imgMatch) data.imageUrl = imgMatch[1];
+        }
+      } catch {}
+    }
+
+    return Object.keys(data).length > 0 ? data : null;
+  } catch { return null; }
+}
+
 // Solo devuelve imagen si es de una fuente confiable
 async function buscarImagenConfiable(query) {
   const homeRes = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, { headers: HEADERS });
@@ -288,42 +415,65 @@ async function buscarImagenConfiable(query) {
   return confiables[0].image;
 }
 
-async function buscarYGuardar(nombre, marca, perfumeId) {
-  console.log(`\n🌐  Buscando "${nombre}" en Fragrantica...`);
-  let fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
+function falta(datos) {
+  return !datos.description || !datos.category || !datos.family;
+}
 
+async function buscarYGuardar(nombre, marca, perfumeId) {
   let datos = {};
 
-  if (fragUrl) {
-    console.log(`📄  ${fragUrl}`);
-    console.log("🔎  Leyendo datos...");
-    try { datos = await scrapFragrantica(fragUrl); }
-    catch (e) { console.warn(`⚠️   Error leyendo Fragrantica: ${e.message}`); }
+  // 1. Fragrantica (a veces funciona)
+  console.log(`\n🌐  [1/4] Fragrantica...`);
+  try {
+    const fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
+    if (fragUrl) {
+      console.log(`     ${fragUrl}`);
+      datos = await scrapFragrantica(fragUrl);
+      if (!falta(datos)) console.log("✅  Fragrantica: datos completos.");
+    }
+  } catch (e) { console.warn(`     Fragrantica: ${e.message}`); }
+
+  // 2. Parfumo (base de datos confiable, menos bloqueos)
+  if (falta(datos)) {
+    console.log("🌐  [2/4] Parfumo...");
+    try {
+      const parfumoData = await scrapParfumo(nombre, marca);
+      if (parfumoData) {
+        datos = { ...parfumoData, ...datos }; // fragrantica tiene prioridad si ya tiene algo
+        // Pero para campos vacíos, tomar parfumo
+        for (const k of Object.keys(parfumoData)) {
+          if (!datos[k]) datos[k] = parfumoData[k];
+        }
+        console.log(`✅  Parfumo: ${Object.keys(parfumoData).join(", ")}`);
+      }
+    } catch {}
   }
 
-  // Si Fragrantica bloqueó, intentar otras fuentes automáticamente
-  if (!datos.category || !datos.family) {
-    console.log("🔄  Intentando Notino y búsqueda web...");
+  // 3. Notino
+  if (falta(datos)) {
+    console.log("🌐  [3/4] Notino...");
     try {
       const notinoData = await scrapNotino(nombre, marca);
       if (notinoData) {
-        datos = { ...datos, ...notinoData };
-        console.log("✅  Datos obtenidos de Notino.");
+        for (const k of Object.keys(notinoData)) { if (!datos[k]) datos[k] = notinoData[k]; }
+        console.log(`✅  Notino: ${Object.keys(notinoData).join(", ")}`);
       }
     } catch {}
-
-    if (!datos.category || !datos.family) {
-      try {
-        const ddgData = await buscarDatosDDG(nombre, marca);
-        if (ddgData) {
-          datos = { ...datos, ...ddgData };
-          console.log("✅  Datos obtenidos de búsqueda web.");
-        }
-      } catch {}
-    }
   }
 
-  // Si sigue sin datos, pedir URL manual
+  // 4. Búsqueda web general (DuckDuckGo + visita de páginas)
+  if (falta(datos)) {
+    console.log("🌐  [4/4] Búsqueda web general...");
+    try {
+      const webData = await buscarDatosEnPaginas(nombre, marca);
+      if (webData) {
+        for (const k of Object.keys(webData)) { if (!datos[k]) datos[k] = webData[k]; }
+        console.log(`✅  Web: ${Object.keys(webData).join(", ")}`);
+      }
+    } catch {}
+  }
+
+  // Fallback: pedir URL manual si todavía no hay nada útil
   if (!datos.category && !datos.imageUrl) {
     console.log("⚠️   No se encontraron datos automáticamente.");
     console.log(`     Buscá en: https://www.fragrantica.com/search/?query=${encodeURIComponent(nombre)}`);
@@ -350,7 +500,11 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
   console.log(`  Duración:    ${datos.duration ?? "❌ no encontrado"}`);
   if (datos.accords?.length) console.log(`  Acordes:     ${datos.accords.join(", ")}`);
   if (datos.notes)       console.log(`  Notas:       ${datos.notes}`);
-  if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 100)}...`);
+  if (datos.description) {
+    console.log(`  Descripción: ${datos.description}`);
+    const editDesc = (await ask("  ¿Editar descripción? (Enter para usar esta, o escribí la nueva): ")).trim();
+    if (editDesc) datos.description = editDesc;
+  }
   console.log(`  Imagen:      ${datos.imageUrl ? "✅ encontrada" : "❌ no encontrada"}`);
 
   // Completar a mano los datos que faltan
@@ -370,6 +524,11 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
     const fn = parseInt(f);
     if (!isNaN(fn) && fn >= 1 && fn <= familias.length) datos.family = familias[fn - 1];
     else if (familias.includes(f)) datos.family = f;
+  }
+
+  if (!datos.description) {
+    const d = (await ask("  Descripción (Enter para saltar): ")).trim();
+    if (d) datos.description = d;
   }
 
   if (!datos.duration) {
