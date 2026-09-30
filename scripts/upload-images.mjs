@@ -127,16 +127,47 @@ async function subirImagen(imageUrl, nombre) {
   return { _type: "image", asset: { _type: "reference", _ref: asset._id } };
 }
 
+// Busca imagen en DuckDuckGo como fallback
+async function buscarImagenDDG(query) {
+  const homeRes = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, { headers: HEADERS });
+  const homeHtml = await homeRes.text();
+  const vqdMatch = homeHtml.match(/vqd=['"]([^'"]+)['"]/);
+  if (!vqdMatch) return null;
+  const vqd = vqdMatch[1];
+  const searchUrl = `https://duckduckgo.com/i.js?l=es-es&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,,,,,&p=1`;
+  const imgRes = await fetch(searchUrl, { headers: { ...HEADERS, Referer: "https://duckduckgo.com/" } });
+  const data = await imgRes.json();
+  if (!data.results?.length) return null;
+  const preferred = ["fragrantica", "parfum", "perfume", "oud", "lattafa", "armaf", "afnan", "rasasi", "amazon"];
+  const sorted = data.results.sort((a, b) => {
+    const aS = preferred.some(s => (a.url ?? "").toLowerCase().includes(s)) ? 1 : 0;
+    const bS = preferred.some(s => (b.url ?? "").toLowerCase().includes(s)) ? 1 : 0;
+    return bS - aS;
+  });
+  return sorted[0].image;
+}
+
 async function buscarYGuardar(nombre, marca, perfumeId) {
   console.log(`\n🌐  Buscando "${nombre}" en Fragrantica...`);
   let fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
-  if (!fragUrl) { console.error("❌  No encontrado en Fragrantica."); return false; }
 
-  console.log(`📄  ${fragUrl}`);
-  console.log("🔎  Leyendo datos...");
-  let datos;
-  try { datos = await scrapFragrantica(fragUrl); }
-  catch (e) { console.error(`❌  Error: ${e.message}`); return false; }
+  let datos = {};
+
+  if (fragUrl) {
+    console.log(`📄  ${fragUrl}`);
+    console.log("🔎  Leyendo datos...");
+    try { datos = await scrapFragrantica(fragUrl); }
+    catch (e) { console.warn(`⚠️   Error leyendo Fragrantica: ${e.message}`); }
+  } else {
+    console.log("⚠️   No encontrado en Fragrantica — buscando imagen en internet...");
+  }
+
+  // Fallback imagen: si Fragrantica no la dio, buscar en DuckDuckGo
+  if (!datos.imageUrl) {
+    try {
+      datos.imageUrl = await buscarImagenDDG(`${nombre} ${marca} perfume bottle`);
+    } catch {}
+  }
 
   console.log("\n══════════════════════════════════════════");
   console.log("📊  DATOS ENCONTRADOS:");
