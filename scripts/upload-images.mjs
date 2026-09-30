@@ -55,25 +55,60 @@ function toSlug(str) {
   return str.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
 
-async function buscarFragranticaUrl(nombre, marca) {
-  // Intentar con variaciones progresivamente más cortas
-  const variaciones = [
-    `${nombre} ${marca}`,
-    nombre,
-    nombre.split(" ").slice(0, 2).join(" "), // primeras 2 palabras
-    nombre.split(" ")[0],                     // primera palabra
-  ].filter((v, i, arr) => arr.indexOf(v) === i); // sin duplicados
+// Convierte un string al formato slug de Fragrantica (Primera-Letra-Mayuscula)
+function toFragranticaSlug(str) {
+  return str
+    .trim()
+    .split(/\s+/)
+    .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+    .join("-");
+}
 
-  for (const variante of variaciones) {
-    const query = `site:fragrantica.com ${variante} perfume`;
-    const res = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&kl=es-es`, { headers: HEADERS });
+async function probarUrlFragrantica(url) {
+  try {
+    const res = await fetch(url, { headers: HEADERS, redirect: "follow" });
+    // Fragrantica devuelve 200 incluso para páginas de búsqueda, verificar que sea una página de perfume
+    if (!res.ok) return false;
     const html = await res.text();
-    const matches = [...html.matchAll(/https?:\/\/www\.fragrantica\.com\/perfume\/[^"&\s>]+/g)];
-    if (matches.length === 0) continue;
-    const nameSlug = variante.toLowerCase().replace(/\s+/g, "-");
-    const best = matches.find(m => m[0].toLowerCase().includes(nameSlug)) ?? matches[0];
-    return best[0].split("&")[0];
+    return html.includes('itemprop="name"') || html.includes("accord-box");
+  } catch { return false; }
+}
+
+async function buscarFragranticaUrl(nombre, marca) {
+  // 1. Intentar construir la URL directamente (lo más confiable)
+  const marcaSlug  = toFragranticaSlug(marca);
+  const nombreSlug = toFragranticaSlug(nombre);
+  const urlDirecta = `https://www.fragrantica.com/perfume/${marcaSlug}/${nombreSlug}.html`;
+  if (await probarUrlFragrantica(urlDirecta)) return urlDirecta;
+
+  // 2. Intentar variaciones del nombre (sin palabras cortas, con primeras palabras)
+  const palabras = nombre.trim().split(/\s+/);
+  const variantes = [
+    palabras.slice(0, 3).join(" "),
+    palabras.slice(0, 2).join(" "),
+    palabras[0],
+  ].filter((v, i, arr) => v !== nombre && arr.indexOf(v) === i);
+
+  for (const variante of variantes) {
+    const url = `https://www.fragrantica.com/perfume/${marcaSlug}/${toFragranticaSlug(variante)}.html`;
+    if (await probarUrlFragrantica(url)) return url;
   }
+
+  // 3. Fallback: buscar en Fragrantica directamente por su buscador
+  try {
+    const searchRes = await fetch(
+      `https://www.fragrantica.com/search/?query=${encodeURIComponent(nombre)}`,
+      { headers: HEADERS }
+    );
+    const searchHtml = await searchRes.text();
+    const matches = [...searchHtml.matchAll(/href="(\/perfume\/[^"]+\.html)"/g)];
+    if (matches.length > 0) {
+      const nameSlug = toFragranticaSlug(nombre).toLowerCase();
+      const best = matches.find(m => m[1].toLowerCase().includes(nameSlug)) ?? matches[0];
+      return `https://www.fragrantica.com${best[1]}`;
+    }
+  } catch {}
+
   return null;
 }
 
