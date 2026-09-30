@@ -212,8 +212,18 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
     console.log("🔎  Leyendo datos...");
     try { datos = await scrapFragrantica(fragUrl); }
     catch (e) { console.warn(`⚠️   Error leyendo Fragrantica: ${e.message}`); }
-  } else {
-    console.log("⚠️   No encontrado en Fragrantica — buscando imagen en internet...");
+  }
+
+  // Si no encontró nada útil, pedir URL manual
+  if (!fragUrl || (!datos.category && !datos.imageUrl)) {
+    console.log("⚠️   No se pudo obtener datos automáticamente.");
+    console.log(`     Buscá manualmente en: https://www.fragrantica.com/search/?query=${encodeURIComponent(nombre)}`);
+    const urlManual = (await ask("   Pegá la URL de Fragrantica (o Enter para saltar): ")).trim();
+    if (urlManual.startsWith("http")) {
+      console.log("🔎  Leyendo datos de la URL...");
+      try { datos = await scrapFragrantica(urlManual); }
+      catch (e) { console.warn(`⚠️   Error: ${e.message}`); }
+    }
   }
 
   // Fallback imagen: si Fragrantica no la dio, buscar en fuentes confiables
@@ -302,6 +312,18 @@ async function crearPerfume() {
   await buscarYGuardar(nombre, marca, created._id);
 }
 
+async function autoOrdenar(perfumes) {
+  console.log("\n📐  Auto-ordenando todos los perfumes alfabéticamente...");
+  // Ordenar por nombre y asignar order: 10, 20, 30... (de a 10 para dejar espacio para insertar)
+  const sorted = [...perfumes].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "", "es"));
+  const transaction = client.transaction();
+  sorted.forEach((p, i) => {
+    transaction.patch(p._id, patch => patch.set({ order: (i + 1) * 10 }));
+  });
+  await transaction.commit();
+  console.log(`✅  ${sorted.length} perfumes ordenados. Los del mismo nombre quedan juntos.`);
+}
+
 async function main() {
   console.log("\n🔍  Cargando perfumes...");
   const perfumes = await client.fetch(
@@ -312,6 +334,7 @@ async function main() {
   console.log("📋  PERFUMES:");
   console.log("══════════════════════════════════════════");
   console.log(`    0.      ➕  Crear perfume nuevo`);
+  console.log(`   -1.      📐  Auto-ordenar (agrupar Odyssey, Hawas, etc.)`);
   perfumes.forEach((p, i) => {
     const img = p.image ? "🖼️ " : "   ";
     const fam = p.family && p.category ? "✅" : "❌";
@@ -321,7 +344,9 @@ async function main() {
 
   const input = (await ask("Número o nombre (o \"borrar X\" para eliminar): ")).trim();
 
-  if (input === "0") {
+  if (input === "-1") {
+    await autoOrdenar(perfumes);
+  } else if (input === "0") {
     await crearPerfume();
   } else if (input.toLowerCase().startsWith("borrar ")) {
     const query = input.slice(7).trim();
