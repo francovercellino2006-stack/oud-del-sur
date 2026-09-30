@@ -208,6 +208,65 @@ const TRUSTED_DOMAINS = [
   "theperfumeshop.com",
 ];
 
+// Extrae datos de perfume scrapeando Notino
+async function scrapNotino(nombre, marca) {
+  const query = `${nombre} ${marca} perfume site:notino.es OR site:notino.com.ar`;
+  const res = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&kl=es-es`, { headers: HEADERS });
+  const html = await res.text();
+  const urlMatch = html.match(/https?:\/\/www\.notino\.[^"&\s>]+perfume[^"&\s>]+/i)
+    ?? html.match(/https?:\/\/www\.notino\.[^"&\s>]+/i);
+  if (!urlMatch) return null;
+
+  const pRes = await fetch(urlMatch[0], { headers: HEADERS });
+  if (!pRes.ok) return null;
+  const pHtml = await pRes.text();
+  const data = {};
+
+  // Género
+  const genderMatch = pHtml.match(/para\s+(hombres|mujeres|unisex)/i)
+    ?? pHtml.match(/(men's|women's|unisex)/i);
+  if (genderMatch) {
+    const g = genderMatch[1].toLowerCase();
+    data.category = g.includes("hombr") || g === "men's" ? "hombre"
+      : g.includes("mujer") || g === "women's" ? "mujer" : "unisex";
+  }
+
+  // Descripción
+  const descMatch = pHtml.match(/<div[^>]*class="[^"]*description[^"]*"[^>]*>([\s\S]{50,500}?)<\/div>/i);
+  if (descMatch) data.description = descMatch[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 400);
+
+  return Object.keys(data).length > 0 ? data : null;
+}
+
+// Extrae datos de los snippets de búsqueda de DuckDuckGo (sin entrar a ningún sitio)
+async function buscarDatosDDG(nombre, marca) {
+  const query = `${nombre} ${marca} perfume for men women unisex fragrance family notes`;
+  const res = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&kl=es-es`, { headers: HEADERS });
+  const html = await res.text();
+  const data = {};
+
+  // Extraer todos los snippets de texto de los resultados
+  const snippets = [...html.matchAll(/<a[^>]*class="[^"]*result__snippet[^"]*"[^>]*>([\s\S]*?)<\/a>/gi)]
+    .map(m => m[1].replace(/<[^>]+>/g, " ").toLowerCase())
+    .join(" ");
+
+  // Género
+  if (/\bfor men\b/.test(snippets))        data.category = "hombre";
+  else if (/\bfor women\b/.test(snippets)) data.category = "mujer";
+  else if (/\bunisex\b/.test(snippets))    data.category = "unisex";
+
+  // Familia desde acordes mencionados en snippets
+  const familiaDetectada = acordToFamily(snippets.split(/\W+/));
+  if (familiaDetectada) data.family = familiaDetectada;
+
+  // Duración
+  if (/very long lasting/i.test(snippets))  data.duration = "10+ hs";
+  else if (/long lasting/i.test(snippets))  data.duration = "6-10 hs";
+  else if (/moderate/i.test(snippets))      data.duration = "4-6 hs";
+
+  return Object.keys(data).length > 0 ? data : null;
+}
+
 // Solo devuelve imagen si es de una fuente confiable
 async function buscarImagenConfiable(query) {
   const homeRes = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, { headers: HEADERS });
@@ -242,14 +301,36 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
     catch (e) { console.warn(`⚠️   Error leyendo Fragrantica: ${e.message}`); }
   }
 
-  // Si no encontró nada útil, pedir URL manual
-  if (!fragUrl || (!datos.category && !datos.imageUrl)) {
-    console.log("⚠️   No se pudo obtener datos automáticamente.");
-    console.log(`     Buscá manualmente en: https://www.fragrantica.com/search/?query=${encodeURIComponent(nombre)}`);
-    const urlManual = (await ask("   Pegá la URL de Fragrantica (o Enter para saltar): ")).trim();
+  // Si Fragrantica bloqueó, intentar otras fuentes automáticamente
+  if (!datos.category || !datos.family) {
+    console.log("🔄  Intentando Notino y búsqueda web...");
+    try {
+      const notinoData = await scrapNotino(nombre, marca);
+      if (notinoData) {
+        datos = { ...datos, ...notinoData };
+        console.log("✅  Datos obtenidos de Notino.");
+      }
+    } catch {}
+
+    if (!datos.category || !datos.family) {
+      try {
+        const ddgData = await buscarDatosDDG(nombre, marca);
+        if (ddgData) {
+          datos = { ...datos, ...ddgData };
+          console.log("✅  Datos obtenidos de búsqueda web.");
+        }
+      } catch {}
+    }
+  }
+
+  // Si sigue sin datos, pedir URL manual
+  if (!datos.category && !datos.imageUrl) {
+    console.log("⚠️   No se encontraron datos automáticamente.");
+    console.log(`     Buscá en: https://www.fragrantica.com/search/?query=${encodeURIComponent(nombre)}`);
+    const urlManual = (await ask("   Pegá la URL del perfume (o Enter para saltar): ")).trim();
     if (urlManual.startsWith("http")) {
-      console.log("🔎  Leyendo datos de la URL...");
-      try { datos = await scrapFragrantica(urlManual); }
+      console.log("🔎  Leyendo datos...");
+      try { const d = await scrapFragrantica(urlManual); datos = { ...datos, ...d }; }
       catch (e) { console.warn(`⚠️   Error: ${e.message}`); }
     }
   }
