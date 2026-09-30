@@ -464,22 +464,24 @@ async function crearPerfume() {
   await buscarYGuardar(nombre, marca, created._id);
 }
 
-async function autoOrdenar(perfumes) {
+async function autoOrdenar() {
   console.log("\n📐  Auto-ordenando todos los perfumes alfabéticamente...");
-  // Ordenar por nombre y asignar order: 10, 20, 30... (de a 10 para dejar espacio para insertar)
-  const sorted = [...perfumes].sort((a, b) => (a.name ?? "").localeCompare(b.name ?? "", "es"));
+  // Solo documentos publicados (sin drafts)
+  const todos = await client.fetch(
+    `*[_type == "perfume" && !(_id in path("drafts.**"))] | order(name asc) { _id, name }`
+  );
   const transaction = client.transaction();
-  sorted.forEach((p, i) => {
+  todos.forEach((p, i) => {
     transaction.patch(p._id, patch => patch.set({ order: (i + 1) * 10 }));
   });
   await transaction.commit();
-  console.log(`✅  ${sorted.length} perfumes ordenados. Los del mismo nombre quedan juntos.`);
+  console.log(`✅  ${todos.length} perfumes ordenados. Los del mismo nombre quedan juntos.`);
 }
 
 async function main() {
   console.log("\n🔍  Cargando perfumes...");
   const perfumes = await client.fetch(
-    `*[_type == "perfume"] | order(name asc) { _id, name, brand, image, family, category }`
+    `*[_type == "perfume" && !(_id in path("drafts.**"))] | order(name asc) { _id, name, brand, image, family, category }`
   );
 
   console.log("\n══════════════════════════════════════════");
