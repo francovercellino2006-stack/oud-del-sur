@@ -85,11 +85,11 @@ export default function ProductDetail({
   allPerfumes?: Perfume[];
 }) {
   const allVariants = [
-    { ml: perfume.ml, price: perfume.price, isBase: true },
+    { ml: perfume.ml ?? 0, price: perfume.price, isBase: true },
     ...(perfume.variants ?? []).map(v => ({ ...v, isBase: false })),
-  ].sort((a, b) => b.ml - a.ml);
+  ].filter(v => v.ml > 0).sort((a, b) => b.ml - a.ml);
 
-  const [selectedMl, setSelectedMl] = useState<number>(perfume.ml);
+  const [selectedMl, setSelectedMl] = useState<number>(perfume.ml ?? 0);
   const [zoomed, setZoomed]         = useState(false);
 
   const selectedVariant = allVariants.find(v => v.ml === selectedMl) ?? allVariants[0];
@@ -111,9 +111,9 @@ export default function ProductDetail({
 
   const specs = [
     { label: "Concentración", value: "Eau de Parfum" },
-    { label: "Familia",       value: perfume.family.charAt(0).toUpperCase() + perfume.family.slice(1) },
+    { label: "Familia",       value: perfume.family ? perfume.family.charAt(0).toUpperCase() + perfume.family.slice(1) : "—" },
     { label: "Duración",      value: perfume.duration },
-    { label: "Categoría",     value: perfume.category.charAt(0).toUpperCase() + perfume.category.slice(1) },
+    { label: "Categoría",     value: perfume.category ? perfume.category.charAt(0).toUpperCase() + perfume.category.slice(1) : "—" },
   ];
 
   const relatedPerfumes = [
