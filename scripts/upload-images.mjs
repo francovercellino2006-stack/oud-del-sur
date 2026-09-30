@@ -112,26 +112,39 @@ async function buscarFragranticaUrl(nombre, marca) {
   return null;
 }
 
+const LONGEVITY_MAP = {
+  "weak":               "2-4 hs",
+  "moderate":           "4-6 hs",
+  "long lasting":       "6-10 hs",
+  "very long lasting":  "10+ hs",
+  "eternal":            "12+ hs",
+};
+
 async function scrapFragrantica(url) {
   const res = await fetch(url, { headers: HEADERS });
   if (!res.ok) throw new Error(`Fragrantica respondió ${res.status}`);
   const html = await res.text();
   const data = {};
 
+  // Nombre
   const nameMatch = html.match(/<h1[^>]*itemprop="name"[^>]*>([^<]+)<\/h1>/i)
     ?? html.match(/<h1[^>]*>([^<]+)<\/h1>/i);
   data.name = nameMatch?.[1]?.trim();
 
-  const descMatch = html.match(/<div[^>]*itemprop="description"[^>]*>([\s\S]*?)<\/div>/i);
+  // Descripción (itemprop o primer párrafo largo)
+  const descMatch = html.match(/<div[^>]*itemprop="description"[^>]*>([\s\S]*?)<\/div>/i)
+    ?? html.match(/<p[^>]*>([\s\S]{80,}?)<\/p>/i);
   if (descMatch) {
     data.description = descMatch[1].replace(/<[^>]+>/g, "").replace(/\s+/g, " ").trim().slice(0, 400);
   }
 
+  // Género
   const titleLower = (html.match(/<title>([^<]+)<\/title>/i)?.[1] ?? "").toLowerCase();
   const genderText = html.match(/for\s+(men|women|unisex)/i)?.[1]?.toLowerCase()
     ?? (titleLower.includes("for men") ? "men" : titleLower.includes("for women") ? "women" : "unisex");
   data.category = genderText === "men" ? "hombre" : genderText === "women" ? "mujer" : "unisex";
 
+  // Familia (acordes principales)
   const accordMatches = [...html.matchAll(/class="[^"]*accord-box[^"]*"[^>]*>[\s\S]*?<span[^>]*>([^<]+)<\/span>/gi)];
   const accords = accordMatches.map(m => m[1].trim().toLowerCase()).filter(Boolean);
   if (accords.length > 0) {
@@ -139,6 +152,21 @@ async function scrapFragrantica(url) {
     data.accords = accords.slice(0, 5);
   }
 
+  // Duración (longevity — buscar la categoría con más votos)
+  const longevitySection = html.match(/longevity[\s\S]{0,2000}?vote-button-name[\s\S]{0,500}/i)?.[0] ?? html;
+  for (const [key, value] of Object.entries(LONGEVITY_MAP)) {
+    if (longevitySection.toLowerCase().includes(key)) {
+      data.duration = value;
+      break;
+    }
+  }
+
+  // Notas olfativas (top, heart, base)
+  const noteMatches = [...html.matchAll(/class="[^"]*note-name[^"]*"[^>]*>([^<]+)<\/span>/gi)];
+  const notes = noteMatches.map(m => m[1].trim()).filter(Boolean);
+  if (notes.length > 0) data.notes = notes.slice(0, 8).join(", ");
+
+  // Imagen
   const imgMatch = html.match(/src="(https:\/\/fimgs\.net\/[^"]+\.jpg)"/i)
     ?? html.match(/content="(https:\/\/fimgs\.net\/[^"]+)"/i);
   data.imageUrl = imgMatch?.[1];
@@ -236,10 +264,12 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
   console.log("\n══════════════════════════════════════════");
   console.log("📊  DATOS ENCONTRADOS:");
   console.log("══════════════════════════════════════════");
-  console.log(`  Categoría:   ${datos.category ?? "(no encontrado)"}`);
-  console.log(`  Familia:     ${datos.family ?? "(no encontrado)"}`);
+  console.log(`  Categoría:   ${datos.category ?? "❌ no encontrado"}`);
+  console.log(`  Familia:     ${datos.family ?? "❌ no encontrado"}`);
+  console.log(`  Duración:    ${datos.duration ?? "❌ no encontrado"}`);
   if (datos.accords?.length) console.log(`  Acordes:     ${datos.accords.join(", ")}`);
-  if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 80)}...`);
+  if (datos.notes)       console.log(`  Notas:       ${datos.notes}`);
+  if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 100)}...`);
   console.log(`  Imagen:      ${datos.imageUrl ? "✅ encontrada" : "❌ no encontrada"}`);
 
   const primero = await ask("¿Poner este perfume primero en el catálogo? [s/N]: ");
@@ -247,9 +277,10 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
   if (!ok.toLowerCase().startsWith("s")) { console.log("Cancelado."); return false; }
 
   const patch = {};
-  if (datos.category) patch.category = datos.category;
+  if (datos.category)  patch.category    = datos.category;
   if (datos.family && FAMILIES_VALID.includes(datos.family)) patch.family = datos.family;
   if (datos.description) patch.description = datos.description;
+  if (datos.duration)  patch.duration    = datos.duration;
 
   if (primero.toLowerCase().startsWith("s")) {
     // Traer el order más bajo actual y restar 1
