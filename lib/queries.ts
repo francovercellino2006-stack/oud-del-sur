@@ -23,7 +23,7 @@ function mapPerfume(raw: any): Perfume {
 
 export async function getPerfumes(): Promise<Perfume[]> {
   const raw = await client.fetch(
-    `*[_type == "perfume"] | order(order asc) { ${PERFUME_FIELDS} }`,
+    `*[_type == "perfume"] | order(order asc, name asc) { ${PERFUME_FIELDS} }`,
     {},
     { next: { revalidate: 30 } }
   )
