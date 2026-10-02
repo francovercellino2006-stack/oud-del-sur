@@ -182,10 +182,7 @@ async function scrapFragrantica(url) {
   const notes = noteMatches.map(m => m[1].trim()).filter(Boolean);
   if (notes.length > 0) data.notes = notes.slice(0, 8).join(", ");
 
-  // Imagen
-  const imgMatch = html.match(/src="(https:\/\/fimgs\.net\/[^"]+\.jpg)"/i)
-    ?? html.match(/content="(https:\/\/fimgs\.net\/[^"]+)"/i);
-  data.imageUrl = imgMatch?.[1];
+  // Sin imagen de Fragrantica (solo usamos sus datos de texto)
 
   return data;
 }
@@ -208,8 +205,6 @@ async function subirImagen(imageUrl, nombre) {
 
 // Dominios confiables para imágenes de perfumes (fotos reales del producto)
 const TRUSTED_DOMAINS = [
-  "fimgs.net",           // Fragrantica CDN
-  "fragrantica.com",
   "parfumo.net",
   "lattafaperfumes.com",
   "lattafa.ae",
