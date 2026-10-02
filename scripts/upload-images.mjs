@@ -858,8 +858,8 @@ async function buscarImagenLujo(nombre) {
       const hits = palabras.filter(p => urlSlug.includes(p)).length;
       return { u, hits };
     }).sort((a, b) => b.hits - a.hits);
-    // Exigir al menos 1 palabra del nombre en el slug del producto
-    if (ranked[0].hits === 0) return null;
+    // Exigir que TODAS las palabras del nombre estén en el slug (evita Khamrah vs Khamrah Waha)
+    if (ranked[0].hits < palabras.length) return null;
     const link = ranked[0].u;
     const pRes = await fetch(link, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
     if (!pRes.ok) return null;
@@ -907,7 +907,8 @@ async function buscarImagenEmirates(nombre, marca) {
     const products = data?.resources?.results?.products ?? [];
     const palabras = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").split("-").filter(p => p.length > 2);
     // Exigir al menos 1 palabra del nombre en el handle del producto
-    const best = products.find(p => palabras.some(w => p.handle?.includes(w)));
+    // Exigir TODAS las palabras en el handle (evita Khamrah vs Khamrah Waha)
+    const best = products.find(p => palabras.every(w => p.handle?.includes(w)));
     if (!best) return null;
     const img = typeof best.image === "string" ? best.image : best.featured_image?.url;
     return img && esImagenApta(img) ? img : null;
