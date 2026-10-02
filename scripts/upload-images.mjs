@@ -19,8 +19,10 @@ import { spawn } from "child_process";
 const PROJECT_ID        = "mbd1smgb";
 const DATASET           = "production";
 const TOKEN             = "skrVODsYlAdDv5WKNebAAyTvju3CEittxoUWqeizjdIJEZklhFpwS5S008nAKM3J5qB7df6WqXirjErsZGHlVJkatYzWiVdSYzdPUW2zARAIdzN6WMXk6cqDjTckm9bv3vjugxLX9HDoDRCnDuQPpmvQTb5MBHUanrVXMjUxQdFhLiLK83SY";
-// Groq es GRATIS: registrarte en console.groq.com → API Keys → Create key → pegala acá
-const GROQ_API_KEY = process.env.GROQ_API_KEY ?? "PEGA_TU_CLAVE_GROQ_AQUI";
+// IA: usá tu clave de Anthropic (console.anthropic.com) mientras tengas suscripción.
+// Si no tenés, usá Groq que es GRATIS (console.groq.com → API Keys).
+const ANTHROPIC_API_KEY = process.env.ANTHROPIC_API_KEY ?? "";
+const GROQ_API_KEY      = process.env.GROQ_API_KEY      ?? "";
 
 const BRANDS_VALID   = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi", "Al Wataniah", "French Avenue"];
 const FAMILIES_VALID = ["dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "aromaticas acuaticas"];
@@ -408,12 +410,9 @@ async function buscarDatosEnPaginas(nombre, marca) {
   } catch { return null; }
 }
 
-// Usa Groq (gratis) para generar datos del perfume con IA
-async function buscarConIA(nombre, marca, datosExistentes = {}) {
-  if (!GROQ_API_KEY || GROQ_API_KEY === "PEGA_TU_CLAVE_GROQ_AQUI") return null;
-
+function buildPromptIA(nombre, marca, datosExistentes) {
   const ya = Object.keys(datosExistentes).filter(k => datosExistentes[k]).join(", ");
-  const prompt = `Sos un experto en perfumería árabe y de Medio Oriente. Dame información sobre el perfume "${nombre}" de la marca ${marca}.
+  return `Sos un experto en perfumería árabe y de Medio Oriente. Dame información sobre el perfume "${nombre}" de la marca ${marca}.
 
 Respondé SOLO con JSON válido (sin markdown ni explicaciones extra):
 {
@@ -422,36 +421,70 @@ Respondé SOLO con JSON válido (sin markdown ni explicaciones extra):
   "family": uno de: "dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "aromaticas acuaticas",
   "duration": uno de: "2-4 hs", "4-6 hs", "6-10 hs", "10+ hs"
 }
+${ya ? `\nYa tenés: ${ya}. Completá igualmente todos los campos.` : ""}
+Si no conocés el perfume, inferí datos razonables basándote en la marca y el nombre.`;
+}
 
-${ya ? `Ya tenés: ${ya}. Completá solo los campos faltantes igualmente.` : ""}
-Si no conocés el perfume, igualmente inferí datos razonables basándote en la marca y el nombre.`;
-
-  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-    method: "POST",
-    headers: {
-      "Authorization": `Bearer ${GROQ_API_KEY}`,
-      "Content-Type": "application/json",
-    },
-    body: JSON.stringify({
-      model: "llama-3.1-8b-instant",
-      max_tokens: 400,
-      temperature: 0.3,
-      messages: [{ role: "user", content: prompt }],
-    }),
-    signal: AbortSignal.timeout(15000),
-  });
-
-  if (!res.ok) { console.warn(`     Groq: ${res.status}`); return null; }
-  const json = await res.json();
-  const text = json.choices?.[0]?.message?.content ?? "";
-
+function parseIAResponse(text) {
   try {
     const parsed = JSON.parse(text.match(/\{[\s\S]+\}/)?.[0] ?? text);
-    // Validar familia
-    if (parsed.family && !FAMILIES_VALID.includes(parsed.family)) delete parsed.family;
+    if (parsed.family   && !FAMILIES_VALID.includes(parsed.family))          delete parsed.family;
     if (parsed.category && !["hombre","mujer","unisex"].includes(parsed.category)) delete parsed.category;
-    return parsed;
+    return Object.keys(parsed).length > 0 ? parsed : null;
   } catch { return null; }
+}
+
+// Usa IA para generar datos: Claude primero (si tenés suscripción), Groq como fallback (gratis)
+async function buscarConIA(nombre, marca, datosExistentes = {}) {
+  const prompt = buildPromptIA(nombre, marca, datosExistentes);
+
+  // 1. Claude (Haiku — el más barato y rápido)
+  if (ANTHROPIC_API_KEY) {
+    try {
+      const res = await fetch("https://api.anthropic.com/v1/messages", {
+        method: "POST",
+        headers: {
+          "x-api-key": ANTHROPIC_API_KEY,
+          "anthropic-version": "2023-06-01",
+          "content-type": "application/json",
+        },
+        body: JSON.stringify({
+          model: "claude-haiku-4-5-20251001",
+          max_tokens: 400,
+          messages: [{ role: "user", content: prompt }],
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        const result = parseIAResponse(json.content?.[0]?.text ?? "");
+        if (result) return result;
+      }
+    } catch {}
+  }
+
+  // 2. Groq (gratis — fallback cuando no hay suscripción de Claude)
+  if (GROQ_API_KEY) {
+    try {
+      const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+        method: "POST",
+        headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          max_tokens: 400,
+          temperature: 0.3,
+          messages: [{ role: "user", content: prompt }],
+        }),
+        signal: AbortSignal.timeout(15000),
+      });
+      if (res.ok) {
+        const json = await res.json();
+        return parseIAResponse(json.choices?.[0]?.message?.content ?? "");
+      }
+    } catch {}
+  }
+
+  return null;
 }
 
 // Solo devuelve imagen si es de una fuente confiable
@@ -516,9 +549,10 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
     if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
   }
 
-  // 5. IA con Groq (siempre completa lo que falta — es gratis)
+  // 5. IA (Claude si hay suscripción, Groq como fallback gratuito)
   if (falta(datos)) {
-    if (!silencioso) process.stdout.write(`🤖  [5/5] IA (Groq)...`);
+    const iaLabel = ANTHROPIC_API_KEY ? "Claude" : GROQ_API_KEY ? "Groq" : "IA (sin clave)";
+    if (!silencioso) process.stdout.write(`🤖  [5/5] ${iaLabel}...`);
     try {
       const iaData = await buscarConIA(nombre, marca, datos);
       if (iaData) { merge(datos, iaData); }
