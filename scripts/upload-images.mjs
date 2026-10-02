@@ -880,12 +880,18 @@ async function buscarImagenBing(nombre, marca) {
     );
     if (!res.ok) return null;
     const html = await res.text();
-    // Bing embeds image URLs as URL-encoded mediaurl= params in search result links
     const urls = [...html.matchAll(/mediaurl=([^&"'\s]+\.(?:jpg|jpeg|png|webp)[^&"'\s]*)/gi)]
       .map(m => { try { return decodeURIComponent(m[1]); } catch { return m[1]; } })
       .filter(u => esImagenApta(u) && !u.includes("bing.com") && !u.includes("msn.com") && !u.includes("microsoft.com"));
-    // Prefer images from trusted perfume domains to avoid false positives
-    return urls.find(esDominioConfiable) ?? null;
+    // Primero: dominio de tienda de perfumes (más confiable)
+    const deTienda = urls.find(esDominioConfiable);
+    if (deTienda) return deTienda;
+    // Segundo: URL cuyo path contiene TODAS las palabras del nombre (evita falsos positivos)
+    const palabrasNombre = nombre.toLowerCase().split(/\s+/).filter(p => p.length > 3);
+    const porNombre = palabrasNombre.length > 0
+      ? urls.find(u => palabrasNombre.every(p => u.toLowerCase().includes(p)))
+      : null;
+    return porNombre ?? null;
   } catch { return null; }
 }
 
