@@ -48,7 +48,7 @@ export default async function ProductPage({ params }: Props) {
     notFound();
   }
 
-  const numericPrice = parseInt(perfume.price.replace(/[$.,]/g, ""), 10);
+  const numericPrice = parseInt((perfume.price ?? "0").replace(/[$.,]/g, ""), 10);
 
   const productJsonLd = {
     "@context": "https://schema.org",
