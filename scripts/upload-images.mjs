@@ -663,9 +663,10 @@ async function buscarImagenFragrancenet(nombre, marca) {
 
 // Busca en DDG de texto (no imágenes) la página del producto en un retailer, luego extrae og:image
 async function buscarImagenViaDDGTexto(nombre, marca) {
+  // Solo retailers con fotos profesionales de fondo blanco/limpio
   const RETAILERS_SITE = [
     "fragrancenet.com", "notino.es", "notino.com.ar",
-    "parfumo.net", "scentbird.com", "theperfumeshop.com",
+    "scentbird.com", "theperfumeshop.com", "fragrancedirect.co.uk",
   ];
   try {
     const query = `"${nombre}" "${marca}" site:${RETAILERS_SITE.join(" OR site:")}`;
@@ -696,50 +697,21 @@ async function buscarImagenViaDDGTexto(nombre, marca) {
 }
 
 async function buscarImagenConfiable(nombre, marca) {
-  // 1. Notino — retailer profesional, siempre fondo blanco
-  const imgNotino = await buscarImagenNotino(nombre, marca);
-  if (imgNotino) return imgNotino;
-
-  // 2. Fragrancenet — cobertura excelente de perfumes árabes
+  // 1. Fragrancenet — fondo blanco profesional, cobertura excelente de perfumes árabes
   const imgFN = await buscarImagenFragrancenet(nombre, marca);
   if (imgFN) return imgFN;
 
-  // 3. Sitio oficial de la marca
-  const imgMarca = await buscarImagenMarca(nombre, marca);
-  if (imgMarca) return imgMarca;
+  // 2. Notino — fotos profesionales de retailer europeo
+  const imgNotino = await buscarImagenNotino(nombre, marca);
+  if (imgNotino) return imgNotino;
 
-  // 4. Parfumo — base de datos de perfumes, imágenes limpias
-  const imgParfumo = await buscarImagenParfumo(nombre, marca);
-  if (imgParfumo) return imgParfumo;
-
-  // 5. DDG texto → retailer → og:image (más preciso que búsqueda de imágenes)
+  // 3. DDG texto: busca página del perfume en fragrancenet / notino / scentbird
+  //    y extrae og:image (siempre foto principal del producto)
   const imgDDGTexto = await buscarImagenViaDDGTexto(nombre, marca);
   if (imgDDGTexto) return imgDDGTexto;
 
-  // 6. DDG imágenes — SOLO de dominios confiables, nunca de vendedores genéricos
-  try {
-    const query = `"${nombre}" ${marca} perfume`;
-    const homeRes = await fetch(
-      `https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`,
-      { headers: HEADERS, signal: AbortSignal.timeout(8000) }
-    );
-    const homeHtml = await homeRes.text();
-    const vqd = homeHtml.match(/vqd=["']([^"']+)["']/)?.[1]
-      ?? homeHtml.match(/"vqd"\s*:\s*"([^"]+)"/)?.[1]
-      ?? homeHtml.match(/vqd=([^&\s"']+)/)?.[1];
-    if (!vqd) return null;
-
-    const imgRes = await fetch(
-      `https://duckduckgo.com/i.js?l=es-es&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,,,,,&p=1`,
-      { headers: { ...HEADERS, Referer: "https://duckduckgo.com/" }, signal: AbortSignal.timeout(8000) }
-    );
-    const data = await imgRes.json();
-    if (!data.results?.length) return null;
-
-    // Solo imágenes de dominios confiables — nunca vendedores genéricos
-    const confiable = data.results.find(r => TRUSTED_DOMAINS.some(d => (r.url ?? "").includes(d)));
-    return confiable?.image ?? null;
-  } catch { return null; }
+  // Si no se encuentra nada confiable, preferimos null a una foto mala
+  return null;
 }
 
 function falta(datos) {
