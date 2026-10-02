@@ -31,7 +31,7 @@ const FAMILIES_VALID = ["dulces", "frescos", "orientales", "maderosos", "florale
 function detectarMarca(nombre) {
   const n = nombre.toLowerCase();
   if (/hawas|khamrah|shamoos|asad|ejaazi|oud mood|oud for glory|oud mood|emirati/.test(n))  return "Lattafa";
-  if (/voyage|sterling|tres nuit|ameer|magic|black onyx|bucephalus|caliber/.test(n))         return "Armaf";
+  if (/voyage|sterling|tres nuit|ameer|magic|black onyx|bucephalus|caliber|club de nuit|milestone|precieux/.test(n)) return "Armaf";
   if (/supremacy|modest|1 million|9 pm|blue sapphire|anniversary|rare|wind flower/.test(n)) return "Afnan";
   if (/paris corner|sultan|aldehyde|baroque|crystal|renaissance/.test(n))                    return "Maison Alhambra";
   if (/oudh|rasasi|dakhoon|choco musk|hawas rasasi/.test(n))                                 return "Rasasi";
