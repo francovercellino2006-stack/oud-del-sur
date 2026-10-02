@@ -488,8 +488,7 @@ Respondé SOLO con JSON válido (sin markdown ni explicaciones extra):
   "description": "descripción en español de 2-3 oraciones: qué huele, notas principales, para qué ocasión",
   "category": "hombre" o "mujer" o "unisex",
   "family": uno de: "dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "aromaticas acuaticas",
-  "duration": uno de: "2-4 hs", "4-6 hs", "6-10 hs", "10+ hs",
-  "imageUrl": "URL directa a imagen JPG/PNG del producto en fragrancenet.com, notino.com, scentbird.com u otro retailer conocido. Solo si estás seguro que existe, sino dejá vacío."
+  "duration": uno de: "2-4 hs", "4-6 hs", "6-10 hs", "10+ hs"
 }
 ${ya ? `\nYa tenés: ${ya}. Completá igualmente todos los campos.` : ""}
 Si no conocés el perfume, inferí datos razonables basándote en la marca y el nombre.`;
@@ -884,7 +883,7 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
   }
 
   // 7. IA (Claude si hay suscripción, Groq como fallback gratuito)
-  {
+  if (falta(datos)) {
     const iaLabel = ANTHROPIC_API_KEY ? "Claude" : GROQ_API_KEY ? "Groq" : "IA (sin clave)";
     if (!silencioso) process.stdout.write(`🤖  [7/7] ${iaLabel}...`);
     try {
@@ -892,25 +891,6 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
       if (iaData) { merge(datos, iaData); }
     } catch {}
     if (!silencioso) console.log(falta(datos) ? (ANTHROPIC_API_KEY || GROQ_API_KEY ? " sin datos" : " sin clave API") : " ✅");
-  }
-
-  // Validar imageUrl sugerida por IA (puede ser alucinada — verificar que existe)
-  if (datos.imageUrl) {
-    if (!silencioso) process.stdout.write(`🖼️   Validando URL de imagen IA: ${datos.imageUrl.slice(0, 60)}...`);
-    try {
-      // GET en vez de HEAD — algunos CDNs no responden a HEAD
-      const check = await fetch(datos.imageUrl, { headers: HEADERS, signal: AbortSignal.timeout(8000) });
-      const ct = check.headers.get("content-type") ?? "";
-      if (!check.ok || (!ct.startsWith("image/") && !ct.startsWith("application/octet"))) {
-        if (!silencioso) console.log(` ✗ (${check.status} ${ct})`);
-        datos.imageUrl = undefined;
-      } else {
-        if (!silencioso) console.log(` ✅`);
-      }
-    } catch (e) {
-      if (!silencioso) console.log(` ✗ (${e.message})`);
-      datos.imageUrl = undefined;
-    }
   }
 
   // Imagen: buscar si no se encontró en las fuentes anteriores
