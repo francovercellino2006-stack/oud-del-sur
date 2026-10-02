@@ -892,13 +892,23 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
     if (!silencioso) console.log(falta(datos) ? (ANTHROPIC_API_KEY || GROQ_API_KEY ? " sin datos" : " sin clave API") : " ✅");
   }
 
-  // Validar imageUrl sugerida por IA (puede ser alucinada — verificar que responde)
+  // Validar imageUrl sugerida por IA (puede ser alucinada — verificar que existe)
   if (datos.imageUrl) {
+    if (!silencioso) process.stdout.write(`🖼️   Validando URL de imagen IA: ${datos.imageUrl.slice(0, 60)}...`);
     try {
-      const check = await fetch(datos.imageUrl, { method: "HEAD", headers: HEADERS, signal: AbortSignal.timeout(5000) });
+      // GET en vez de HEAD — algunos CDNs no responden a HEAD
+      const check = await fetch(datos.imageUrl, { headers: HEADERS, signal: AbortSignal.timeout(8000) });
       const ct = check.headers.get("content-type") ?? "";
-      if (!check.ok || !ct.startsWith("image/")) datos.imageUrl = undefined;
-    } catch { datos.imageUrl = undefined; }
+      if (!check.ok || (!ct.startsWith("image/") && !ct.startsWith("application/octet"))) {
+        if (!silencioso) console.log(` ✗ (${check.status} ${ct})`);
+        datos.imageUrl = undefined;
+      } else {
+        if (!silencioso) console.log(` ✅`);
+      }
+    } catch (e) {
+      if (!silencioso) console.log(` ✗ (${e.message})`);
+      datos.imageUrl = undefined;
+    }
   }
 
   // Imagen: buscar si no se encontró en las fuentes anteriores
