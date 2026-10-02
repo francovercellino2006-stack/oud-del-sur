@@ -839,8 +839,22 @@ async function buscarImagenLujo(nombre) {
     );
     if (!res.ok) return null;
     const html = await res.text();
-    const link = html.match(/href="(https:\/\/lujoperfume\.com\/producto\/[^"]+)"/i)?.[1];
-    if (!link) return null;
+    // Extraer todos los links de producto y elegir el que más coincida con el nombre buscado
+    const links = [...html.matchAll(/href="(https:\/\/lujoperfume\.com\/producto\/[^"]+)"/gi)]
+      .map(m => m[1]);
+    if (links.length === 0) return null;
+    // El slug del nombre buscado para comparar (ej: "khamrah-waha")
+    const slug = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-");
+    const palabras = slug.split("-").filter(p => p.length > 2);
+    // Preferir el link cuyo slug contenga más palabras del nombre buscado
+    const ranked = links.map(u => {
+      const urlSlug = u.split("/producto/")[1] ?? "";
+      const hits = palabras.filter(p => urlSlug.includes(p)).length;
+      return { u, hits };
+    }).sort((a, b) => b.hits - a.hits);
+    // Exigir al menos 1 palabra del nombre en el slug del producto
+    if (ranked[0].hits === 0) return null;
+    const link = ranked[0].u;
     const pRes = await fetch(link, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
     if (!pRes.ok) return null;
     const pHtml = await pRes.text();
