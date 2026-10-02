@@ -1056,12 +1056,16 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
     if (!silencioso) console.log(falta(datos) ? (ANTHROPIC_API_KEY || GROQ_API_KEY ? " sin datos" : " sin clave API") : " ✅");
   }
 
-  // Imagen: buscar si no se encontró en las fuentes anteriores
-  if (!datos.imageUrl) {
-    if (!silencioso) process.stdout.write(`🖼️   Buscando imagen...`);
-    try { datos.imageUrl = await buscarImagenConfiable(nombre, marca); } catch {}
-    if (!silencioso) console.log(datos.imageUrl ? " ✅" : " no encontrada");
-  }
+  // Imagen: SIEMPRE buscar con el pipeline dedicado (ignora imageUrl de scrapers de texto)
+  // Los scrapers de texto (Parfumo, Notino, etc.) encuentran imágenes genéricas del producto
+  // equivocado — el pipeline de imagen tiene lógica específica para evitar confundir variantes.
+  if (!silencioso) process.stdout.write(`🖼️   Buscando imagen...`);
+  try {
+    const imgDedicada = await buscarImagenConfiable(nombre, marca);
+    if (imgDedicada) datos.imageUrl = imgDedicada;
+    else if (!datos.imageUrl) datos.imageUrl = null; // queda null si nadie encontró nada
+  } catch {}
+  if (!silencioso) console.log(datos.imageUrl ? " ✅" : " no encontrada");
 
   // Resumen de lo encontrado
   console.log("\n──────────────────────────────────────────");
