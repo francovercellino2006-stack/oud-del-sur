@@ -895,6 +895,51 @@ async function buscarImagenBing(nombre, marca) {
   } catch { return null; }
 }
 
+// emiratesoud.co.uk — Shopify store con API de búsqueda predictiva (sin JS)
+async function buscarImagenEmirates(nombre, marca) {
+  try {
+    const res = await fetch(
+      `https://www.emiratesoud.co.uk/search/suggest.json?q=${encodeURIComponent(nombre)}&resources[type]=product&resources[limit]=5`,
+      { headers: { ...HEADERS, Accept: "application/json" }, signal: AbortSignal.timeout(10000) }
+    );
+    if (!res.ok) return null;
+    const data = await res.json();
+    const products = data?.resources?.results?.products ?? [];
+    const palabras = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").split("-").filter(p => p.length > 2);
+    // Exigir al menos 1 palabra del nombre en el handle del producto
+    const best = products.find(p => palabras.some(w => p.handle?.includes(w)));
+    if (!best) return null;
+    const img = typeof best.image === "string" ? best.image : best.featured_image?.url;
+    return img && esImagenApta(img) ? img : null;
+  } catch { return null; }
+}
+
+// Fragrantica — imagen del producto (fimgs.net CDN) como último recurso de vendedor
+async function buscarImagenFragranticaImg(nombre, marca) {
+  try {
+    const fragUrl = await buscarFragranticaUrl(nombre, marca);
+    if (!fragUrl) return null;
+    const res = await fetch(fragUrl, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const html = await res.text();
+    // Fragrantica usa fimgs.net para las fotos de los frascos
+    const img = html.match(/https:\/\/fimgs\.net\/mdimg\/perfume\/[^"'\s]+\.(?:jpg|jpeg|png|webp)/i)?.[0];
+    return img ?? null;
+  } catch { return null; }
+}
+
+// Pollinations.ai — genera imagen del frasco con IA (gratis, sin API key)
+async function generarImagenIA(nombre, marca) {
+  try {
+    const prompt = `${nombre} by ${marca} luxury arabic perfume bottle product photography white background professional`;
+    const url = `https://image.pollinations.ai/prompt/${encodeURIComponent(prompt)}?width=800&height=800&nologo=true&enhance=true`;
+    // Verificar que responde antes de devolver la URL (pollinations genera al pedirla)
+    const res = await fetch(url, { method: "HEAD", signal: AbortSignal.timeout(20000) });
+    if (!res.ok || !res.headers.get("content-type")?.includes("image")) return null;
+    return url;
+  } catch { return null; }
+}
+
 async function buscarImagenConfiable(nombre, marca) {
   process.stdout.write("\n    img [1] fragrancenet...");
   const imgFN = await buscarImagenFragrancenet(nombre, marca);
@@ -916,9 +961,24 @@ async function buscarImagenConfiable(nombre, marca) {
   if (imgLujo) { process.stdout.write(" ✅\n"); return imgLujo; }
   process.stdout.write(" ✗");
 
-  process.stdout.write("  [5] bing images...");
+  process.stdout.write("  [5] emiratesoud...");
+  const imgEmirates = await buscarImagenEmirates(nombre, marca);
+  if (imgEmirates) { process.stdout.write(" ✅\n"); return imgEmirates; }
+  process.stdout.write(" ✗");
+
+  process.stdout.write("  [6] bing images...");
   const imgBing = await buscarImagenBing(nombre, marca);
   if (imgBing) { process.stdout.write(" ✅\n"); return imgBing; }
+  process.stdout.write(" ✗");
+
+  process.stdout.write("  [7] fragrantica...");
+  const imgFrag = await buscarImagenFragranticaImg(nombre, marca);
+  if (imgFrag) { process.stdout.write(" ✅\n"); return imgFrag; }
+  process.stdout.write(" ✗");
+
+  process.stdout.write("  [8] IA Pollinations...");
+  const imgIA = await generarImagenIA(nombre, marca);
+  if (imgIA) { process.stdout.write(" ✅ (generada)\n"); return imgIA; }
   process.stdout.write(" ✗\n");
 
   return null;
