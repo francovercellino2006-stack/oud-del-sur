@@ -573,7 +573,7 @@ async function buscarConIA(nombre, marca, datosExistentes = {}) {
         method: "POST",
         headers: { "Authorization": `Bearer ${GROQ_API_KEY}`, "Content-Type": "application/json" },
         body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
+          model: "llama3-8b-8192",
           max_tokens: 400,
           temperature: 0.3,
           messages: [{ role: "user", content: prompt }],
