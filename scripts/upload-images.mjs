@@ -647,9 +647,12 @@ async function buscarImagenFragrancenet(nombre, marca) {
   const brandSlug   = marca.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   const perfumeSlug = nombre.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
-  // Variantes del slug (con y sin "for-her", "for-him", etc.)
+  // Variantes del slug — distintos retailers usan "for-her" vs "for-women", etc.
   const slugBase = perfumeSlug.replace(/-?(?:for-her|for-him|for-men|for-women)$/, "");
-  const slugsToTry = [perfumeSlug, slugBase, `${slugBase}-eau-de-parfum`].filter((s, i, a) => a.indexOf(s) === i);
+  const slugWithWomen = perfumeSlug.replace("for-her", "for-women").replace("for-him", "for-men");
+  const slugWithHer   = perfumeSlug.replace("for-women", "for-her").replace("for-men", "for-him");
+  const slugsToTry = [perfumeSlug, slugWithWomen, slugWithHer, slugBase, `${slugBase}-eau-de-parfum`]
+    .filter((s, i, a) => s && a.indexOf(s) === i);
 
   for (const slug of slugsToTry) {
     const img = await ogImage(`https://www.fragrancenet.com/fragrances/${brandSlug}/${slug}`);
@@ -707,6 +710,22 @@ async function buscarImagenViaDDGTexto(nombre, marca) {
   return null;
 }
 
+// Sitio oficial de la marca — solo marcas con fotos de fondo limpio
+async function buscarImagenMarcaOficial(nombre, marca) {
+  const slug = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const URLS = {
+    "Rasasi":         [`https://rasasi.com/product/${slug}/`, `https://rasasi.com/${slug}/`],
+    "Lattafa":        [`https://lattafaperfumes.com/${slug}/`, `https://lattafaperfumes.com/product/${slug}/`],
+    "Afnan":          [`https://afnanperfumes.com/product/${slug}/`],
+    "Al Wataniah":    [`https://alwataniah.com/product/${slug}/`],
+  };
+  for (const url of URLS[marca] ?? []) {
+    const img = await ogImage(url);
+    if (img && !img.includes("logo") && !img.includes("banner") && !img.includes("placeholder")) return img;
+  }
+  return null;
+}
+
 async function buscarImagenConfiable(nombre, marca) {
   // 1. Fragrancenet — fondo blanco profesional, cobertura excelente de perfumes árabes
   const imgFN = await buscarImagenFragrancenet(nombre, marca);
@@ -720,6 +739,10 @@ async function buscarImagenConfiable(nombre, marca) {
   //    y extrae og:image (siempre foto principal del producto)
   const imgDDGTexto = await buscarImagenViaDDGTexto(nombre, marca);
   if (imgDDGTexto) return imgDDGTexto;
+
+  // 4. Sitio oficial de la marca (solo marcas con fotos limpias conocidas)
+  const imgOficial = await buscarImagenMarcaOficial(nombre, marca);
+  if (imgOficial) return imgOficial;
 
   // Si no se encuentra nada confiable, preferimos null a una foto mala
   return null;
