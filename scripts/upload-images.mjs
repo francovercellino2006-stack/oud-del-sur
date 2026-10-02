@@ -675,10 +675,16 @@ const BLOCKED_DOMAINS = [
   "blogspot", "wordpress.com", "tumblr",
 ];
 
+const IMAGEN_MALA_PATTERNS = [
+  /set[_-]de[_-]/i, /decant/i, /\bset\b.*\bmujer\b/i, /\bset\b.*\bhombre\b/i,
+  /bundle/i, /pack[_-]/i, /combo/i, /cupon/i, /promo/i, /banner/i,
+  /logo/i, /icon/i, /placeholder/i,
+];
+
 function esImagenApta(url = "") {
   const lower = url.toLowerCase();
   if (BLOCKED_DOMAINS.some(d => lower.includes(d))) return false;
-  // Preferir URLs que sugieran foto de producto profesional
+  if (IMAGEN_MALA_PATTERNS.some(p => p.test(lower))) return false;
   return true;
 }
 
@@ -1013,6 +1019,19 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
     process.stdout.write("⬇️   Subiendo imagen...");
     try { patch.image = await subirImagen(datos.imageUrl, nombre); console.log(" ✅"); }
     catch (e) { console.log(` sin imagen: ${e.message}`); }
+  } else {
+    // Si no encontramos imagen nueva, revisar si la existente en Sanity es una imagen mala (set/promo)
+    try {
+      const existing = await client.fetch(
+        `*[_id == $id][0]{ "imgUrl": image.asset->url }`,
+        { id: perfumeId }
+      );
+      if (existing?.imgUrl && !esImagenApta(existing.imgUrl)) {
+        console.log(`\n⚠️   Imagen actual es un set/promo — borrando...`);
+        await client.patch(perfumeId).unset(["image"]).commit();
+        console.log("   ✅ Imagen mala eliminada de Sanity.");
+      }
+    } catch {}
   }
 
   if (Object.keys(patch).length === 0) {
