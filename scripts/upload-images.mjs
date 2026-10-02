@@ -586,8 +586,23 @@ async function buscarImagenMarca(nombre, marca) {
   } catch { return null; }
 }
 
+// Dominios bloqueados: fotos de baja calidad (vendedores, redes sociales, mercados)
+const BLOCKED_DOMAINS = [
+  "instagram", "facebook", "twitter", "tiktok", "pinterest",
+  "mercadolibre", "mercadolivre", "olx", "ebay", "amazon",
+  "aliexpress", "alibaba", "wish", "shopify",
+  "blogspot", "wordpress.com", "tumblr",
+];
+
+function esImagenApta(url = "") {
+  const lower = url.toLowerCase();
+  if (BLOCKED_DOMAINS.some(d => lower.includes(d))) return false;
+  // Preferir URLs que sugieran foto de producto profesional
+  return true;
+}
+
 async function buscarImagenConfiable(nombre, marca) {
-  // 1. Notino — imágenes reales de producto, muy confiable
+  // 1. Notino — retailer profesional, siempre fondo blanco
   const imgNotino = await buscarImagenNotino(nombre, marca);
   if (imgNotino) return imgNotino;
 
@@ -595,15 +610,15 @@ async function buscarImagenConfiable(nombre, marca) {
   const imgMarca = await buscarImagenMarca(nombre, marca);
   if (imgMarca) return imgMarca;
 
-  // 3. DuckDuckGo images (vqd token puede fallar, es el último recurso)
+  // 3. DuckDuckGo — query específico para fotos de producto con fondo limpio
   try {
-    const query = `${nombre} ${marca} perfume bottle`;
+    // Agregar términos que ayudan a encontrar fotos de producto profesionales
+    const query = `"${nombre}" "${marca}" perfume eau de parfum official`;
     const homeRes = await fetch(
       `https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`,
       { headers: HEADERS, signal: AbortSignal.timeout(8000) }
     );
     const homeHtml = await homeRes.text();
-    // Probar varios formatos del vqd
     const vqd = homeHtml.match(/vqd=["']([^"']+)["']/)?.[1]
       ?? homeHtml.match(/"vqd"\s*:\s*"([^"]+)"/)?.[1]
       ?? homeHtml.match(/vqd=([^&\s"']+)/)?.[1];
@@ -615,8 +630,11 @@ async function buscarImagenConfiable(nombre, marca) {
     );
     const data = await imgRes.json();
     if (!data.results?.length) return null;
+
+    // Priorizar: dominio confiable → cualquier URL apta → null
     const confiable = data.results.find(r => TRUSTED_DOMAINS.some(d => (r.url ?? "").includes(d)));
-    return (confiable ?? data.results[0])?.image ?? null;
+    const apta      = data.results.find(r => esImagenApta(r.url));
+    return (confiable ?? apta)?.image ?? null;
   } catch { return null; }
 }
 
@@ -699,7 +717,16 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
   console.log(`  Categoría:   ${datos.category ?? "—"}`);
   console.log(`  Familia:     ${datos.family ?? "—"}`);
   console.log(`  Duración:    ${datos.duration ?? "—"}`);
-  console.log(`  Imagen:      ${datos.imageUrl ? "✅" : "—"}`);
+  if (datos.imageUrl) {
+    console.log(`  Imagen URL:  ${datos.imageUrl.slice(0, 80)}...`);
+    const reemplazar = (await ask("  ¿La imagen es correcta? Enter=sí, pegá otra URL para reemplazar: ")).trim();
+    if (reemplazar.startsWith("http")) datos.imageUrl = reemplazar;
+    else if (reemplazar.toLowerCase() === "n" || reemplazar.toLowerCase() === "no") datos.imageUrl = undefined;
+  } else {
+    console.log(`  Imagen:      — no encontrada`);
+    const urlManual = (await ask("  Pegá una URL de imagen (o Enter para saltar): ")).trim();
+    if (urlManual.startsWith("http")) datos.imageUrl = urlManual;
+  }
   if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 120)}...`);
   console.log("──────────────────────────────────────────");
 
