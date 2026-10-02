@@ -548,23 +548,76 @@ async function buscarConIA(nombre, marca, datosExistentes = {}) {
   return null;
 }
 
-// Solo devuelve imagen si es de una fuente confiable
-async function buscarImagenConfiable(query) {
-  const homeRes = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, { headers: HEADERS });
-  const homeHtml = await homeRes.text();
-  const vqdMatch = homeHtml.match(/vqd=['"]([^'"]+)['"]/);
-  if (!vqdMatch) return null;
-  const vqd = vqdMatch[1];
-  const searchUrl = `https://duckduckgo.com/i.js?l=es-es&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,,,,,&p=1`;
-  const imgRes = await fetch(searchUrl, { headers: { ...HEADERS, Referer: "https://duckduckgo.com/" } });
-  const data = await imgRes.json();
-  if (!data.results?.length) return null;
+// Busca imagen en Notino (retailer confiable, imágenes reales de producto)
+async function buscarImagenNotino(nombre, marca) {
+  try {
+    const res = await fetch(
+      `https://www.notino.es/search/?query=${encodeURIComponent(`${nombre} ${marca}`)}`,
+      { headers: HEADERS, signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const html = await res.text();
+    const match = html.match(/src="(https:\/\/i\.notino\.com\/[^"]+\.(?:jpg|jpeg|webp)[^"]*)"/i)
+      ?? html.match(/"(https:\/\/i\.notino\.com\/[^"]+\.(?:jpg|jpeg|webp)[^"]*)"/i);
+    return match?.[1] ?? null;
+  } catch { return null; }
+}
 
-  // Preferir dominios conocidos, pero si no hay ninguno tomar el primer resultado
-  const confiable = data.results.find(r =>
-    TRUSTED_DOMAINS.some(d => (r.url ?? "").toLowerCase().includes(d))
-  );
-  return (confiable ?? data.results[0])?.image ?? null;
+// Busca imagen en el sitio de la marca directamente
+async function buscarImagenMarca(nombre, marca) {
+  const MARCA_URLS = {
+    "Lattafa":        `https://lattafaperfumes.com/?s=${encodeURIComponent(nombre)}`,
+    "Armaf":          `https://www.armafperfumes.com/?s=${encodeURIComponent(nombre)}`,
+    "Afnan":          `https://afnanperfumes.com/?s=${encodeURIComponent(nombre)}`,
+    "Maison Alhambra":`https://maisonalhambra.com/?s=${encodeURIComponent(nombre)}`,
+    "Rasasi":         `https://rasasi.com/?s=${encodeURIComponent(nombre)}`,
+    "Al Wataniah":    `https://alwataniah.com/?s=${encodeURIComponent(nombre)}`,
+  };
+  const url = MARCA_URLS[marca];
+  if (!url) return null;
+  try {
+    const res = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const html = await res.text();
+    // Buscar imagen de producto (evitar logos y banners)
+    const match = html.match(/src="(https?:\/\/[^"]+\/wp-content\/uploads\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i)
+      ?? html.match(/src="(https?:\/\/[^"]+product[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i);
+    return match?.[1] ?? null;
+  } catch { return null; }
+}
+
+async function buscarImagenConfiable(nombre, marca) {
+  // 1. Notino — imágenes reales de producto, muy confiable
+  const imgNotino = await buscarImagenNotino(nombre, marca);
+  if (imgNotino) return imgNotino;
+
+  // 2. Sitio oficial de la marca
+  const imgMarca = await buscarImagenMarca(nombre, marca);
+  if (imgMarca) return imgMarca;
+
+  // 3. DuckDuckGo images (vqd token puede fallar, es el último recurso)
+  try {
+    const query = `${nombre} ${marca} perfume bottle`;
+    const homeRes = await fetch(
+      `https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`,
+      { headers: HEADERS, signal: AbortSignal.timeout(8000) }
+    );
+    const homeHtml = await homeRes.text();
+    // Probar varios formatos del vqd
+    const vqd = homeHtml.match(/vqd=["']([^"']+)["']/)?.[1]
+      ?? homeHtml.match(/"vqd"\s*:\s*"([^"]+)"/)?.[1]
+      ?? homeHtml.match(/vqd=([^&\s"']+)/)?.[1];
+    if (!vqd) return null;
+
+    const imgRes = await fetch(
+      `https://duckduckgo.com/i.js?l=es-es&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,,,,,&p=1`,
+      { headers: { ...HEADERS, Referer: "https://duckduckgo.com/" }, signal: AbortSignal.timeout(8000) }
+    );
+    const data = await imgRes.json();
+    if (!data.results?.length) return null;
+    const confiable = data.results.find(r => TRUSTED_DOMAINS.some(d => (r.url ?? "").includes(d)));
+    return (confiable ?? data.results[0])?.image ?? null;
+  } catch { return null; }
 }
 
 function falta(datos) {
@@ -636,7 +689,7 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
   // Imagen: buscar si no se encontró en las fuentes anteriores
   if (!datos.imageUrl) {
     if (!silencioso) process.stdout.write(`🖼️   Buscando imagen...`);
-    try { datos.imageUrl = await buscarImagenConfiable(`${nombre} ${marca} perfume bottle`); } catch {}
+    try { datos.imageUrl = await buscarImagenConfiable(nombre, marca); } catch {}
     if (!silencioso) console.log(datos.imageUrl ? " ✅" : " no encontrada");
   }
 
