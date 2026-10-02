@@ -942,45 +942,50 @@ async function generarImagenIA(nombre, marca) {
 }
 
 async function buscarImagenConfiable(nombre, marca) {
+  const log = (label, url) => {
+    if (url) console.log(`\n    ✅ [${label}] ${url.slice(0, 100)}`);
+    else process.stdout.write(` ✗`);
+  };
+
   process.stdout.write("\n    img [1] fragrancenet...");
   const imgFN = await buscarImagenFragrancenet(nombre, marca);
-  if (imgFN) { process.stdout.write(" ✅\n"); return imgFN; }
-  process.stdout.write(" ✗");
+  if (imgFN) { log("fragrancenet", imgFN); return imgFN; }
+  log(null, null);
 
   process.stdout.write("  [2] notino...");
   const imgNotino = await buscarImagenNotino(nombre, marca);
-  if (imgNotino) { process.stdout.write(" ✅\n"); return imgNotino; }
-  process.stdout.write(" ✗");
+  if (imgNotino) { log("notino", imgNotino); return imgNotino; }
+  log(null, null);
 
   process.stdout.write("  [3] sitio marca...");
   const imgOficial = await buscarImagenMarcaOficial(nombre, marca);
-  if (imgOficial) { process.stdout.write(" ✅\n"); return imgOficial; }
-  process.stdout.write(" ✗");
+  if (imgOficial) { log("sitio oficial", imgOficial); return imgOficial; }
+  log(null, null);
 
   process.stdout.write("  [4] lujoperfume...");
   const imgLujo = await buscarImagenLujo(nombre);
-  if (imgLujo) { process.stdout.write(" ✅\n"); return imgLujo; }
-  process.stdout.write(" ✗");
+  if (imgLujo) { log("lujoperfume", imgLujo); return imgLujo; }
+  log(null, null);
 
   process.stdout.write("  [5] emiratesoud...");
   const imgEmirates = await buscarImagenEmirates(nombre, marca);
-  if (imgEmirates) { process.stdout.write(" ✅\n"); return imgEmirates; }
-  process.stdout.write(" ✗");
+  if (imgEmirates) { log("emiratesoud", imgEmirates); return imgEmirates; }
+  log(null, null);
 
   process.stdout.write("  [6] bing images...");
   const imgBing = await buscarImagenBing(nombre, marca);
-  if (imgBing) { process.stdout.write(" ✅\n"); return imgBing; }
-  process.stdout.write(" ✗");
+  if (imgBing) { log("bing", imgBing); return imgBing; }
+  log(null, null);
 
   process.stdout.write("  [7] fragrantica...");
   const imgFrag = await buscarImagenFragranticaImg(nombre, marca);
-  if (imgFrag) { process.stdout.write(" ✅\n"); return imgFrag; }
-  process.stdout.write(" ✗");
+  if (imgFrag) { log("fragrantica", imgFrag); return imgFrag; }
+  log(null, null);
 
   process.stdout.write("  [8] IA Pollinations...");
   const imgIA = await generarImagenIA(nombre, marca);
-  if (imgIA) { process.stdout.write(" ✅ (generada)\n"); return imgIA; }
-  process.stdout.write(" ✗\n");
+  if (imgIA) { log("IA generada", imgIA); return imgIA; }
+  console.log(" ✗");
 
   return null;
 }
@@ -1109,8 +1114,8 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
     console.log("⚠️   Sin datos nuevos."); return true;
   }
 
-  await client.patch(perfumeId).set(patch).commit();
-  console.log(`🎉  ¡Guardado! (${Object.keys(patch).join(", ")})`);
+  const result = await client.patch(perfumeId).set(patch).commit();
+  console.log(`🎉  ¡Guardado! ID=${result._id} rev=${result._rev} campos=(${Object.keys(patch).join(", ")})`);
   return true;
 }
 
