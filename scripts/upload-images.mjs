@@ -768,26 +768,31 @@ async function main() {
     await crearPerfume();
   } else if (input.toLowerCase().startsWith("borrar ")) {
     const query = input.slice(7).trim();
-    const num = parseInt(query);
+    const soloNum = /^\d+$/.test(query); // solo números puros → índice
     let perfume;
-    if (!isNaN(num) && num >= 1 && num <= perfumes.length) {
-      perfume = perfumes[num - 1];
+    if (soloNum) {
+      const num = parseInt(query);
+      if (num >= 1 && num <= perfumes.length) perfume = perfumes[num - 1];
     } else {
       perfume = perfumes.find(p => p.name.toLowerCase().includes(query.toLowerCase()));
     }
     if (!perfume) { console.error(`❌  No encontrado: "${query}"`); rl.close(); return; }
 
     console.log(`\n⚠️   Vas a eliminar: ${perfume.name} — ${perfume.brand}`);
-    const confirmar = await ask("¿Confirmar eliminación? Esto no se puede deshacer. [s/N]: ");
-    if (!confirmar.toLowerCase().startsWith("s")) { console.log("Cancelado."); rl.close(); return; }
+    const confirmar = await ask(`   Escribí el nombre para confirmar ("${perfume.name}"): `);
+    if (confirmar.trim().toLowerCase() !== perfume.name.toLowerCase()) {
+      console.log("❌  Nombre incorrecto. Cancelado.");
+      rl.close(); return;
+    }
 
     await client.delete(perfume._id);
     console.log(`🗑️   "${perfume.name}" eliminado de Sanity.`);
   } else {
-    const num = parseInt(input);
+    const soloNum = /^\d+$/.test(input);
     let perfume;
-    if (!isNaN(num) && num >= 1 && num <= perfumes.length) {
-      perfume = perfumes[num - 1];
+    if (soloNum) {
+      const num = parseInt(input);
+      if (num >= 1 && num <= perfumes.length) perfume = perfumes[num - 1];
     } else {
       perfume = perfumes.find(p => p.name.toLowerCase().includes(input.toLowerCase()));
     }
