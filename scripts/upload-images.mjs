@@ -711,7 +711,7 @@ async function buscarImagenFragrancenet(nombre, marca) {
 
   for (const slug of slugsToTry) {
     const img = await ogImage(`https://www.fragrancenet.com/fragrances/${brandSlug}/${slug}`);
-    if (img && img.includes("media.fragrancenet.com")) return img;
+    if (img && esImagenApta(img) && !img.includes("logo")) return img;
   }
 
   // Fallback: buscar en el sitio
@@ -725,7 +725,7 @@ async function buscarImagenFragrancenet(nombre, marca) {
     const link = html.match(/href="(\/fragrances\/[^"]+)"/i)?.[1];
     if (!link) return null;
     const img = await ogImage(`https://www.fragrancenet.com${link}`);
-    if (img && img.includes("media.fragrancenet.com")) return img;
+    if (img && esImagenApta(img) && !img.includes("logo")) return img;
   } catch {}
   return null;
 }
@@ -800,24 +800,26 @@ async function buscarImagenMarcaOficial(nombre, marca) {
 }
 
 async function buscarImagenConfiable(nombre, marca) {
-  // 1. Fragrancenet — fondo blanco profesional, cobertura excelente de perfumes árabes
+  process.stdout.write("\n    img [1] fragrancenet...");
   const imgFN = await buscarImagenFragrancenet(nombre, marca);
-  if (imgFN) return imgFN;
+  if (imgFN) { process.stdout.write(" ✅\n"); return imgFN; }
+  process.stdout.write(" ✗");
 
-  // 2. Notino — fotos profesionales de retailer europeo
+  process.stdout.write("  [2] notino...");
   const imgNotino = await buscarImagenNotino(nombre, marca);
-  if (imgNotino) return imgNotino;
+  if (imgNotino) { process.stdout.write(" ✅\n"); return imgNotino; }
+  process.stdout.write(" ✗");
 
-  // 3. DDG texto: busca página del perfume en fragrancenet / notino / scentbird
-  //    y extrae og:image (siempre foto principal del producto)
+  process.stdout.write("  [3] ddg→página...");
   const imgDDGTexto = await buscarImagenViaDDGTexto(nombre, marca);
-  if (imgDDGTexto) return imgDDGTexto;
+  if (imgDDGTexto) { process.stdout.write(" ✅\n"); return imgDDGTexto; }
+  process.stdout.write(" ✗");
 
-  // 4. Sitio oficial de la marca (solo marcas con fotos limpias conocidas)
+  process.stdout.write("  [4] sitio marca...");
   const imgOficial = await buscarImagenMarcaOficial(nombre, marca);
-  if (imgOficial) return imgOficial;
+  if (imgOficial) { process.stdout.write(" ✅\n"); return imgOficial; }
+  process.stdout.write(" ✗\n");
 
-  // Si no se encuentra nada confiable, preferimos null a una foto mala
   return null;
 }
 
