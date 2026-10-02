@@ -815,6 +815,32 @@ async function buscarImagenMarcaOficial(nombre, marca) {
   return extractProductImgFromSearch(url);
 }
 
+// DDG image search con filtro de fondo blanco — fotos de producto profesionales
+async function buscarImagenDDGWhite(nombre, marca) {
+  try {
+    const query = `${nombre} ${marca} perfume`;
+    const homeRes = await fetch(
+      `https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`,
+      { headers: HEADERS, signal: AbortSignal.timeout(10000) }
+    );
+    const homeHtml = await homeRes.text();
+    const vqd = homeHtml.match(/vqd=["']([^"']+)["']/)?.[1]
+      ?? homeHtml.match(/"vqd"\s*:\s*"([^"]+)"/)?.[1]
+      ?? homeHtml.match(/vqd=([^&\s"']+)/)?.[1];
+    if (!vqd) return null;
+
+    // Filtro: fondo blanco (color_White) — fotos de producto sobre fondo blanco
+    const imgRes = await fetch(
+      `https://duckduckgo.com/i.js?l=en-us&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,size_Large,color_White,,&p=1`,
+      { headers: { ...HEADERS, Referer: "https://duckduckgo.com/" }, signal: AbortSignal.timeout(10000) }
+    );
+    if (!imgRes.ok) return null;
+    const data = await imgRes.json();
+    const apta = data.results?.find(r => esImagenApta(r.url) && r.image?.match(/\.(jpg|jpeg|png|webp)/i));
+    return apta?.image ?? null;
+  } catch { return null; }
+}
+
 async function buscarImagenConfiable(nombre, marca) {
   process.stdout.write("\n    img [1] fragrancenet...");
   const imgFN = await buscarImagenFragrancenet(nombre, marca);
@@ -826,14 +852,14 @@ async function buscarImagenConfiable(nombre, marca) {
   if (imgNotino) { process.stdout.write(" ✅\n"); return imgNotino; }
   process.stdout.write(" ✗");
 
-  process.stdout.write("  [3] ddg→página...");
-  const imgDDGTexto = await buscarImagenViaDDGTexto(nombre, marca);
-  if (imgDDGTexto) { process.stdout.write(" ✅\n"); return imgDDGTexto; }
-  process.stdout.write(" ✗");
-
-  process.stdout.write("  [4] sitio marca...");
+  process.stdout.write("  [3] sitio marca...");
   const imgOficial = await buscarImagenMarcaOficial(nombre, marca);
   if (imgOficial) { process.stdout.write(" ✅\n"); return imgOficial; }
+  process.stdout.write(" ✗");
+
+  process.stdout.write("  [4] ddg fondo blanco...");
+  const imgDDG = await buscarImagenDDGWhite(nombre, marca);
+  if (imgDDG) { process.stdout.write(" ✅\n"); return imgDDG; }
   process.stdout.write(" ✗\n");
 
   return null;
