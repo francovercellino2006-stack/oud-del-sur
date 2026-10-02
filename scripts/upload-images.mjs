@@ -67,6 +67,13 @@ function acordToFamily(accords) {
   return null;
 }
 
+// Descarta descripciones en árabe u otros idiomas no-latinos
+function esDescripcionUtilizable(texto) {
+  if (!texto || texto.length < 40) return false;
+  const arabicChars = (texto.match(/[؀-ۿ]/g) ?? []).length;
+  return arabicChars / texto.length < 0.1; // menos del 10% árabe
+}
+
 function toSlug(str) {
   return str.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
 }
@@ -640,12 +647,16 @@ async function buscarImagenFragrancenet(nombre, marca) {
   const brandSlug   = marca.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
   const perfumeSlug = nombre.toLowerCase().replace(/\s+/g, "-").replace(/[^a-z0-9-]/g, "");
 
-  // Intentar URL directa primero (patrón conocido)
-  const urlDirecta = `https://www.fragrancenet.com/fragrances/${brandSlug}/${perfumeSlug}`;
-  const imgDirecta = await ogImage(urlDirecta);
-  if (imgDirecta && imgDirecta.includes("media.fragrancenet.com")) return imgDirecta;
+  // Variantes del slug (con y sin "for-her", "for-him", etc.)
+  const slugBase = perfumeSlug.replace(/-?(?:for-her|for-him|for-men|for-women)$/, "");
+  const slugsToTry = [perfumeSlug, slugBase, `${slugBase}-eau-de-parfum`].filter((s, i, a) => a.indexOf(s) === i);
 
-  // Fallback: buscar en su sitio
+  for (const slug of slugsToTry) {
+    const img = await ogImage(`https://www.fragrancenet.com/fragrances/${brandSlug}/${slug}`);
+    if (img && img.includes("media.fragrancenet.com")) return img;
+  }
+
+  // Fallback: buscar en el sitio
   try {
     const searchRes = await fetch(
       `https://www.fragrancenet.com/search?q=${encodeURIComponent(`${nombre} ${marca}`)}`,
@@ -720,7 +731,12 @@ function falta(datos) {
 
 function merge(base, nuevo) {
   if (!nuevo) return;
-  for (const k of Object.keys(nuevo)) { if (!base[k]) base[k] = nuevo[k]; }
+  for (const k of Object.keys(nuevo)) {
+    if (base[k]) continue;
+    // No guardar descripciones en árabe u otros scripts no-latinos
+    if (k === "description" && !esDescripcionUtilizable(nuevo[k])) continue;
+    base[k] = nuevo[k];
+  }
 }
 
 async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } = {}) {
