@@ -279,6 +279,72 @@ async function buscarDatosDDG(nombre, marca) {
   return Object.keys(data).length > 0 ? data : null;
 }
 
+// DuckDuckGo Instant Answers — API gratuita, sin clave, a veces da descripciones de Wikipedia
+async function buscarDDGInstant(nombre, marca) {
+  try {
+    const query = `${nombre} ${marca} perfume`;
+    const res = await fetch(
+      `https://api.duckduckgo.com/?q=${encodeURIComponent(query)}&format=json&no_html=1&skip_disambig=1`,
+      { headers: HEADERS, signal: AbortSignal.timeout(8000) }
+    );
+    if (!res.ok) return null;
+    const json = await res.json();
+    const data = {};
+
+    if (json.AbstractText?.length > 60) data.description = json.AbstractText.slice(0, 400);
+    else {
+      const topic = json.RelatedTopics?.find(t => t.Text?.length > 60);
+      if (topic) data.description = topic.Text.slice(0, 400);
+    }
+
+    const text = (json.AbstractText ?? "").toLowerCase();
+    if (/\bfor men\b|\bmasculine\b/.test(text))        data.category = "hombre";
+    else if (/\bfor women\b|\bfeminine\b/.test(text)) data.category = "mujer";
+    else if (/\bunisex\b/.test(text))                 data.category = "unisex";
+
+    const fam = acordToFamily(text.split(/\W+/));
+    if (fam) data.family = fam;
+
+    return Object.keys(data).length > 0 ? data : null;
+  } catch { return null; }
+}
+
+// Intenta obtener descripción directamente del sitio oficial de la marca
+async function scrapMarcaOficial(nombre, marca) {
+  const sitios = {
+    "Lattafa":        `https://lattafaperfumes.com/?s=${encodeURIComponent(nombre)}`,
+    "Armaf":          `https://www.armafperfumes.com/?s=${encodeURIComponent(nombre)}`,
+    "Afnan":          `https://afnanperfumes.com/?s=${encodeURIComponent(nombre)}`,
+    "Rasasi":         `https://rasasi.com/?s=${encodeURIComponent(nombre)}`,
+    "Al Wataniah":    `https://alwataniah.com/?s=${encodeURIComponent(nombre)}`,
+    "Maison Alhambra":`https://maisonalhambra.com/?s=${encodeURIComponent(nombre)}`,
+  };
+  const url = sitios[marca];
+  if (!url) return null;
+
+  try {
+    const res = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const html = await res.text();
+
+    // Buscar link al producto en los resultados
+    const linkMatch = html.match(/href="(https?:\/\/[^"]*(?:product|perfume|fragrance)[^"]*)"[^>]*>[^<]*(?:${nombre.split(" ")[0]})/i)
+      ?? html.match(/href="(https?:\/\/[^"]*(?:product|perfume)[^"]+)"/i);
+    if (!linkMatch) return null;
+
+    const prodRes = await fetch(linkMatch[1], { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!prodRes.ok) return null;
+    const prodHtml = await prodRes.text();
+
+    const paras = [...prodHtml.matchAll(/<(?:p|div)[^>]*>([\s\S]{80,600}?)<\/(?:p|div)>/gi)]
+      .map(m => m[1].replace(/<[^>]+>/g, " ").replace(/\s+/g, " ").trim())
+      .filter(p => p.length > 80 && !p.toLowerCase().includes("cookie") && !p.toLowerCase().includes("©"));
+
+    if (paras.length === 0) return null;
+    return { description: paras[0].slice(0, 400) };
+  } catch { return null; }
+}
+
 // Scraper de Parfumo.net — buena base de datos, menos bloqueos que Fragrantica
 async function scrapParfumo(nombre, marca) {
   try {
@@ -513,44 +579,58 @@ function merge(base, nuevo) {
 async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } = {}) {
   let datos = {};
 
-  // 1. Fragrantica
-  if (!silencioso) process.stdout.write(`\n🔎  [1/5] Fragrantica...`);
-  try {
-    const fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
-    if (fragUrl) { datos = await scrapFragrantica(fragUrl); }
-  } catch {}
+  // 1. Sitio oficial de la marca
+  if (!silencioso) process.stdout.write(`\n🔎  [1/7] Sitio oficial ${marca}...`);
+  try { merge(datos, await scrapMarcaOficial(nombre, marca)); } catch {}
   if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
 
-  // 2. Parfumo
+  // 2. DuckDuckGo Instant Answers (Wikipedia/gratis)
   if (falta(datos)) {
-    if (!silencioso) process.stdout.write(`🔎  [2/5] Parfumo...`);
+    if (!silencioso) process.stdout.write(`🔎  [2/7] DuckDuckGo Instant...`);
+    try { merge(datos, await buscarDDGInstant(nombre, marca)); } catch {}
+    if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
+  }
+
+  // 3. Fragrantica (texto sin imagen)
+  if (falta(datos)) {
+    if (!silencioso) process.stdout.write(`🔎  [3/7] Fragrantica...`);
+    try {
+      const fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
+      if (fragUrl) { merge(datos, await scrapFragrantica(fragUrl)); }
+    } catch {}
+    if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
+  }
+
+  // 4. Parfumo
+  if (falta(datos)) {
+    if (!silencioso) process.stdout.write(`🔎  [4/7] Parfumo...`);
     try { merge(datos, await scrapParfumo(nombre, marca)); } catch {}
     if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
   }
 
-  // 3. Notino
+  // 5. Notino
   if (falta(datos)) {
-    if (!silencioso) process.stdout.write(`🔎  [3/5] Notino...`);
+    if (!silencioso) process.stdout.write(`🔎  [5/7] Notino...`);
     try { merge(datos, await scrapNotino(nombre, marca)); } catch {}
     if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
   }
 
-  // 4. Búsqueda web general
+  // 6. Búsqueda web general
   if (falta(datos)) {
-    if (!silencioso) process.stdout.write(`🔎  [4/5] Búsqueda web...`);
+    if (!silencioso) process.stdout.write(`🔎  [6/7] Búsqueda web...`);
     try { merge(datos, await buscarDatosEnPaginas(nombre, marca)); } catch {}
     if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
   }
 
-  // 5. IA (Claude si hay suscripción, Groq como fallback gratuito)
+  // 7. IA (Claude si hay suscripción, Groq como fallback gratuito)
   if (falta(datos)) {
     const iaLabel = ANTHROPIC_API_KEY ? "Claude" : GROQ_API_KEY ? "Groq" : "IA (sin clave)";
-    if (!silencioso) process.stdout.write(`🤖  [5/5] ${iaLabel}...`);
+    if (!silencioso) process.stdout.write(`🤖  [7/7] ${iaLabel}...`);
     try {
       const iaData = await buscarConIA(nombre, marca, datos);
       if (iaData) { merge(datos, iaData); }
     } catch {}
-    if (!silencioso) console.log(falta(datos) ? " sin clave Groq" : " ✅");
+    if (!silencioso) console.log(falta(datos) ? (ANTHROPIC_API_KEY || GROQ_API_KEY ? " sin datos" : " sin clave API") : " ✅");
   }
 
   // Imagen: buscar si no se encontró en las fuentes anteriores
