@@ -583,8 +583,11 @@ async function buscarConIA(nombre, marca, datosExistentes = {}) {
       if (res.ok) {
         const json = await res.json();
         return parseIAResponse(json.choices?.[0]?.message?.content ?? "");
+      } else {
+        const errBody = await res.text().catch(() => "");
+        process.stdout.write(` [Groq error ${res.status}: ${errBody.slice(0, 80)}] `);
       }
-    } catch {}
+    } catch (e) { process.stdout.write(` [Groq excepción: ${e.message}] `); }
   }
 
   return null;
