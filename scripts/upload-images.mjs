@@ -593,15 +593,32 @@ async function buscarConIA(nombre, marca, datosExistentes = {}) {
   return null;
 }
 
-// Extrae og:image de una URL — siempre es la foto principal del producto
+// Extrae la imagen del producto de una página: og:image, JSON-LD, o img de producto
 async function ogImage(url) {
   try {
     const res = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
     const html = await res.text();
-    return html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
-      ?? html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1]
-      ?? null;
+
+    // 1. og:image (lo más común)
+    const og = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
+      ?? html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1];
+    if (og) return og;
+
+    // 2. JSON-LD structured data (e-commerce estándar)
+    for (const script of [...html.matchAll(/<script[^>]+type="application\/ld\+json"[^>]*>([\s\S]*?)<\/script>/gi)]) {
+      try {
+        const d = JSON.parse(script[1]);
+        const img = d.image ?? d.image?.[0] ?? d.offers?.image ?? d.logo?.url;
+        if (img && typeof img === "string" && img.startsWith("http") && !img.includes("logo")) return img;
+      } catch {}
+    }
+
+    // 3. Primera imagen grande de producto (src que parezca CDN de producto)
+    const cdnImg = html.match(/src="(https?:\/\/[^"]+(?:product|fragrance|perfume)[^"]+\.(?:jpg|jpeg|png|webp))"/i)?.[1];
+    if (cdnImg) return cdnImg;
+
+    return null;
   } catch { return null; }
 }
 
@@ -763,9 +780,15 @@ async function buscarImagenViaDDGTexto(nombre, marca) {
 async function buscarImagenMarcaOficial(nombre, marca) {
   const slug = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
   const URLS = {
-    "Rasasi":         [`https://rasasi.com/product/${slug}/`, `https://rasasi.com/${slug}/`],
-    "Lattafa":        [`https://lattafaperfumes.com/${slug}/`, `https://lattafaperfumes.com/product/${slug}/`],
-    "Afnan":          [`https://afnanperfumes.com/product/${slug}/`],
+    "Rasasi":         [`https://rasasi.com/product/${slug}/`, `https://rasasi.com/product/${slug}-edp/`],
+    "Lattafa":        [
+      `https://lattafaperfumes.com/${slug}/`,
+      `https://lattafaperfumes.com/${slug}-edp/`,
+      `https://lattafaperfumes.com/${slug}-eau-de-parfum/`,
+      `https://lattafaperfumes.com/product/${slug}/`,
+    ],
+    "Afnan":          [`https://afnanperfumes.com/product/${slug}/`, `https://afnanperfumes.com/product/${slug}-edp/`],
+    "Armaf":          [`https://www.armafperfumes.com/product/${slug}/`, `https://www.armafperfumes.com/product/${slug}-edp/`],
     "Al Wataniah":    [`https://alwataniah.com/product/${slug}/`],
   };
   for (const url of URLS[marca] ?? []) {
