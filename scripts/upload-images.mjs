@@ -494,11 +494,42 @@ ${ya ? `\nYa tenés: ${ya}. Completá igualmente todos los campos.` : ""}
 Si no conocés el perfume, inferí datos razonables basándote en la marca y el nombre.`;
 }
 
+const FAMILY_NORMALIZE = {
+  "floral": "florales", "florals": "florales", "flower": "florales",
+  "sweet": "dulces", "gourmand": "dulces", "dulce": "dulces",
+  "fresh": "frescos", "fresco": "frescos", "citrus": "frescos",
+  "oriental": "orientales",
+  "woody": "maderosos", "wood": "maderosos", "madera": "maderosos", "maderoso": "maderosos",
+  "aromatic": "aromaticas", "aromatica": "aromaticas", "herbal": "aromaticas",
+  "aquatic": "aromaticas acuaticas", "marine": "aromaticas acuaticas", "acuatica": "aromaticas acuaticas",
+};
+const CATEGORY_NORMALIZE = {
+  "women": "mujer", "woman": "mujer", "female": "mujer", "femenino": "mujer", "femenina": "mujer",
+  "men": "hombre", "man": "hombre", "male": "hombre", "masculino": "hombre",
+};
+
 function parseIAResponse(text) {
   try {
     const parsed = JSON.parse(text.match(/\{[\s\S]+\}/)?.[0] ?? text);
-    if (parsed.family   && !FAMILIES_VALID.includes(parsed.family))          delete parsed.family;
-    if (parsed.category && !["hombre","mujer","unisex"].includes(parsed.category)) delete parsed.category;
+
+    // Normalizar family: acepta inglés y variantes en español
+    if (parsed.family) {
+      const f = parsed.family.toLowerCase().trim();
+      parsed.family = FAMILY_NORMALIZE[f] ?? (FAMILIES_VALID.includes(f) ? f : null);
+      if (!parsed.family) delete parsed.family;
+    }
+    // Normalizar category
+    if (parsed.category) {
+      const c = parsed.category.toLowerCase().trim();
+      parsed.category = CATEGORY_NORMALIZE[c] ?? (["hombre","mujer","unisex"].includes(c) ? c : null);
+      if (!parsed.category) delete parsed.category;
+    }
+    // Normalizar duration: "6-10 hours" → "6-10 hs"
+    if (parsed.duration) {
+      const d = parsed.duration.replace(/hours?|horas?/i, "hs").replace(/\s+/g, " ").trim();
+      parsed.duration = d.match(/\d+\+?\s*hs|\d+-\d+\s*hs/i)?.[0] ?? parsed.duration;
+    }
+
     return Object.keys(parsed).length > 0 ? parsed : null;
   } catch { return null; }
 }
@@ -528,8 +559,11 @@ async function buscarConIA(nombre, marca, datosExistentes = {}) {
         const json = await res.json();
         const result = parseIAResponse(json.content?.[0]?.text ?? "");
         if (result) return result;
+      } else {
+        const errBody = await res.text().catch(() => "");
+        process.stdout.write(` [Claude error ${res.status}: ${errBody.slice(0, 80)}] `);
       }
-    } catch {}
+    } catch (e) { process.stdout.write(` [Claude excepción: ${e.message}] `); }
   }
 
   // 2. Groq (gratis — fallback cuando no hay suscripción de Claude)
