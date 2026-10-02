@@ -815,29 +815,57 @@ async function buscarImagenMarcaOficial(nombre, marca) {
   return extractProductImgFromSearch(url);
 }
 
-// DDG image search con filtro de fondo blanco — fotos de producto profesionales
-async function buscarImagenDDGWhite(nombre, marca) {
+// Dominios confiables para imágenes de perfumes
+const DOMINIOS_PERFUME = [
+  "amazon", "walmart", "sephora", "macys", "nordstrom", "target",
+  "notino", "fragrancenet", "fragrancex", "scentbird", "parfumo",
+  "lattafa", "rasasi", "armaf", "afnan", "maison", "wataniah",
+  "lujoperfume", "oud", "perfume", "fragrance", "parfum", "scent", "aroma",
+  "aliexpress", "alhambra",
+];
+function esDominioConfiable(url) {
   try {
-    const query = `${nombre} ${marca} perfume`;
-    const homeRes = await fetch(
-      `https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`,
+    const host = new URL(url).hostname.toLowerCase();
+    return DOMINIOS_PERFUME.some(d => host.includes(d));
+  } catch { return false; }
+}
+
+// lujoperfume.com — tienda argentina que tiene todas las marcas árabes + og:image confiable
+async function buscarImagenLujo(nombre) {
+  try {
+    const res = await fetch(
+      `https://lujoperfume.com/?s=${encodeURIComponent(nombre)}`,
       { headers: HEADERS, signal: AbortSignal.timeout(10000) }
     );
-    const homeHtml = await homeRes.text();
-    const vqd = homeHtml.match(/vqd=["']([^"']+)["']/)?.[1]
-      ?? homeHtml.match(/"vqd"\s*:\s*"([^"]+)"/)?.[1]
-      ?? homeHtml.match(/vqd=([^&\s"']+)/)?.[1];
-    if (!vqd) return null;
+    if (!res.ok) return null;
+    const html = await res.text();
+    const link = html.match(/href="(https:\/\/lujoperfume\.com\/producto\/[^"]+)"/i)?.[1];
+    if (!link) return null;
+    const pRes = await fetch(link, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!pRes.ok) return null;
+    const pHtml = await pRes.text();
+    const og = pHtml.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
+      ?? pHtml.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1];
+    return og && esImagenApta(og) ? og : null;
+  } catch { return null; }
+}
 
-    // Filtro: fondo blanco (color_White) — fotos de producto sobre fondo blanco
-    const imgRes = await fetch(
-      `https://duckduckgo.com/i.js?l=en-us&o=json&q=${encodeURIComponent(query)}&vqd=${encodeURIComponent(vqd)}&f=,size_Large,color_White,,&p=1`,
-      { headers: { ...HEADERS, Referer: "https://duckduckgo.com/" }, signal: AbortSignal.timeout(10000) }
+// Bing Images — extrae mediaurl (URL de imagen real) del HTML de resultados
+async function buscarImagenBing(nombre, marca) {
+  try {
+    const query = `"${nombre}" ${marca} perfume`;
+    const res = await fetch(
+      `https://www.bing.com/images/search?q=${encodeURIComponent(query)}&qft=+filterui:photo-photo`,
+      { headers: { ...HEADERS, "Accept-Language": "en-US,en;q=0.9" }, signal: AbortSignal.timeout(10000) }
     );
-    if (!imgRes.ok) return null;
-    const data = await imgRes.json();
-    const apta = data.results?.find(r => esImagenApta(r.url) && r.image?.match(/\.(jpg|jpeg|png|webp)/i));
-    return apta?.image ?? null;
+    if (!res.ok) return null;
+    const html = await res.text();
+    // Bing embeds image URLs as URL-encoded mediaurl= params in search result links
+    const urls = [...html.matchAll(/mediaurl=([^&"'\s]+\.(?:jpg|jpeg|png|webp)[^&"'\s]*)/gi)]
+      .map(m => { try { return decodeURIComponent(m[1]); } catch { return m[1]; } })
+      .filter(u => esImagenApta(u) && !u.includes("bing.com") && !u.includes("msn.com") && !u.includes("microsoft.com"));
+    // Prefer images from trusted perfume domains to avoid false positives
+    return urls.find(esDominioConfiable) ?? null;
   } catch { return null; }
 }
 
@@ -857,9 +885,14 @@ async function buscarImagenConfiable(nombre, marca) {
   if (imgOficial) { process.stdout.write(" ✅\n"); return imgOficial; }
   process.stdout.write(" ✗");
 
-  process.stdout.write("  [4] ddg fondo blanco...");
-  const imgDDG = await buscarImagenDDGWhite(nombre, marca);
-  if (imgDDG) { process.stdout.write(" ✅\n"); return imgDDG; }
+  process.stdout.write("  [4] lujoperfume...");
+  const imgLujo = await buscarImagenLujo(nombre);
+  if (imgLujo) { process.stdout.write(" ✅\n"); return imgLujo; }
+  process.stdout.write(" ✗");
+
+  process.stdout.write("  [5] bing images...");
+  const imgBing = await buscarImagenBing(nombre, marca);
+  if (imgBing) { process.stdout.write(" ✅\n"); return imgBing; }
   process.stdout.write(" ✗\n");
 
   return null;
