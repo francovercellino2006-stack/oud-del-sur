@@ -776,26 +776,43 @@ async function buscarImagenViaDDGTexto(nombre, marca) {
   return null;
 }
 
-// Sitio oficial de la marca — solo marcas con fotos de fondo limpio
+// Extrae la primera imagen de producto de una página de búsqueda de WooCommerce/WordPress
+async function extractProductImgFromSearch(url) {
+  try {
+    const res = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
+    if (!res.ok) return null;
+    const html = await res.text();
+    // WooCommerce product thumbnails — siempre son fotos del frasco
+    const patterns = [
+      /class="[^"]*(?:wp-post-image|woocommerce-placeholder|attachment-woocommerce)[^"]*"[^>]+src="([^"]+)"/i,
+      /class="[^"]*product[^"]*"[^>]*>[\s\S]{0,200}?<img[^>]+src="(https?:\/\/[^"]+\.(?:jpg|jpeg|png|webp))"/i,
+      /<img[^>]+src="(https?:\/\/[^"]+wp-content\/uploads\/[^"]+\.(?:jpg|jpeg|png|webp))"/i,
+    ];
+    for (const p of patterns) {
+      const m = html.match(p);
+      if (m?.[1] && esImagenApta(m[1])) return m[1];
+    }
+    // og:image como fallback
+    return html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
+      ?? html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1]
+      ?? null;
+  } catch { return null; }
+}
+
+// Sitio oficial de la marca — busca en la página de búsqueda (server-side rendered)
 async function buscarImagenMarcaOficial(nombre, marca) {
-  const slug = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  const URLS = {
-    "Rasasi":         [`https://rasasi.com/product/${slug}/`, `https://rasasi.com/product/${slug}-edp/`],
-    "Lattafa":        [
-      `https://lattafaperfumes.com/${slug}/`,
-      `https://lattafaperfumes.com/${slug}-edp/`,
-      `https://lattafaperfumes.com/${slug}-eau-de-parfum/`,
-      `https://lattafaperfumes.com/product/${slug}/`,
-    ],
-    "Afnan":          [`https://afnanperfumes.com/product/${slug}/`, `https://afnanperfumes.com/product/${slug}-edp/`],
-    "Armaf":          [`https://www.armafperfumes.com/product/${slug}/`, `https://www.armafperfumes.com/product/${slug}-edp/`],
-    "Al Wataniah":    [`https://alwataniah.com/product/${slug}/`],
+  const q = encodeURIComponent(nombre);
+  const SEARCH_URLS = {
+    "Lattafa":        `https://lattafaperfumes.com/?s=${q}`,
+    "Rasasi":         `https://rasasi.com/?s=${q}`,
+    "Afnan":          `https://afnanperfumes.com/?s=${q}`,
+    "Armaf":          `https://www.armafperfumes.com/?s=${q}`,
+    "Al Wataniah":    `https://alwataniah.com/?s=${q}`,
+    "Maison Alhambra":`https://maisonalhambra.com/?s=${q}`,
   };
-  for (const url of URLS[marca] ?? []) {
-    const img = await ogImage(url);
-    if (img && !img.includes("logo") && !img.includes("banner") && !img.includes("placeholder")) return img;
-  }
-  return null;
+  const url = SEARCH_URLS[marca];
+  if (!url) return null;
+  return extractProductImgFromSearch(url);
 }
 
 async function buscarImagenConfiable(nombre, marca) {
