@@ -494,13 +494,11 @@ async function buscarImagenConfiable(query) {
   const data = await imgRes.json();
   if (!data.results?.length) return null;
 
-  // Filtrar solo imágenes de dominios confiables
-  const confiables = data.results.filter(r =>
+  // Preferir dominios conocidos, pero si no hay ninguno tomar el primer resultado
+  const confiable = data.results.find(r =>
     TRUSTED_DOMAINS.some(d => (r.url ?? "").toLowerCase().includes(d))
   );
-
-  if (confiables.length === 0) return null; // No encontró nada confiable — mejor no subir nada
-  return confiables[0].image;
+  return (confiable ?? data.results[0])?.image ?? null;
 }
 
 function falta(datos) {
