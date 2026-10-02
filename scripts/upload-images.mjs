@@ -16,12 +16,26 @@ import { join } from "path";
 import { pipeline } from "stream/promises";
 import { spawn } from "child_process";
 
-const PROJECT_ID = "mbd1smgb";
-const DATASET    = "production";
-const TOKEN      = "skrVODsYlAdDv5WKNebAAyTvju3CEittxoUWqeizjdIJEZklhFpwS5S008nAKM3J5qB7df6WqXirjErsZGHlVJkatYzWiVdSYzdPUW2zARAIdzN6WMXk6cqDjTckm9bv3vjugxLX9HDoDRCnDuQPpmvQTb5MBHUanrVXMjUxQdFhLiLK83SY";
+const PROJECT_ID        = "mbd1smgb";
+const DATASET           = "production";
+const TOKEN             = "skrVODsYlAdDv5WKNebAAyTvju3CEittxoUWqeizjdIJEZklhFpwS5S008nAKM3J5qB7df6WqXirjErsZGHlVJkatYzWiVdSYzdPUW2zARAIdzN6WMXk6cqDjTckm9bv3vjugxLX9HDoDRCnDuQPpmvQTb5MBHUanrVXMjUxQdFhLiLK83SY";
+// Groq es GRATIS: registrarte en console.groq.com → API Keys → Create key → pegala acá
+const GROQ_API_KEY = process.env.GROQ_API_KEY ?? "PEGA_TU_CLAVE_GROQ_AQUI";
 
 const BRANDS_VALID   = ["Lattafa", "Armaf", "Afnan", "Maison Alhambra", "Rasasi", "Al Wataniah", "French Avenue"];
 const FAMILIES_VALID = ["dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "aromaticas acuaticas"];
+
+// Detecta la marca automáticamente según palabras clave del nombre
+function detectarMarca(nombre) {
+  const n = nombre.toLowerCase();
+  if (/hawas|khamrah|shamoos|asad|ejaazi|oud mood|oud for glory|oud mood|emirati/.test(n))  return "Lattafa";
+  if (/voyage|sterling|tres nuit|ameer|magic|black onyx|bucephalus|caliber/.test(n))         return "Armaf";
+  if (/supremacy|modest|1 million|9 pm|blue sapphire|anniversary|rare|wind flower/.test(n)) return "Afnan";
+  if (/paris corner|sultan|aldehyde|baroque|crystal|renaissance/.test(n))                    return "Maison Alhambra";
+  if (/oudh|rasasi|dakhoon|choco musk|hawas rasasi/.test(n))                                 return "Rasasi";
+  if (/odyssey|opulent|qimmah|waha|oud 24 hours/.test(n))                                    return "Al Wataniah";
+  return null;
+}
 
 const client = createClient({ projectId: PROJECT_ID, dataset: DATASET, token: TOKEN, apiVersion: "2024-01-01", useCdn: false });
 const rl = createInterface({ input: process.stdin, output: process.stdout });
@@ -394,6 +408,52 @@ async function buscarDatosEnPaginas(nombre, marca) {
   } catch { return null; }
 }
 
+// Usa Groq (gratis) para generar datos del perfume con IA
+async function buscarConIA(nombre, marca, datosExistentes = {}) {
+  if (!GROQ_API_KEY || GROQ_API_KEY === "PEGA_TU_CLAVE_GROQ_AQUI") return null;
+
+  const ya = Object.keys(datosExistentes).filter(k => datosExistentes[k]).join(", ");
+  const prompt = `Sos un experto en perfumería árabe y de Medio Oriente. Dame información sobre el perfume "${nombre}" de la marca ${marca}.
+
+Respondé SOLO con JSON válido (sin markdown ni explicaciones extra):
+{
+  "description": "descripción en español de 2-3 oraciones: qué huele, notas principales, para qué ocasión",
+  "category": "hombre" o "mujer" o "unisex",
+  "family": uno de: "dulces", "frescos", "orientales", "maderosos", "florales", "aromaticas", "aromaticas acuaticas",
+  "duration": uno de: "2-4 hs", "4-6 hs", "6-10 hs", "10+ hs"
+}
+
+${ya ? `Ya tenés: ${ya}. Completá solo los campos faltantes igualmente.` : ""}
+Si no conocés el perfume, igualmente inferí datos razonables basándote en la marca y el nombre.`;
+
+  const res = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${GROQ_API_KEY}`,
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      model: "llama-3.1-8b-instant",
+      max_tokens: 400,
+      temperature: 0.3,
+      messages: [{ role: "user", content: prompt }],
+    }),
+    signal: AbortSignal.timeout(15000),
+  });
+
+  if (!res.ok) { console.warn(`     Groq: ${res.status}`); return null; }
+  const json = await res.json();
+  const text = json.choices?.[0]?.message?.content ?? "";
+
+  try {
+    const parsed = JSON.parse(text.match(/\{[\s\S]+\}/)?.[0] ?? text);
+    // Validar familia
+    if (parsed.family && !FAMILIES_VALID.includes(parsed.family)) delete parsed.family;
+    if (parsed.category && !["hombre","mujer","unisex"].includes(parsed.category)) delete parsed.category;
+    return parsed;
+  } catch { return null; }
+}
+
 // Solo devuelve imagen si es de una fuente confiable
 async function buscarImagenConfiable(query) {
   const homeRes = await fetch(`https://duckduckgo.com/?q=${encodeURIComponent(query)}&iax=images&ia=images`, { headers: HEADERS });
@@ -419,146 +479,83 @@ function falta(datos) {
   return !datos.description || !datos.category || !datos.family;
 }
 
-async function buscarYGuardar(nombre, marca, perfumeId) {
+function merge(base, nuevo) {
+  if (!nuevo) return;
+  for (const k of Object.keys(nuevo)) { if (!base[k]) base[k] = nuevo[k]; }
+}
+
+async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } = {}) {
   let datos = {};
 
-  // 1. Fragrantica (a veces funciona)
-  console.log(`\n🌐  [1/4] Fragrantica...`);
+  // 1. Fragrantica
+  if (!silencioso) process.stdout.write(`\n🔎  [1/5] Fragrantica...`);
   try {
     const fragUrl = await buscarFragranticaUrl(nombre, marca) ?? await buscarFragranticaUrl(nombre, "");
-    if (fragUrl) {
-      console.log(`     ${fragUrl}`);
-      datos = await scrapFragrantica(fragUrl);
-      if (!falta(datos)) console.log("✅  Fragrantica: datos completos.");
-    }
-  } catch (e) { console.warn(`     Fragrantica: ${e.message}`); }
+    if (fragUrl) { datos = await scrapFragrantica(fragUrl); }
+  } catch {}
+  if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
 
-  // 2. Parfumo (base de datos confiable, menos bloqueos)
+  // 2. Parfumo
   if (falta(datos)) {
-    console.log("🌐  [2/4] Parfumo...");
-    try {
-      const parfumoData = await scrapParfumo(nombre, marca);
-      if (parfumoData) {
-        datos = { ...parfumoData, ...datos }; // fragrantica tiene prioridad si ya tiene algo
-        // Pero para campos vacíos, tomar parfumo
-        for (const k of Object.keys(parfumoData)) {
-          if (!datos[k]) datos[k] = parfumoData[k];
-        }
-        console.log(`✅  Parfumo: ${Object.keys(parfumoData).join(", ")}`);
-      }
-    } catch {}
+    if (!silencioso) process.stdout.write(`🔎  [2/5] Parfumo...`);
+    try { merge(datos, await scrapParfumo(nombre, marca)); } catch {}
+    if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
   }
 
   // 3. Notino
   if (falta(datos)) {
-    console.log("🌐  [3/4] Notino...");
-    try {
-      const notinoData = await scrapNotino(nombre, marca);
-      if (notinoData) {
-        for (const k of Object.keys(notinoData)) { if (!datos[k]) datos[k] = notinoData[k]; }
-        console.log(`✅  Notino: ${Object.keys(notinoData).join(", ")}`);
-      }
-    } catch {}
+    if (!silencioso) process.stdout.write(`🔎  [3/5] Notino...`);
+    try { merge(datos, await scrapNotino(nombre, marca)); } catch {}
+    if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
   }
 
-  // 4. Búsqueda web general (DuckDuckGo + visita de páginas)
+  // 4. Búsqueda web general
   if (falta(datos)) {
-    console.log("🌐  [4/4] Búsqueda web general...");
+    if (!silencioso) process.stdout.write(`🔎  [4/5] Búsqueda web...`);
+    try { merge(datos, await buscarDatosEnPaginas(nombre, marca)); } catch {}
+    if (!silencioso) console.log(falta(datos) ? " sin datos" : " ✅");
+  }
+
+  // 5. IA con Groq (siempre completa lo que falta — es gratis)
+  if (falta(datos)) {
+    if (!silencioso) process.stdout.write(`🤖  [5/5] IA (Groq)...`);
     try {
-      const webData = await buscarDatosEnPaginas(nombre, marca);
-      if (webData) {
-        for (const k of Object.keys(webData)) { if (!datos[k]) datos[k] = webData[k]; }
-        console.log(`✅  Web: ${Object.keys(webData).join(", ")}`);
-      }
+      const iaData = await buscarConIA(nombre, marca, datos);
+      if (iaData) { merge(datos, iaData); }
     } catch {}
+    if (!silencioso) console.log(falta(datos) ? " sin clave Groq" : " ✅");
   }
 
-  // Fallback: pedir URL manual si todavía no hay nada útil
-  if (!datos.category && !datos.imageUrl) {
-    console.log("⚠️   No se encontraron datos automáticamente.");
-    console.log(`     Buscá en: https://www.fragrantica.com/search/?query=${encodeURIComponent(nombre)}`);
-    const urlManual = (await ask("   Pegá la URL del perfume (o Enter para saltar): ")).trim();
-    if (urlManual.startsWith("http")) {
-      console.log("🔎  Leyendo datos...");
-      try { const d = await scrapFragrantica(urlManual); datos = { ...datos, ...d }; }
-      catch (e) { console.warn(`⚠️   Error: ${e.message}`); }
-    }
-  }
-
-  // Fallback imagen: si Fragrantica no la dio, buscar en fuentes confiables
+  // Imagen: buscar si no se encontró en las fuentes anteriores
   if (!datos.imageUrl) {
-    try {
-      datos.imageUrl = await buscarImagenConfiable(`${nombre} ${marca} perfume bottle`);
-    } catch {}
+    if (!silencioso) process.stdout.write(`🖼️   Buscando imagen...`);
+    try { datos.imageUrl = await buscarImagenConfiable(`${nombre} ${marca} perfume bottle`); } catch {}
+    if (!silencioso) console.log(datos.imageUrl ? " ✅" : " no encontrada");
   }
 
-  console.log("\n══════════════════════════════════════════");
-  console.log("📊  DATOS ENCONTRADOS:");
-  console.log("══════════════════════════════════════════");
-  console.log(`  Categoría:   ${datos.category ?? "❌ no encontrado"}`);
-  console.log(`  Familia:     ${datos.family ?? "❌ no encontrado"}`);
-  console.log(`  Duración:    ${datos.duration ?? "❌ no encontrado"}`);
-  if (datos.accords?.length) console.log(`  Acordes:     ${datos.accords.join(", ")}`);
-  if (datos.notes)       console.log(`  Notas:       ${datos.notes}`);
-  if (datos.description) {
-    console.log(`  Descripción: ${datos.description}`);
-    const editDesc = (await ask("  ¿Editar descripción? (Enter para usar esta, o escribí la nueva): ")).trim();
-    if (editDesc) datos.description = editDesc;
-  }
-  console.log(`  Imagen:      ${datos.imageUrl ? "✅ encontrada" : "❌ no encontrada"}`);
+  // Resumen de lo encontrado
+  console.log("\n──────────────────────────────────────────");
+  console.log(`  ${nombre} — ${marca}`);
+  console.log(`  Categoría:   ${datos.category ?? "—"}`);
+  console.log(`  Familia:     ${datos.family ?? "—"}`);
+  console.log(`  Duración:    ${datos.duration ?? "—"}`);
+  console.log(`  Imagen:      ${datos.imageUrl ? "✅" : "—"}`);
+  if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 120)}...`);
+  console.log("──────────────────────────────────────────");
 
-  // Completar a mano los datos que faltan
-  if (!datos.category) {
-    console.log("\n  Categorías: 1) hombre  2) mujer  3) unisex");
-    const c = (await ask("  Categoría (número o texto, Enter para saltar): ")).trim();
-    if (c === "1") datos.category = "hombre";
-    else if (c === "2") datos.category = "mujer";
-    else if (c === "3") datos.category = "unisex";
-    else if (["hombre","mujer","unisex"].includes(c)) datos.category = c;
-  }
-
-  if (!datos.family) {
-    console.log("\n  Familias: 1) dulces  2) frescos  3) orientales  4) maderosos  5) florales  6) aromaticas  7) aromaticas acuaticas");
-    const f = (await ask("  Familia (número o texto, Enter para saltar): ")).trim();
-    const familias = ["dulces","frescos","orientales","maderosos","florales","aromaticas","aromaticas acuaticas"];
-    const fn = parseInt(f);
-    if (!isNaN(fn) && fn >= 1 && fn <= familias.length) datos.family = familias[fn - 1];
-    else if (familias.includes(f)) datos.family = f;
-  }
-
-  if (!datos.description) {
-    const d = (await ask("  Descripción (Enter para saltar): ")).trim();
-    if (d) datos.description = d;
-  }
-
-  if (!datos.duration) {
-    const d = (await ask("  Duración (ej: 6-10 hs, Enter para saltar): ")).trim();
-    if (d) datos.duration = d;
-  }
-
-  const primero = await ask("\n¿Poner este perfume primero en el catálogo? [s/N]: ");
-  const ok = await ask("¿Guardar datos? [s/N]: ");
-  if (!ok.toLowerCase().startsWith("s")) { console.log("Cancelado."); return false; }
+  const ok = await ask("¿Guardar? [S/n]: ");
+  if (ok.toLowerCase() === "n") { console.log("Cancelado."); return false; }
 
   const patch = {};
-  if (datos.category)  patch.category    = datos.category;
-  if (datos.family && FAMILIES_VALID.includes(datos.family)) patch.family = datos.family;
-  if (datos.description) patch.description = datos.description;
-  if (datos.duration)  patch.duration    = datos.duration;
-
-  if (primero.toLowerCase().startsWith("s")) {
-    // Traer el order más bajo actual y restar 1
-    const minOrder = await client.fetch(`*[_type == "perfume"] | order(order asc)[0].order`);
-    patch.order = (minOrder ?? 1) - 1;
-    console.log(`📌  Orden: ${patch.order} (primero en catálogo)`);
-  }
+  if (datos.category)                                        patch.category    = datos.category;
+  if (datos.family && FAMILIES_VALID.includes(datos.family)) patch.family      = datos.family;
+  if (datos.description)                                     patch.description = datos.description;
+  if (datos.duration)                                        patch.duration    = datos.duration;
 
   if (datos.imageUrl) {
-    console.log("\n⬇️   Descargando imagen...");
-    try {
-      patch.image = await subirImagen(datos.imageUrl, nombre);
-      console.log("✅  Imagen subida.");
-    } catch (e) { console.warn(`⚠️   Sin imagen: ${e.message}`); }
+    process.stdout.write("⬇️   Subiendo imagen...");
+    try { patch.image = await subirImagen(datos.imageUrl, nombre); console.log(" ✅"); }
+    catch (e) { console.log(` sin imagen: ${e.message}`); }
   }
 
   if (Object.keys(patch).length === 0) {
@@ -566,60 +563,61 @@ async function buscarYGuardar(nombre, marca, perfumeId) {
   }
 
   await client.patch(perfumeId).set(patch).commit();
-  console.log(`\n🎉  ¡Guardado! (${Object.keys(patch).join(", ")})`);
+  console.log(`🎉  ¡Guardado! (${Object.keys(patch).join(", ")})`);
   return true;
 }
 
 async function crearPerfume() {
   console.log("\n── CREAR PERFUME NUEVO ──────────────────");
-  const nombre = (await ask("Nombre del perfume: ")).trim();
+  const nombre = (await ask("Nombre: ")).trim();
   if (!nombre) return;
 
-  // Mostrar marcas
-  BRANDS_VALID.forEach((b, i) => console.log(`  ${i + 1}. ${b}`));
-  const marcaInput = await ask("Marca (número o nombre): ");
-  const num = parseInt(marcaInput);
-  const marca = !isNaN(num) && num >= 1 && num <= BRANDS_VALID.length
-    ? BRANDS_VALID[num - 1]
-    : marcaInput.trim();
+  // Auto-detectar marca
+  let marca = detectarMarca(nombre);
+  if (marca) {
+    console.log(`   Marca detectada: ${marca}`);
+    const cambiar = (await ask("   ¿Cambiar marca? (Enter para usar esta): ")).trim();
+    if (cambiar) marca = cambiar;
+  } else {
+    BRANDS_VALID.forEach((b, i) => console.log(`  ${i + 1}. ${b}`));
+    const marcaInput = (await ask("Marca (número o nombre): ")).trim();
+    const num = parseInt(marcaInput);
+    marca = !isNaN(num) && num >= 1 && num <= BRANDS_VALID.length
+      ? BRANDS_VALID[num - 1]
+      : marcaInput;
+  }
 
-  const precio = await ask("Precio (ej: $74.000): ");
-  const ml = parseInt(await ask("ML (ej: 100): ") || "0");
+  const precio = (await ask("Precio (ej: $74.000): ")).trim();
+  const mlStr  = (await ask("ML (ej: 100, Enter = 100): ")).trim();
+  const ml     = parseInt(mlStr) || 100;
 
-  // Crear documento base en Sanity
+  // Verificar duplicados
   const slug = toSlug(nombre);
-  const doc = {
-    _type: "perfume",
-    name: nombre,
-    brand: marca,
-    price: precio,
-    ml: ml || undefined,
-    slug: { _type: "slug", current: slug },
-    outOfStock: false,
-    isDecant: false,
-  };
-
-  // Verificar si ya existe un perfume con el mismo slug o nombre
   const existente = await client.fetch(
     `*[_type == "perfume" && (slug.current == $slug || lower(name) == $nameLower)][0]{ _id, name }`,
     { slug, nameLower: nombre.toLowerCase() }
   );
   if (existente) {
-    console.log(`⚠️   Ya existe "${existente.name}" en Sanity (ID: ${existente._id}).`);
-    const usar = (await ask("   ¿Actualizar ese perfume en vez de crear uno nuevo? [s/N]: ")).trim();
+    console.log(`⚠️   Ya existe "${existente.name}".`);
+    const usar = (await ask("   ¿Actualizar ese en vez de crear uno nuevo? [s/N]: ")).trim();
     if (usar.toLowerCase().startsWith("s")) {
       await buscarYGuardar(nombre, marca, existente._id);
       return;
     }
-    console.log("   Creando de todas formas con slug alternativo...");
-    doc.slug = { _type: "slug", current: `${slug}-2` };
   }
 
-  console.log("\n⬆️   Creando perfume en Sanity...");
+  // Crear documento base
+  process.stdout.write("⬆️   Creando en Sanity...");
+  const doc = {
+    _type: "perfume",
+    name: nombre, brand: marca, price: precio, ml,
+    slug: { _type: "slug", current: existente ? `${slug}-2` : slug },
+    outOfStock: false, isDecant: false,
+  };
   const created = await client.create(doc);
-  console.log(`✅  Perfume creado con ID: ${created._id}`);
+  console.log(` ✅  ID: ${created._id}`);
 
-  // Buscar datos en Fragrantica
+  // Buscar y guardar todo automáticamente
   await buscarYGuardar(nombre, marca, created._id);
 }
 
