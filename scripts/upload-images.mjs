@@ -388,9 +388,11 @@ async function scrapParfumo(nombre, marca) {
     else if (/long.?lasting/i.test(html)) data.duration = "6-10 hs";
     else if (/moderate/i.test(html.slice(0, 5000))) data.duration = "4-6 hs";
 
-    // Imagen
-    const imgMatch = html.match(/src="(https:\/\/[^"]*parfumo\.net\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i);
-    if (imgMatch) data.imageUrl = imgMatch[1];
+    // Imagen: og:image es siempre la foto del frasco, alta calidad
+    const ogImg = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
+      ?? html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1]
+      ?? html.match(/src="(https:\/\/[^"]*parfumo\.net\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i)?.[1];
+    if (ogImg) data.imageUrl = ogImg;
 
     return Object.keys(data).length > 0 ? data : null;
   } catch { return null; }
@@ -457,12 +459,11 @@ async function buscarDatosEnPaginas(nombre, marca) {
           else if (/moderate longevity/i.test(html)) data.duration = "4-6 hs";
         }
 
-        // Imagen de fuente confiable
-        if (!data.imageUrl) {
-          const imgMatch = html.match(
-            new RegExp(`src="(https://[^"]*(?:${TRUSTED_DOMAINS.join("|").replace(/\./g,"\\.")})[^"]+\\.(?:jpg|jpeg|png|webp)[^"]*)"`, "i")
-          );
-          if (imgMatch) data.imageUrl = imgMatch[1];
+        // Imagen: og:image de dominios confiables (siempre foto principal de producto)
+        if (!data.imageUrl && TRUSTED_DOMAINS.some(d => url.includes(d))) {
+          const ogImg = html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
+            ?? html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1];
+          if (ogImg && esImagenApta(ogImg)) data.imageUrl = ogImg;
         }
       } catch {}
     }
@@ -548,42 +549,61 @@ async function buscarConIA(nombre, marca, datosExistentes = {}) {
   return null;
 }
 
-// Busca imagen en Notino (retailer confiable, imágenes reales de producto)
-async function buscarImagenNotino(nombre, marca) {
-  try {
-    const res = await fetch(
-      `https://www.notino.es/search/?query=${encodeURIComponent(`${nombre} ${marca}`)}`,
-      { headers: HEADERS, signal: AbortSignal.timeout(8000) }
-    );
-    if (!res.ok) return null;
-    const html = await res.text();
-    const match = html.match(/src="(https:\/\/i\.notino\.com\/[^"]+\.(?:jpg|jpeg|webp)[^"]*)"/i)
-      ?? html.match(/"(https:\/\/i\.notino\.com\/[^"]+\.(?:jpg|jpeg|webp)[^"]*)"/i);
-    return match?.[1] ?? null;
-  } catch { return null; }
-}
-
-// Busca imagen en el sitio de la marca directamente
-async function buscarImagenMarca(nombre, marca) {
-  const MARCA_URLS = {
-    "Lattafa":        `https://lattafaperfumes.com/?s=${encodeURIComponent(nombre)}`,
-    "Armaf":          `https://www.armafperfumes.com/?s=${encodeURIComponent(nombre)}`,
-    "Afnan":          `https://afnanperfumes.com/?s=${encodeURIComponent(nombre)}`,
-    "Maison Alhambra":`https://maisonalhambra.com/?s=${encodeURIComponent(nombre)}`,
-    "Rasasi":         `https://rasasi.com/?s=${encodeURIComponent(nombre)}`,
-    "Al Wataniah":    `https://alwataniah.com/?s=${encodeURIComponent(nombre)}`,
-  };
-  const url = MARCA_URLS[marca];
-  if (!url) return null;
+// Extrae og:image de una URL — siempre es la foto principal del producto
+async function ogImage(url) {
   try {
     const res = await fetch(url, { headers: HEADERS, signal: AbortSignal.timeout(10000) });
     if (!res.ok) return null;
     const html = await res.text();
-    // Buscar imagen de producto (evitar logos y banners)
-    const match = html.match(/src="(https?:\/\/[^"]+\/wp-content\/uploads\/[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i)
-      ?? html.match(/src="(https?:\/\/[^"]+product[^"]+\.(?:jpg|jpeg|png|webp)[^"]*)"/i);
-    return match?.[1] ?? null;
+    return html.match(/<meta[^>]+property="og:image"[^>]+content="([^"]+)"/i)?.[1]
+      ?? html.match(/<meta[^>]+content="([^"]+)"[^>]+property="og:image"/i)?.[1]
+      ?? null;
   } catch { return null; }
+}
+
+// Busca imagen en Notino (retailer profesional)
+async function buscarImagenNotino(nombre, marca) {
+  const dominios = ["notino.es", "notino.com.ar", "notino.com"];
+  for (const dominio of dominios) {
+    try {
+      const res = await fetch(
+        `https://www.${dominio}/search/?query=${encodeURIComponent(`${nombre} ${marca}`)}`,
+        { headers: HEADERS, signal: AbortSignal.timeout(8000) }
+      );
+      if (!res.ok) continue;
+      const html = await res.text();
+      // Buscar link al primer producto
+      const link = html.match(/href="(https?:\/\/www\.[^"]*notino[^"]+\/p\.[^"]+)"/i)?.[1]
+        ?? html.match(/href="(https?:\/\/www\.[^"]*notino[^"]+\/[^"]+\/[^"]+\/)"/i)?.[1];
+      if (link) {
+        const img = await ogImage(link);
+        if (img) return img;
+      }
+      // Fallback: CDN directo en el HTML de búsqueda
+      const cdnImg = html.match(/"(https:\/\/i\.notino\.com\/[^"]+\.(?:jpg|jpeg|webp)[^"]*)"/i)?.[1];
+      if (cdnImg) return cdnImg;
+    } catch {}
+  }
+  return null;
+}
+
+// Busca imagen en el sitio oficial de la marca usando og:image
+async function buscarImagenMarca(nombre, marca) {
+  const slug = nombre.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
+  const URLS = {
+    "Lattafa":        [`https://lattafaperfumes.com/${slug}/`, `https://lattafaperfumes.com/?s=${encodeURIComponent(nombre)}`],
+    "Armaf":          [`https://www.armafperfumes.com/product/${slug}/`, `https://www.armafperfumes.com/?s=${encodeURIComponent(nombre)}`],
+    "Afnan":          [`https://afnanperfumes.com/product/${slug}/`, `https://afnanperfumes.com/?s=${encodeURIComponent(nombre)}`],
+    "Maison Alhambra":[`https://maisonalhambra.com/product/${slug}/`, `https://maisonalhambra.com/?s=${encodeURIComponent(nombre)}`],
+    "Rasasi":         [`https://rasasi.com/product/${slug}/`, `https://rasasi.com/?s=${encodeURIComponent(nombre)}`],
+    "Al Wataniah":    [`https://alwataniah.com/product/${slug}/`, `https://alwataniah.com/?s=${encodeURIComponent(nombre)}`],
+  };
+  const urls = URLS[marca] ?? [];
+  for (const url of urls) {
+    const img = await ogImage(url);
+    if (img && !img.includes("logo") && !img.includes("banner")) return img;
+  }
+  return null;
 }
 
 // Dominios bloqueados: fotos de baja calidad (vendedores, redes sociales, mercados)
@@ -601,6 +621,20 @@ function esImagenApta(url = "") {
   return true;
 }
 
+async function buscarImagenParfumo(nombre, marca) {
+  try {
+    const searchRes = await fetch(
+      `https://www.parfumo.net/Search/index?search=${encodeURIComponent(`${nombre} ${marca}`)}`,
+      { headers: HEADERS, signal: AbortSignal.timeout(10000) }
+    );
+    if (!searchRes.ok) return null;
+    const searchHtml = await searchRes.text();
+    const linkMatch = searchHtml.match(/href="(\/Perfumes\/[^"#?]+)"/);
+    if (!linkMatch) return null;
+    return ogImage(`https://www.parfumo.net${linkMatch[1]}`);
+  } catch { return null; }
+}
+
 async function buscarImagenConfiable(nombre, marca) {
   // 1. Notino — retailer profesional, siempre fondo blanco
   const imgNotino = await buscarImagenNotino(nombre, marca);
@@ -610,7 +644,11 @@ async function buscarImagenConfiable(nombre, marca) {
   const imgMarca = await buscarImagenMarca(nombre, marca);
   if (imgMarca) return imgMarca;
 
-  // 3. DuckDuckGo — query específico para fotos de producto con fondo limpio
+  // 3. Parfumo — base de datos de perfumes, imágenes de frasco limpias
+  const imgParfumo = await buscarImagenParfumo(nombre, marca);
+  if (imgParfumo) return imgParfumo;
+
+  // 4. DuckDuckGo — query específico para fotos de producto con fondo limpio
   try {
     // Agregar términos que ayudan a encontrar fotos de producto profesionales
     const query = `"${nombre}" "${marca}" perfume eau de parfum official`;
@@ -717,16 +755,7 @@ async function buscarYGuardar(nombre, marca, perfumeId, { silencioso = false } =
   console.log(`  Categoría:   ${datos.category ?? "—"}`);
   console.log(`  Familia:     ${datos.family ?? "—"}`);
   console.log(`  Duración:    ${datos.duration ?? "—"}`);
-  if (datos.imageUrl) {
-    console.log(`  Imagen URL:  ${datos.imageUrl.slice(0, 80)}...`);
-    const reemplazar = (await ask("  ¿La imagen es correcta? Enter=sí, pegá otra URL para reemplazar: ")).trim();
-    if (reemplazar.startsWith("http")) datos.imageUrl = reemplazar;
-    else if (reemplazar.toLowerCase() === "n" || reemplazar.toLowerCase() === "no") datos.imageUrl = undefined;
-  } else {
-    console.log(`  Imagen:      — no encontrada`);
-    const urlManual = (await ask("  Pegá una URL de imagen (o Enter para saltar): ")).trim();
-    if (urlManual.startsWith("http")) datos.imageUrl = urlManual;
-  }
+  console.log(`  Imagen:      ${datos.imageUrl ? "✅ " + datos.imageUrl.slice(0, 70) + "..." : "— no encontrada"}`);
   if (datos.description) console.log(`  Descripción: ${datos.description.slice(0, 120)}...`);
   console.log("──────────────────────────────────────────");
 
