@@ -712,15 +712,22 @@ async function buscarImagenFragrancenet(nombre, marca) {
   return null;
 }
 
-// Busca en DDG de texto (no imágenes) la página del producto en un retailer, luego extrae og:image
+// Busca en DDG de texto, visita los primeros resultados aptos y extrae og:image
 async function buscarImagenViaDDGTexto(nombre, marca) {
-  // Solo retailers con fotos profesionales de fondo blanco/limpio
-  const RETAILERS_SITE = [
-    "fragrancenet.com", "notino.es", "notino.com.ar",
-    "scentbird.com", "theperfumeshop.com", "fragrancedirect.co.uk",
+  const SKIP_DOMAINS = [
+    "duckduckgo", "google", "youtube", "instagram", "facebook",
+    "twitter", "tiktok", "pinterest", "mercadolibre", "ebay",
+    "aliexpress", "amazon", "blogspot", "wordpress.com", "reddit",
+  ];
+  // Retailers con fotos limpias de producto — priorizamos si aparecen
+  const GOOD_DOMAINS = [
+    "fragrancenet.com", "notino.", "scentbird.com",
+    "theperfumeshop.com", "fragrancedirect.co.uk", "parfumo.",
+    "lattafaperfumes.com", "armafperfumes.com", "rasasi.com",
+    "afnanperfumes.com", "alwataniah.com",
   ];
   try {
-    const query = `"${nombre}" "${marca}" site:${RETAILERS_SITE.join(" OR site:")}`;
+    const query = `"${nombre}" ${marca} perfume buy`;
     const res = await fetch(
       `https://lite.duckduckgo.com/lite/?q=${encodeURIComponent(query)}`,
       { headers: HEADERS, signal: AbortSignal.timeout(10000) }
@@ -728,7 +735,7 @@ async function buscarImagenViaDDGTexto(nombre, marca) {
     if (!res.ok) return null;
     const html = await res.text();
 
-    const rawUrls = [...html.matchAll(/href="(https?:\/\/[^"]+)"/gi)]
+    const allUrls = [...html.matchAll(/href="(https?:\/\/[^"]+)"/gi)]
       .map(m => {
         const u = m[1];
         if (u.includes("duckduckgo.com/l/")) {
@@ -736,12 +743,17 @@ async function buscarImagenViaDDGTexto(nombre, marca) {
         }
         return u;
       })
-      .filter(u => !u.includes("duckduckgo") && RETAILERS_SITE.some(d => u.includes(d)))
-      .slice(0, 4);
+      .filter(u => !SKIP_DOMAINS.some(d => u.includes(d)));
 
-    for (const url of rawUrls) {
+    // Priorizar URLs de dominios conocidos por tener fotos limpias
+    const sorted = [
+      ...allUrls.filter(u => GOOD_DOMAINS.some(d => u.includes(d))),
+      ...allUrls.filter(u => !GOOD_DOMAINS.some(d => u.includes(d))),
+    ].slice(0, 6);
+
+    for (const url of sorted) {
       const img = await ogImage(url);
-      if (img && esImagenApta(img)) return img;
+      if (img && esImagenApta(img) && !img.includes("logo") && !img.includes("banner")) return img;
     }
   } catch {}
   return null;
